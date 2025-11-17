@@ -43,6 +43,10 @@ class DossierMedical
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $antecedents_medicaux = null;
 
+    #[ORM\ManyToOne(inversedBy: 'dossier_animal')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Animal $animal = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -164,6 +168,18 @@ class DossierMedical
     public function setAntecedentsMedicaux(?string $antecedents_medicaux): static
     {
         $this->antecedents_medicaux = $antecedents_medicaux;
+
+        return $this;
+    }
+
+    public function getAnimal(): ?Animal
+    {
+        return $this->animal;
+    }
+
+    public function setAnimal(?Animal $animal): static
+    {
+        $this->animal = $animal;
 
         return $this;
     }

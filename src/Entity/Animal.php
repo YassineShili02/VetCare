@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AnimalRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -37,6 +39,17 @@ class Animal
 
     #[ORM\Column]
     private ?\DateTime $date_enregistrement = null;
+
+    /**
+     * @var Collection<int, DossierMedical>
+     */
+    #[ORM\OneToMany(targetEntity: DossierMedical::class, mappedBy: 'animal')]
+    private Collection $dossier_animal;
+
+    public function __construct()
+    {
+        $this->dossier_animal = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -135,6 +148,36 @@ class Animal
     public function setDateEnregistrement(\DateTime $date_enregistrement): static
     {
         $this->date_enregistrement = $date_enregistrement;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DossierMedical>
+     */
+    public function getDossierAnimal(): Collection
+    {
+        return $this->dossier_animal;
+    }
+
+    public function addDossierAnimal(DossierMedical $dossierAnimal): static
+    {
+        if (!$this->dossier_animal->contains($dossierAnimal)) {
+            $this->dossier_animal->add($dossierAnimal);
+            $dossierAnimal->setAnimal($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDossierAnimal(DossierMedical $dossierAnimal): static
+    {
+        if ($this->dossier_animal->removeElement($dossierAnimal)) {
+            // set the owning side to null (unless already changed)
+            if ($dossierAnimal->getAnimal() === $this) {
+                $dossierAnimal->setAnimal(null);
+            }
+        }
 
         return $this;
     }
