@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un Rendez-vous{% endblock %}
+
+{% block body %}
+<h1>✏️ Modifier le Rendez-vous</h1>
+
+{{ form_start(form) }}
+
+<div>
+    {{ form_label(form.type) }}
+    {{ form_widget(form.type) }}
+    {{ form_errors(form.type) }}
+</div>
+
+<div>
+    {{ form_label(form.duree) }}
+    {{ form_widget(form.duree) }}
+    {{ form_errors(form.duree) }}
+</div>
+
+<div>
+    {{ form_label(form.commentaireClient) }}
+    {{ form_widget(form.commentaireClient) }}
+    {{ form_errors(form.commentaireClient) }}
+</div>
+
+<div>
+    {{ form_label(form.notesVeterinaire) }}
+    {{ form_widget(form.notesVeterinaire) }}
+    {{ form_errors(form.notesVeterinaire) }}
+</div>
+
+<div>
+    {{ form_label(form.confirmation) }}
+    {{ form_widget(form.confirmation) }}
+    {{ form_errors(form.confirmation) }}
+</div>
+
+<div>
+    {{ form_label(form.modePaiementPrevu) }}
+    {{ form_widget(form.modePaiementPrevu) }}
+    {{ form_errors(form.modePaiementPrevu) }}
+</div>
+
+<hr>
+
+<div>
+    <label>Créé le :</label>
+    <input type="text"
+           value="{{ rendezvous.createdAt ? rendezvous.createdAt|date('d/m/Y H:i') : '—' }}"
+           readonly>
+</div>
+
+<div>
+    <label>Dernière mise à jour :</label>
+    <input type="text"
+           value="{{ rendezvous.updatedAt ? rendezvous.updatedAt|date('d/m/Y H:i') : '—' }}"
+           readonly>
+</div>
+
+<hr>
+
+<div style="margin-top: 20px;">
+    <a href="{{ path('rendezvous_list') }}" style="margin-right:15px;">⬅️ Retour</a>
+    <button type="submit">💾 Sauvegarder</button>
+</div>
+
+{{ form_end(form) }}
+
+{% endblock %}
