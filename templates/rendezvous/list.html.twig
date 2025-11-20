@@ -1,48 +1,186 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>Liste des Rendez-vous</h1>
-    <a href="{{ path('rendezvous_add') }}" class="btn btn-success">➕ Ajouter un rendez-vous</a>
-</div>
+{% block title %}Liste des Rendez-vous - VetCare{% endblock %}
 
-<table class="table table-striped table-hover shadow-sm bg-white">
-    <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Type</th>
-            <th>Durée</th>
-            <th>Commentaire Client</th>
-            <th>Notes Vétérinaire</th>
-            <th>Confirmation</th>
-            <th>Mode Paiement</th>
-            <th>Créé le</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for r in rendezvous %}
-            <tr>
-                <td>{{ r.id }}</td>
-                <td>{{ r.type }}</td>
-                <td>{{ r.duree }} min</td>
-                <td>{{ r.commentaireClient }}</td>
-                <td>{{ r.notesVeterinaire }}</td>
-                <td>{{ r.confirmation ? 'Oui' : 'Non' }}</td>
-                <td>{{ r.modePaiementPrevu }}</td>
-                <td>{{ r.createdAt|date('Y-m-d H:i') }}</td>
-                <td>
-                    <a href="{{ path('rendezvous_edit', {id: r.id}) }}" class="btn btn-sm btn-primary">✏️ Edit</a>
-                    <a href="{{ path('rendezvous_delete', {id: r.id}) }}" 
-                       class="btn btn-sm btn-danger"
-                       onclick="return confirm('Supprimer ce rendez-vous ?');">❌ Delete</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="9" class="text-center">Aucun rendez-vous trouvé.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% block body %}
+<section class="container py-5">
+    
+    {# En-tête centré avec titre et bouton #}
+    <div class="text-center mb-5">
+        <h1 class="display-4 mb-3" style="color:#2c3e50;">
+            📋 Liste des Rendez-vous
+        </h1>
+        <p class="text-muted mb-4">Gérez tous vos rendez-vous vétérinaires</p>
+        <a href="{{ path('rendezvous_add') }}" class="btn btn-success btn-lg shadow">
+            <i class="fas fa-plus-circle"></i> Ajouter un nouveau rendez-vous
+        </a>
+    </div>
+
+    {# Messages flash #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+
+    {# Statistiques rapides (optionnel) #}
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card border-primary shadow-sm">
+                <div class="card-body text-center">
+                    <h3 class="text-primary">{{ rendezvous|length }}</h3>
+                    <p class="mb-0 text-muted">Total Rendez-vous</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-success shadow-sm">
+                <div class="card-body text-center">
+                    <h3 class="text-success">
+                        {{ rendezvous|filter(r => r.confirmation)|length }}
+                    </h3>
+                    <p class="mb-0 text-muted">Confirmés</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-warning shadow-sm">
+                <div class="card-body text-center">
+                    <h3 class="text-warning">
+                        {{ rendezvous|filter(r => not r.confirmation)|length }}
+                    </h3>
+                    <p class="mb-0 text-muted">En attente</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Tableau des rendez-vous avec un design moderne #}
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-calendar-alt"></i> Tous les Rendez-vous
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width: 60px;">#</th>
+                            <th><i class="fas fa-stethoscope"></i> Type</th>
+                            <th class="text-center"><i class="fas fa-clock"></i> Durée</th>
+                            <th><i class="fas fa-comment"></i> Commentaire Client</th>
+                            <th><i class="fas fa-notes-medical"></i> Notes Vétérinaire</th>
+                            <th class="text-center"><i class="fas fa-check-circle"></i> Statut</th>
+                            <th><i class="fas fa-credit-card"></i> Paiement</th>
+                            <th><i class="fas fa-calendar"></i> Date création</th>
+                            <th class="text-center" style="width: 200px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in rendezvous %}
+                            <tr>
+                                <td class="text-center fw-bold">{{ r.id }}</td>
+                                <td>
+                                    <span class="badge bg-info text-dark">{{ r.type }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary">{{ r.duree }} min</span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ r.commentaireClient|length > 30 ? r.commentaireClient|slice(0, 30) ~ '...' : r.commentaireClient }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ r.notesVeterinaire|length > 30 ? r.notesVeterinaire|slice(0, 30) ~ '...' : r.notesVeterinaire }}
+                                    </small>
+                                </td>
+                                <td class="text-center">
+                                    {% if r.confirmation %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check"></i> Confirmé
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-hourglass-half"></i> En attente
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        {{ r.modePaiementPrevu }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small>{{ r.createdAt|date('d/m/Y') }}</small><br>
+                                    <small class="text-muted">{{ r.createdAt|date('H:i') }}</small>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ path('rendezvous_edit', {id: r.id}) }}" 
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="Modifier">
+                                            <i class="fas fa-edit"></i> Modifier
+                                        </a>
+                                        <a href="{{ path('rendezvous_delete', {id: r.id}) }}" 
+                                           class="btn btn-sm btn-outline-danger"
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?');"
+                                           title="Supprimer">
+                                            <i class="fas fa-trash-alt"></i> Supprimer
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center py-5">
+                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted mb-3">Aucun rendez-vous trouvé</p>
+                                    <a href="{{ path('rendezvous_add') }}" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i> Créer le premier rendez-vous
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        {# Footer du tableau avec info #}
+        <div class="card-footer bg-light text-muted text-center">
+            <small>
+                <i class="fas fa-info-circle"></i> 
+                Total : {{ rendezvous|length }} rendez-vous
+            </small>
+        </div>
+    </div>
+
+</section>
+
+{# Style personnalisé pour améliorer l'apparence #}
+<style>
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+        transition: background-color 0.3s ease;
+    }
+    
+    .btn-group .btn {
+        font-size: 0.875rem;
+    }
+    
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .badge {
+        font-weight: 500;
+        padding: 0.5em 0.8em;
+    }
+</style>
 {% endblock %}

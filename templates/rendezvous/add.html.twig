@@ -3,52 +3,65 @@
 {% block title %}Ajouter un rendez-vous{% endblock %}
 
 {% block body %}
-<div style="max-width: 600px; margin: 50px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-    <h1 style="color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px;">➕ Créer un rendez-vous</h1>
+<section class="container py-5">
 
-    {{ form_start(form) }}
+    <div class="bg-white p-4 shadow rounded" style="max-width: 650px; margin: 0 auto;">
 
-    <div style="margin-bottom: 20px;">
-        {{ form_label(form.type, 'Type de rendez-vous', {'label_attr': {'style': 'display: block; font-weight: bold; margin-bottom: 5px; color: #34495e;'}}) }}
-        {{ form_widget(form.type, {'attr': {'style': 'width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;'}}) }}
-        {{ form_errors(form.type) }}
+        <h2 class="text-center mb-4" style="color:#2c3e50;">
+            ➕ Créer un rendez-vous
+        </h2>
+
+        {{ form_start(form) }}
+
+        <div class="mb-3">
+            {{ form_label(form.type, 'Type de rendez-vous') }}
+            {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.type) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.duree, 'Durée (minutes)') }}
+            {{ form_widget(form.duree, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.duree) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.commentaireClient, 'Commentaire client') }}
+            {{ form_widget(form.commentaireClient, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+            {{ form_errors(form.commentaireClient) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.notesVeterinaire, 'Notes vétérinaire') }}
+            {{ form_widget(form.notesVeterinaire, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+            {{ form_errors(form.notesVeterinaire) }}
+        </div>
+
+        <div class="mb-3 form-check">
+            {{ form_widget(form.confirmation, {'attr': {'class': 'form-check-input'}}) }}
+            {{ form_label(form.confirmation, 'Rendez-vous confirmé', {'label_attr': {'class': 'form-check-label'}}) }}
+            {{ form_errors(form.confirmation) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.modePaiementPrevu, 'Mode de paiement prévu') }}
+            {{ form_widget(form.modePaiementPrevu, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.modePaiementPrevu) }}
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{{ path('rendezvous_list') }}" class="btn btn-secondary">
+                ← Retour
+            </a>
+
+            <button type="submit" class="btn btn-success">
+                💾 Enregistrer
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+
     </div>
 
-    <div style="margin-bottom: 20px;">
-        {{ form_label(form.duree, 'Durée (minutes)', {'label_attr': {'style': 'display: block; font-weight: bold; margin-bottom: 5px; color: #34495e;'}}) }}
-        {{ form_widget(form.duree, {'attr': {'style': 'width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;'}}) }}
-        {{ form_errors(form.duree) }}
-    </div>
-
-    <div style="margin-bottom: 20px;">
-        {{ form_label(form.commentaireClient, 'Commentaire client', {'label_attr': {'style': 'display: block; font-weight: bold; margin-bottom: 5px; color: #34495e;'}}) }}
-        {{ form_widget(form.commentaireClient, {'attr': {'style': 'width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-height: 100px;'}}) }}
-        {{ form_errors(form.commentaireClient) }}
-    </div>
-
-    <div style="margin-bottom: 20px;">
-        {{ form_label(form.notesVeterinaire, 'Notes vétérinaire', {'label_attr': {'style': 'display: block; font-weight: bold; margin-bottom: 5px; color: #34495e;'}}) }}
-        {{ form_widget(form.notesVeterinaire, {'attr': {'style': 'width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-height: 100px;'}}) }}
-        {{ form_errors(form.notesVeterinaire) }}
-    </div>
-
-    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px;">
-        {{ form_widget(form.confirmation, {'attr': {'style': 'margin-right: 10px;'}}) }}
-        {{ form_label(form.confirmation, 'Rendez-vous confirmé', {'label_attr': {'style': 'font-weight: bold; color: #34495e;'}}) }}
-        {{ form_errors(form.confirmation) }}
-    </div>
-
-    <div style="margin-bottom: 20px;">
-        {{ form_label(form.modePaiementPrevu, 'Mode de paiement prévu', {'label_attr': {'style': 'display: block; font-weight: bold; margin-bottom: 5px; color: #34495e;'}}) }}
-        {{ form_widget(form.modePaiementPrevu, {'attr': {'style': 'width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;'}}) }}
-        {{ form_errors(form.modePaiementPrevu) }}
-    </div>
-
-    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
-        <a href="{{ path('rendezvous_list') }}" style="padding: 12px 24px; background: #95a5a6; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">← Retour</a>
-        <button type="submit" style="padding: 12px 24px; background: #27ae60; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">💾 Enregistrer</button>
-    </div>
-
-    {{ form_end(form) }}
-</div>
+</section>
 {% endblock %}

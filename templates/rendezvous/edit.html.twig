@@ -3,69 +3,86 @@
 {% block title %}Modifier un Rendez-vous{% endblock %}
 
 {% block body %}
-<h1>✏️ Modifier le Rendez-vous</h1>
 
-{{ form_start(form) }}
+<div class="container mt-5">
+    <div class="section-title">
+        <h2>Modifier le Rendez-vous</h2>
+        <p>Modifiez les informations du rendez-vous puis enregistrez.</p>
+    </div>
 
-<div>
-    {{ form_label(form.type) }}
-    {{ form_widget(form.type) }}
-    {{ form_errors(form.type) }}
+    <div class="card p-4 shadow-sm" style="border-radius: 12px;">
+
+        {{ form_start(form) }}
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.type) }}
+                {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.type) }}
+            </div>
+
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.duree) }}
+                {{ form_widget(form.duree, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.duree) }}
+            </div>
+
+            <div class="col-md-12 mb-3">
+                {{ form_label(form.commentaireClient) }}
+                {{ form_widget(form.commentaireClient, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.commentaireClient) }}
+            </div>
+
+            <div class="col-md-12 mb-3">
+                {{ form_label(form.notesVeterinaire) }}
+                {{ form_widget(form.notesVeterinaire, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.notesVeterinaire) }}
+            </div>
+
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.confirmation) }}
+                {{ form_widget(form.confirmation, {'attr': {'class': 'form-select'}}) }}
+                {{ form_errors(form.confirmation) }}
+            </div>
+
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.modePaiementPrevu) }}
+                {{ form_widget(form.modePaiementPrevu, {'attr': {'class': 'form-select'}}) }}
+                {{ form_errors(form.modePaiementPrevu) }}
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="fw-bold">Créé le :</label>
+                <input type="text" class="form-control"
+                       value="{{ rendezvous.createdAt ? rendezvous.createdAt|date('d/m/Y H:i') : '—' }}"
+                       readonly>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="fw-bold">Dernière mise à jour :</label>
+                <input type="text" class="form-control"
+                       value="{{ rendezvous.updatedAt ? rendezvous.updatedAt|date('d/m/Y H:i') : '—' }}"
+                       readonly>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between">
+            <a href="{{ path('rendezvous_list') }}" class="btn btn-secondary">
+                ⬅️ Retour
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                💾 Sauvegarder
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+
+    </div>
 </div>
-
-<div>
-    {{ form_label(form.duree) }}
-    {{ form_widget(form.duree) }}
-    {{ form_errors(form.duree) }}
-</div>
-
-<div>
-    {{ form_label(form.commentaireClient) }}
-    {{ form_widget(form.commentaireClient) }}
-    {{ form_errors(form.commentaireClient) }}
-</div>
-
-<div>
-    {{ form_label(form.notesVeterinaire) }}
-    {{ form_widget(form.notesVeterinaire) }}
-    {{ form_errors(form.notesVeterinaire) }}
-</div>
-
-<div>
-    {{ form_label(form.confirmation) }}
-    {{ form_widget(form.confirmation) }}
-    {{ form_errors(form.confirmation) }}
-</div>
-
-<div>
-    {{ form_label(form.modePaiementPrevu) }}
-    {{ form_widget(form.modePaiementPrevu) }}
-    {{ form_errors(form.modePaiementPrevu) }}
-</div>
-
-<hr>
-
-<div>
-    <label>Créé le :</label>
-    <input type="text"
-           value="{{ rendezvous.createdAt ? rendezvous.createdAt|date('d/m/Y H:i') : '—' }}"
-           readonly>
-</div>
-
-<div>
-    <label>Dernière mise à jour :</label>
-    <input type="text"
-           value="{{ rendezvous.updatedAt ? rendezvous.updatedAt|date('d/m/Y H:i') : '—' }}"
-           readonly>
-</div>
-
-<hr>
-
-<div style="margin-top: 20px;">
-    <a href="{{ path('rendezvous_list') }}" style="margin-right:15px;">⬅️ Retour</a>
-    <button type="submit">💾 Sauvegarder</button>
-</div>
-
-{{ form_end(form) }}
 
 {% endblock %}
