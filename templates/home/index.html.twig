@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetCare - Accueil</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ecf0f1;
+            padding: 2rem;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ecf0f1;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #bdc3c7;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: inline-block;
+            padding: 1.2rem 2.5rem;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1.1rem;
+            min-width: 200px;
+        }
+
+        .nav-link.client {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .nav-link.veterinary {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .nav-link:hover {
+            opacity: 0.9;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .description {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(52, 73, 94, 0.5);
+            border-radius: 10px;
+            border: 1px solid #4a6572;
+        }
+
+        .description h3 {
+            margin-bottom: 1rem;
+            color: #ecf0f1;
+        }
+
+        .description p {
+            color: #bdc3c7;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🏥</div>
+        <h1>VetCare</h1>
+        <p class="subtitle">Système de gestion des médicaments et traitements vétérinaires</p>
+
+        <div class="nav-links">
+            <a href="{{ path('app_client_interface') }}" class="nav-link client">
+                👁️ Interface Client
+            </a>
+            <a href="{{ path('app_login') }}" class="nav-link veterinary">
+                🔐 Accès Vétérinaire
+            </a>
+        </div>
+
+        <div class="description">
+            <h3>À propos de VetCare</h3>
+            <p>
+                VetCare est une application web dédiée à la gestion des médicaments et traitements
+                dans un cabinet vétérinaire. L'interface client permet la consultation des données
+                tandis que l'espace vétérinaire offre des fonctionnalités complètes de gestion.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
