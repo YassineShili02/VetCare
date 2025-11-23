@@ -1,0 +1,721 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Prendre rendez-vous - VetCare{% endblock %}
+
+{% block body %}
+<style>
+    :root {
+        --primary-color: #667eea;
+        --primary-light: #f0f3ff;
+        --success-color: #48bb78;
+        --text-dark: #2d3748;
+        --text-light: #718096;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .appointment-wrapper {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .page-header h1 {
+        color: var(--text-dark);
+        font-weight: 700;
+        font-size: 2.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+        color: var(--text-light);
+        font-size: 1.05rem;
+    }
+
+    .vet-selector {
+        background: white;
+        border-radius: 12px;
+        padding: 1.75rem;
+        margin-bottom: 2.5rem;
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-color);
+    }
+
+    .vet-selector-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1.25rem;
+        color: var(--text-dark);
+        font-weight: 600;
+        font-size: 1.05rem;
+    }
+
+    .vet-selector-header i {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+    }
+
+    .vet-form-group {
+        display: flex;
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .vet-form-group > div {
+        flex: 1;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .form-select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        background: white;
+    }
+
+    .form-select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn-search {
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, var(--primary-color) 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        white-space: nowrap;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-search:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-search i {
+        margin-right: 0.4rem;
+    }
+
+    .alert-custom {
+        background: var(--primary-light);
+        border-left: 4px solid var(--primary-color);
+        border-radius: 10px;
+        padding: 1.1rem 1.3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-custom i {
+        color: var(--primary-color);
+        font-size: 1.3rem;
+    }
+
+    .slots-section-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .slots-section-header h2 {
+        color: var(--text-dark);
+        font-weight: 700;
+        font-size: 1.75rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .slots-section-header p {
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+
+    .day-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+    }
+
+    .day-card-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #764ba2 100%);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .date-selector-wrapper {
+        position: relative;
+        flex: 1;
+    }
+
+    .date-selector-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 0.65rem 1.25rem;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        transition: all 0.2s;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .date-selector-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    .date-selector-btn i.fa-calendar-alt {
+        font-size: 1.3rem;
+    }
+
+    .date-selector-btn i.fa-chevron-down {
+        margin-left: auto;
+        font-size: 0.9rem;
+        transition: transform 0.3s;
+    }
+
+    .date-selector-btn.active i.fa-chevron-down {
+        transform: rotate(180deg);
+    }
+
+    .date-dropdown {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 0;
+        right: 0;
+        background: white;
+        border-radius: 10px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+    }
+
+    .date-dropdown.show {
+        display: block;
+    }
+
+    .date-option {
+        padding: 0.9rem 1.25rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .date-option:last-child {
+        border-bottom: none;
+    }
+
+    .date-option:hover {
+        background: var(--primary-light);
+    }
+
+    .date-option.active {
+        background: var(--primary-light);
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .date-option-label {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .date-option-badge {
+        background: #e2e8f0;
+        color: var(--text-dark);
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .date-option.active .date-option-badge {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .slots-badge {
+        background: rgba(255, 255, 255, 0.25);
+        color: white;
+        padding: 0.3rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .timeline-container {
+        padding: 1.75rem 1.5rem;
+    }
+
+    .time-period {
+        margin-bottom: 1.5rem;
+    }
+
+    .time-period:last-child {
+        margin-bottom: 0;
+    }
+
+    .time-period-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.85rem 1rem;
+        background: var(--primary-light);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 1rem;
+    }
+
+    .time-period-header:hover {
+        background: #e5ebff;
+    }
+
+    .time-period-header-left {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+    }
+
+    .time-period-icon {
+        width: 36px;
+        height: 36px;
+        background: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+    }
+
+    .time-period-title {
+        color: var(--text-dark);
+        font-weight: 600;
+        font-size: 1.05rem;
+        margin: 0;
+    }
+
+    .time-period-subtitle {
+        color: var(--text-light);
+        font-size: 0.82rem;
+        margin: 0;
+    }
+
+    .time-period-toggle {
+        width: 28px;
+        height: 28px;
+        background: white;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 0.85rem;
+        transition: transform 0.3s;
+    }
+
+    .time-period.collapsed .time-period-toggle {
+        transform: rotate(-90deg);
+    }
+
+    .time-period-content {
+        max-height: 1000px;
+        overflow: hidden;
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+        opacity: 1;
+    }
+
+    .time-period.collapsed .time-period-content {
+        max-height: 0;
+        opacity: 0;
+    }
+
+    .slots-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.85rem;
+    }
+
+    .slot-card {
+        background: white;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 1rem 1.1rem;
+        text-decoration: none;
+        color: var(--text-dark);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.45rem;
+        transition: all 0.25s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .slot-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-color), #764ba2);
+        transform: scaleX(0);
+        transition: transform 0.25s ease;
+    }
+
+    .slot-card:hover {
+        border-color: var(--primary-color);
+        background: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .slot-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .slot-time-display {
+        font-weight: 700;
+        font-size: 1.15rem;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .slot-time-display i {
+        color: var(--primary-color);
+        font-size: 1rem;
+    }
+
+    .slot-vet-name {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .slot-card:hover .slot-vet-name {
+        color: var(--primary-color);
+    }
+
+    .slot-duration {
+        font-size: 0.7rem;
+        color: var(--text-light);
+        background: #f7fafc;
+        padding: 0.15rem 0.5rem;
+        border-radius: 5px;
+    }
+
+    @media (max-width: 768px) {
+        .appointment-wrapper {
+            max-width: 100%;
+            padding: 0 1rem;
+            margin: 2rem auto;
+        }
+
+        .page-header h1 {
+            font-size: 1.75rem;
+        }
+
+        .vet-form-group {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .date-selector-btn {
+            font-size: 1rem;
+            max-width: 100%;
+        }
+
+        .slots-grid {
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.7rem;
+        }
+
+        .slot-card {
+            padding: 0.85rem 0.9rem;
+        }
+
+        .day-card-header {
+            padding: 1rem 1.25rem;
+        }
+    }
+</style>
+
+<div class="appointment-wrapper">
+    <div class="page-header">
+        <h1>Prendre rendez-vous</h1>
+        <p>Choisissez un créneau qui vous convient</p>
+    </div>
+
+    <div class="vet-selector">
+        <div class="vet-selector-header">
+            <i class="fas fa-user-md"></i>
+            <span>Choisir un vétérinaire (optionnel)</span>
+        </div>
+        <form method="get" action="{{ path('rendezvous_new') }}">
+            <div class="vet-form-group">
+                <div>
+                    <label for="vet" class="form-label">Vétérinaire</label>
+                    <select name="vet" id="vet" class="form-select">
+                        <option value="">Aucune préférence (tous les vétérinaires)</option>
+                        {% for veterinaire in veterinaires %}
+                            <option value="{{ veterinaire.id }}" 
+                                {% if selectedVet and selectedVet.id == veterinaire.id %}selected{% endif %}>
+                                Dr. {{ veterinaire.nom }}
+                                {% if veterinaire.specialite %}
+                                    - {{ veterinaire.specialite }}
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn-search">
+                    <i class="fas fa-search"></i> Voir
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if availableSlots is empty %}
+        <div class="alert-custom">
+            <i class="fas fa-info-circle"></i>
+            <span>
+                {% if selectedVet %}
+                    Aucun créneau disponible pour Dr. {{ selectedVet.nom }} dans les 7 prochains jours.
+                {% else %}
+                    Aucun créneau disponible dans les 7 prochains jours.
+                {% endif %}
+            </span>
+        </div>
+    {% else %}
+        <div class="slots-section-header">
+            <h2>Créneaux disponibles</h2>
+            <p>Sélectionnez votre date et horaire</p>
+        </div>
+
+        {% set firstDateKey = availableSlots|keys|first %}
+        {% set allDates = availableSlots %}
+
+        <div class="day-card">
+            <div class="day-card-header">
+                <div class="date-selector-wrapper">
+                    <button type="button" class="date-selector-btn" id="dateSelectorBtn">
+                        <i class="far fa-calendar-alt"></i>
+                        <span id="selectedDateText">{{ allDates[firstDateKey].day_name }} {{ allDates[firstDateKey].date|date('d/m/Y') }}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="date-dropdown" id="dateDropdown">
+                        {% for dateKey, dayData in allDates %}
+                            <div class="date-option {% if dateKey == firstDateKey %}active{% endif %}" data-date="{{ dateKey }}">
+                                <span class="date-option-label">
+                                    <i class="far fa-calendar"></i>
+                                    {{ dayData.day_name }} {{ dayData.date|date('d/m/Y') }}
+                                </span>
+                                <span class="date-option-badge">{{ dayData.slots|length }} créneaux</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <span class="slots-badge" id="currentSlotsBadge">{{ allDates[firstDateKey].slots|length }} créneaux</span>
+            </div>
+
+            <div class="timeline-container">
+                {% for dateKey, dayData in allDates %}
+                    {% set slotsByTime = {} %}
+                    {% for slot in dayData.slots %}
+                        {% set timeKey = slot.datetime|date('H:i') %}
+                        {% set slotsByTime = slotsByTime|merge({(timeKey): (slotsByTime[timeKey]|default([]))|merge([slot])}) %}
+                    {% endfor %}
+
+                    {% set morningSlots = [] %}
+                    {% set afternoonSlots = [] %}
+                    {% for slot in dayData.slots %}
+                        {% if slot.datetime|date('H') < 12 %}
+                            {% set morningSlots = morningSlots|merge([slot]) %}
+                        {% else %}
+                            {% set afternoonSlots = afternoonSlots|merge([slot]) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="day-content" data-date="{{ dateKey }}" style="{% if dateKey != firstDateKey %}display: none;{% endif %}">
+                        {% if morningSlots|length > 0 %}
+                            <div class="time-period">
+                                <div class="time-period-header" onclick="togglePeriod(this)">
+                                    <div class="time-period-header-left">
+                                        <div class="time-period-icon">
+                                            <i class="fas fa-sun"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="time-period-title">Matinée</h4>
+                                            <p class="time-period-subtitle">{{ morningSlots|length }} créneaux disponibles</p>
+                                        </div>
+                                    </div>
+                                    <div class="time-period-toggle">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div class="time-period-content">
+                                    <div class="slots-grid">
+                                        {% for slot in morningSlots %}
+                                            <a href="{{ path('rendezvous_book', {
+                                                'datetime': slot.datetime|date('Y-m-d H:i:s'),
+                                                'vet': slot.veterinaire.id
+                                            }) }}" class="slot-card">
+                                                <span class="slot-time-display">
+                                                    <i class="far fa-clock"></i>
+                                                    {{ slot.time }}
+                                                </span>
+                                                {% if not selectedVet %}
+                                                    <span class="slot-vet-name">Dr. {{ slot.veterinaire.nom }}</span>
+                                                {% endif %}
+                                                <span class="slot-duration">30 min</span>
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if afternoonSlots|length > 0 %}
+                            <div class="time-period">
+                                <div class="time-period-header" onclick="togglePeriod(this)">
+                                    <div class="time-period-header-left">
+                                        <div class="time-period-icon">
+                                            <i class="fas fa-cloud-sun"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="time-period-title">Après-midi</h4>
+                                            <p class="time-period-subtitle">{{ afternoonSlots|length }} créneaux disponibles</p>
+                                        </div>
+                                    </div>
+                                    <div class="time-period-toggle">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div class="time-period-content">
+                                    <div class="slots-grid">
+                                        {% for slot in afternoonSlots %}
+                                            <a href="{{ path('rendezvous_book', {
+                                                'datetime': slot.datetime|date('Y-m-d H:i:s'),
+                                                'vet': slot.veterinaire.id
+                                            }) }}" class="slot-card">
+                                                <span class="slot-time-display">
+                                                    <i class="far fa-clock"></i>
+                                                    {{ slot.time }}
+                                                </span>
+                                                {% if not selectedVet %}
+                                                    <span class="slot-vet-name">Dr. {{ slot.veterinaire.nom }}</span>
+                                                {% endif %}
+                                                <span class="slot-duration">30 min</span>
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+// Date selector dropdown
+const dateSelectorBtn = document.getElementById('dateSelectorBtn');
+const dateDropdown = document.getElementById('dateDropdown');
+
+if (dateSelectorBtn) {
+    dateSelectorBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dateDropdown.classList.toggle('show');
+        dateSelectorBtn.classList.toggle('active');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function() {
+        dateDropdown.classList.remove('show');
+        dateSelectorBtn.classList.remove('active');
+    });
+
+    dateDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+
+    // Handle date selection
+    const dateOptions = document.querySelectorAll('.date-option');
+    dateOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const selectedDate = this.dataset.date;
+            const dateText = this.querySelector('.date-option-label').textContent.trim();
+            const slotsCount = this.querySelector('.date-option-badge').textContent;
+
+            // Update button text
+            document.getElementById('selectedDateText').textContent = dateText;
+            document.getElementById('currentSlotsBadge').textContent = slotsCount;
+
+            // Update active state
+            dateOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+
+            // Show corresponding day content
+            document.querySelectorAll('.day-content').forEach(content => {
+                content.style.display = content.dataset.date === selectedDate ? 'block' : 'none';
+            });
+
+            // Close dropdown
+            dateDropdown.classList.remove('show');
+            dateSelectorBtn.classList.remove('active');
+        });
+    });
+}
+
+// Toggle time period collapse
+function togglePeriod(header) {
+    const period = header.closest('.time-period');
+    period.classList.toggle('collapsed');
+}
+</script>
+{% endblock %}

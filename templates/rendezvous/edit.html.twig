@@ -1,88 +1,106 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier un Rendez-vous{% endblock %}
+{% block title %}Éditer le rendez-vous - VetCare{% endblock %}
 
 {% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i>
+                        Éditer le rendez-vous #{{ rendezvous.id }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <i class="fas fa-check-circle"></i> {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
 
-<div class="container mt-5">
-    <div class="section-title">
-        <h2>Modifier le Rendez-vous</h2>
-        <p>Modifiez les informations du rendez-vous puis enregistrez.</p>
-    </div>
+                    {{ form_start(form) }}
+                        
+                        <h5 class="border-bottom pb-2 mb-3">Informations Client</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ form_row(form.nomClient) }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form_row(form.emailClient) }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form_row(form.telephoneClient) }}
+                            </div>
+                        </div>
 
-    <div class="card p-4 shadow-sm" style="border-radius: 12px;">
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">Informations Animal</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.nomAnimal) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.especeAnimal) }}
+                            </div>
+                        </div>
 
-        {{ form_start(form) }}
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">Détails du rendez-vous</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.dateHeure) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.type) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.veterinaire) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.statut) }}
+                            </div>
+                        </div>
 
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                {{ form_label(form.type) }}
-                {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(form.type) }}
-            </div>
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">Notes</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.notesClient) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.notesVeterinaire) }}
+                            </div>
+                        </div>
 
-            <div class="col-md-6 mb-3">
-                {{ form_label(form.duree) }}
-                {{ form_widget(form.duree, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(form.duree) }}
-            </div>
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">Paiement</h5>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                {{ form_row(form.statutPaiement) }}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                {{ form_row(form.montantPaiement) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.methodePaiement) }}
+                            </div>
+                        </div>
 
-            <div class="col-md-12 mb-3">
-                {{ form_label(form.commentaireClient) }}
-                {{ form_widget(form.commentaireClient, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(form.commentaireClient) }}
-            </div>
+                        {{ form_rest(form) }}
 
-            <div class="col-md-12 mb-3">
-                {{ form_label(form.notesVeterinaire) }}
-                {{ form_widget(form.notesVeterinaire, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(form.notesVeterinaire) }}
-            </div>
+                        <hr class="my-4">
 
-            <div class="col-md-6 mb-3">
-                {{ form_label(form.confirmation) }}
-                {{ form_widget(form.confirmation, {'attr': {'class': 'form-select'}}) }}
-                {{ form_errors(form.confirmation) }}
-            </div>
-
-            <div class="col-md-6 mb-3">
-                {{ form_label(form.modePaiementPrevu) }}
-                {{ form_widget(form.modePaiementPrevu, {'attr': {'class': 'form-select'}}) }}
-                {{ form_errors(form.modePaiementPrevu) }}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Enregistrer les modifications
+                            </button>
+                            <a href="{{ path('rendezvous_list') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour à la liste
+                            </a>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
             </div>
         </div>
-
-        <hr>
-
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label class="fw-bold">Créé le :</label>
-                <input type="text" class="form-control"
-                       value="{{ rendezvous.createdAt ? rendezvous.createdAt|date('d/m/Y H:i') : '—' }}"
-                       readonly>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label class="fw-bold">Dernière mise à jour :</label>
-                <input type="text" class="form-control"
-                       value="{{ rendezvous.updatedAt ? rendezvous.updatedAt|date('d/m/Y H:i') : '—' }}"
-                       readonly>
-            </div>
-        </div>
-
-        <div class="mt-4 d-flex justify-content-between">
-            <a href="{{ path('rendezvous_list') }}" class="btn btn-secondary">
-                ⬅️ Retour
-            </a>
-
-            <button type="submit" class="btn btn-primary">
-                💾 Sauvegarder
-            </button>
-        </div>
-
-        {{ form_end(form) }}
-
     </div>
 </div>
-
 {% endblock %}

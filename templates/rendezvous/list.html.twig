@@ -1,186 +1,162 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Rendez-vous - VetCare{% endblock %}
+{% block title %}Gestion des rendez-vous - VetCare{% endblock %}
 
 {% block body %}
-<section class="container py-5">
-    
-    {# En-tête centré avec titre et bouton #}
-    <div class="text-center mb-5">
-        <h1 class="display-4 mb-3" style="color:#2c3e50;">
-            📋 Liste des Rendez-vous
-        </h1>
-        <p class="text-muted mb-4">Gérez tous vos rendez-vous vétérinaires</p>
-        <a href="{{ path('rendezvous_add') }}" class="btn btn-success btn-lg shadow">
-            <i class="fas fa-plus-circle"></i> Ajouter un nouveau rendez-vous
-        </a>
-    </div>
+<div class="container my-5">
+    <h1 class="mb-4">
+        <i class="fas fa-calendar-alt"></i> Gestion des rendez-vous
+    </h1>
 
-    {# Messages flash #}
     {% for message in app.flashes('success') %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show">
             <i class="fas fa-check-circle"></i> {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     {% endfor %}
 
-    {# Statistiques rapides (optionnel) #}
-    <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-            <div class="card border-primary shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="text-primary">{{ rendezvous|length }}</h3>
-                    <p class="mb-0 text-muted">Total Rendez-vous</p>
-                </div>
-            </div>
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning alert-dismissible fade show">
+            <i class="fas fa-exclamation-triangle"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <div class="col-md-4 mb-3">
-            <div class="card border-success shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="text-success">
-                        {{ rendezvous|filter(r => r.confirmation)|length }}
-                    </h3>
-                    <p class="mb-0 text-muted">Confirmés</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card border-warning shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="text-warning">
-                        {{ rendezvous|filter(r => not r.confirmation)|length }}
-                    </h3>
-                    <p class="mb-0 text-muted">En attente</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% endfor %}
 
-    {# Tableau des rendez-vous avec un design moderne #}
-    <div class="card shadow-lg border-0">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">
-                <i class="fas fa-calendar-alt"></i> Tous les Rendez-vous
-            </h5>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="text-center" style="width: 60px;">#</th>
-                            <th><i class="fas fa-stethoscope"></i> Type</th>
-                            <th class="text-center"><i class="fas fa-clock"></i> Durée</th>
-                            <th><i class="fas fa-comment"></i> Commentaire Client</th>
-                            <th><i class="fas fa-notes-medical"></i> Notes Vétérinaire</th>
-                            <th class="text-center"><i class="fas fa-check-circle"></i> Statut</th>
-                            <th><i class="fas fa-credit-card"></i> Paiement</th>
-                            <th><i class="fas fa-calendar"></i> Date création</th>
-                            <th class="text-center" style="width: 200px;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for r in rendezvous %}
-                            <tr>
-                                <td class="text-center fw-bold">{{ r.id }}</td>
-                                <td>
-                                    <span class="badge bg-info text-dark">{{ r.type }}</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-secondary">{{ r.duree }} min</span>
-                                </td>
-                                <td>
-                                    <small class="text-muted">
-                                        {{ r.commentaireClient|length > 30 ? r.commentaireClient|slice(0, 30) ~ '...' : r.commentaireClient }}
-                                    </small>
-                                </td>
-                                <td>
-                                    <small class="text-muted">
-                                        {{ r.notesVeterinaire|length > 30 ? r.notesVeterinaire|slice(0, 30) ~ '...' : r.notesVeterinaire }}
-                                    </small>
-                                </td>
-                                <td class="text-center">
-                                    {% if r.confirmation %}
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-check"></i> Confirmé
-                                        </span>
-                                    {% else %}
-                                        <span class="badge bg-warning text-dark">
-                                            <i class="fas fa-hourglass-half"></i> En attente
-                                        </span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <span class="badge bg-light text-dark border">
-                                        {{ r.modePaiementPrevu }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <small>{{ r.createdAt|date('d/m/Y') }}</small><br>
-                                    <small class="text-muted">{{ r.createdAt|date('H:i') }}</small>
-                                </td>
-                                <td class="text-center">
-                                    <div class="btn-group" role="group">
-                                        <a href="{{ path('rendezvous_edit', {id: r.id}) }}" 
-                                           class="btn btn-sm btn-outline-primary"
-                                           title="Modifier">
-                                            <i class="fas fa-edit"></i> Modifier
-                                        </a>
-                                        <a href="{{ path('rendezvous_delete', {id: r.id}) }}" 
-                                           class="btn btn-sm btn-outline-danger"
-                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?');"
-                                           title="Supprimer">
-                                            <i class="fas fa-trash-alt"></i> Supprimer
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="9" class="text-center py-5">
-                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted mb-3">Aucun rendez-vous trouvé</p>
-                                    <a href="{{ path('rendezvous_add') }}" class="btn btn-primary">
-                                        <i class="fas fa-plus"></i> Créer le premier rendez-vous
-                                    </a>
-                                </td>
-                            </tr>
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-5">
+                    <label for="statut" class="form-label">Statut</label>
+                    <select name="statut" id="statut" class="form-select">
+                        <option value="">Tous les statuts</option>
+                        <option value="en_attente" {% if currentStatut == 'en_attente' %}selected{% endif %}>En attente</option>
+                        <option value="confirme" {% if currentStatut == 'confirme' %}selected{% endif %}>Confirmé</option>
+                        <option value="refuse" {% if currentStatut == 'refuse' %}selected{% endif %}>Refusé</option>
+                        <option value="termine" {% if currentStatut == 'termine' %}selected{% endif %}>Terminé</option>
+                        <option value="annule" {% if currentStatut == 'annule' %}selected{% endif %}>Annulé</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label for="vet" class="form-label">Vétérinaire</label>
+                    <select name="vet" id="vet" class="form-select">
+                        <option value="">Tous les vétérinaires</option>
+                        {% for veterinaire in veterinaires %}
+                            <option value="{{ veterinaire.id }}" {% if currentVet == veterinaire.id %}selected{% endif %}>
+                                {{ veterinaire }}
+                            </option>
                         {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        {# Footer du tableau avec info #}
-        <div class="card-footer bg-light text-muted text-center">
-            <small>
-                <i class="fas fa-info-circle"></i> 
-                Total : {{ rendezvous|length }} rendez-vous
-            </small>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter"></i> Filtrer
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-</section>
-
-{# Style personnalisé pour améliorer l'apparence #}
-<style>
-    .table tbody tr:hover {
-        background-color: #f8f9fa;
-        transition: background-color 0.3s ease;
-    }
-    
-    .btn-group .btn {
-        font-size: 0.875rem;
-    }
-    
-    .card {
-        border-radius: 15px;
-        overflow: hidden;
-    }
-    
-    .badge {
-        font-weight: 500;
-        padding: 0.5em 0.8em;
-    }
-</style>
+    <!-- Tableau des rendez-vous -->
+    <div class="card">
+        <div class="card-body">
+            {% if rendezvous is empty %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Aucun rendez-vous trouvé.
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date/Heure</th>
+                                <th>Client</th>
+                                <th>Animal</th>
+                                <th>Type</th>
+                                <th>Vétérinaire</th>
+                                <th>Statut</th>
+                                <th>Paiement</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rdv in rendezvous %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ rdv.dateHeure|date('d/m/Y') }}</strong><br>
+                                        <small class="text-muted">{{ rdv.dateHeure|date('H:i') }}</small>
+                                    </td>
+                                    <td>
+                                        {{ rdv.nomClient }}<br>
+                                        <small class="text-muted">
+                                            {% if rdv.telephoneClient %}
+                                                <i class="fas fa-phone"></i> {{ rdv.telephoneClient }}
+                                            {% endif %}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        {% if rdv.nomAnimal %}
+                                            {{ rdv.nomAnimal }}<br>
+                                            <small class="text-muted">{{ rdv.especeAnimal }}</small>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ rdv.type }}</span>
+                                    </td>
+                                    <td>
+                                        {% if rdv.veterinaire %}
+                                            {{ rdv.veterinaire.prenom }} {{ rdv.veterinaire.nom }}
+                                        {% else %}
+                                            <span class="text-muted">Non assigné</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ rdv.statutBadgeClass }}">
+                                            {{ rdv.statut|replace({'_': ' '})|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ rdv.statutPaiementBadgeClass }}">
+                                            {{ rdv.statutPaiement|replace({'_': ' '})|title }}
+                                        </span>
+                                        {% if rdv.montantPaiement %}
+                                            <br><small>{{ rdv.montantPaiement }} TND</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            {% if rdv.statut == 'en_attente' %}
+                                                <a href="{{ path('rendezvous_approve', {id: rdv.id}) }}" 
+                                                   class="btn btn-success" title="Approuver">
+                                                    <i class="fas fa-check"></i>
+                                                </a>
+                                                <a href="{{ path('rendezvous_reject', {id: rdv.id}) }}" 
+                                                   class="btn btn-danger" title="Refuser">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            {% endif %}
+                                            <a href="{{ path('rendezvous_edit', {id: rdv.id}) }}" 
+                                               class="btn btn-primary" title="Éditer">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="post" action="{{ path('rendezvous_delete', {id: rdv.id}) }}" 
+                                                  style="display: inline;"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?');">
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

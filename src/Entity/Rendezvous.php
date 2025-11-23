@@ -3,10 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\RendezvousRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RendezvousRepository::class)]
-#[ORM\HasLifecycleCallbacks]
 class Rendezvous
 {
     #[ORM\Id]
@@ -14,58 +14,67 @@ class Rendezvous
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $dateHeure = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
+    #[ORM\Column(length: 100)]
+    private ?string $type = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $type = null; // Contrôle, urgence, vaccination...
-
-    #[ORM\Column]
-    private ?int $duree = null; // durée en minutes
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $commentaireClient = null;
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $notesVeterinaire = null;
-
-    #[ORM\Column]
-    private ?int $confirmation = null;
+    #[ORM\ManyToOne(inversedBy: 'rendezvous')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Veterinaire $veterinaire = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $modePaiementPrevu = null; // cash, carte...
+    private ?string $statut = 'en_attente';
 
-    // ========== GETTERS & SETTERS ==========
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $notesClient = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $notesVeterinaire = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $statutPaiement = 'non_paye';
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $montantPaiement = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $methodePaiement = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $datePaiement = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $nomClient = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $emailClient = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $telephoneClient = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $nomAnimal = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $especeAnimal = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getDateHeure(): ?\DateTimeInterface
     {
-        return $this->createdAt;
+        return $this->dateHeure;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setDateHeure(\DateTimeInterface $dateHeure): static
     {
-        $this->createdAt = $createdAt;
+        $this->dateHeure = $dateHeure;
         return $this;
     }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
-{
-    $this->updatedAt = $updatedAt;
-    return $this;
-}
 
     public function getType(): ?string
     {
@@ -78,25 +87,36 @@ class Rendezvous
         return $this;
     }
 
-    public function getDuree(): ?int
+    public function getVeterinaire(): ?Veterinaire
     {
-        return $this->duree;
+        return $this->veterinaire;
     }
 
-    public function setDuree(int $duree): static
+    public function setVeterinaire(?Veterinaire $veterinaire): static
     {
-        $this->duree = $duree;
+        $this->veterinaire = $veterinaire;
         return $this;
     }
 
-    public function getCommentaireClient(): ?string
+    public function getStatut(): ?string
     {
-        return $this->commentaireClient;
+        return $this->statut;
     }
 
-    public function setCommentaireClient(?string $commentaireClient): static
+    public function setStatut(string $statut): static
     {
-        $this->commentaireClient = $commentaireClient;
+        $this->statut = $statut;
+        return $this;
+    }
+
+    public function getNotesClient(): ?string
+    {
+        return $this->notesClient;
+    }
+
+    public function setNotesClient(?string $notesClient): static
+    {
+        $this->notesClient = $notesClient;
         return $this;
     }
 
@@ -111,46 +131,125 @@ class Rendezvous
         return $this;
     }
 
-    public function isConfirmation(): ?bool
-{
-    return $this->confirmation;
-}
-
-public function setConfirmation(?bool $confirmation): self
-{
-    $this->confirmation = $confirmation;
-    return $this;
-}
-
-
-    public function getModePaiementPrevu(): ?string
+    public function getStatutPaiement(): ?string
     {
-        return $this->modePaiementPrevu;
+        return $this->statutPaiement;
     }
 
-    public function setModePaiementPrevu(string $modePaiementPrevu): static
+    public function setStatutPaiement(string $statutPaiement): static
     {
-        $this->modePaiementPrevu = $modePaiementPrevu;
+        $this->statutPaiement = $statutPaiement;
         return $this;
     }
 
-    // ========== AUTO timestamps ==========
-
-    #[ORM\PrePersist]
-    public function onPrePersist(): void
+    public function getMontantPaiement(): ?string
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-
-    // Valeur par défaut pour confirmation
-    if ($this->confirmation === null) {
-        $this->confirmation = false;
-    }
+        return $this->montantPaiement;
     }
 
-    #[ORM\PreUpdate]
-    public function onPreUpdate(): void
+    public function setMontantPaiement(?string $montantPaiement): static
     {
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->montantPaiement = $montantPaiement;
+        return $this;
+    }
+
+    public function getMethodePaiement(): ?string
+    {
+        return $this->methodePaiement;
+    }
+
+    public function setMethodePaiement(?string $methodePaiement): static
+    {
+        $this->methodePaiement = $methodePaiement;
+        return $this;
+    }
+
+    public function getDatePaiement(): ?\DateTimeInterface
+    {
+        return $this->datePaiement;
+    }
+
+    public function setDatePaiement(?\DateTimeInterface $datePaiement): static
+    {
+        $this->datePaiement = $datePaiement;
+        return $this;
+    }
+
+    public function getNomClient(): ?string
+    {
+        return $this->nomClient;
+    }
+
+    public function setNomClient(string $nomClient): static
+    {
+        $this->nomClient = $nomClient;
+        return $this;
+    }
+
+    public function getEmailClient(): ?string
+    {
+        return $this->emailClient;
+    }
+
+    public function setEmailClient(?string $emailClient): static
+    {
+        $this->emailClient = $emailClient;
+        return $this;
+    }
+
+    public function getTelephoneClient(): ?string
+    {
+        return $this->telephoneClient;
+    }
+
+    public function setTelephoneClient(?string $telephoneClient): static
+    {
+        $this->telephoneClient = $telephoneClient;
+        return $this;
+    }
+
+    public function getNomAnimal(): ?string
+    {
+        return $this->nomAnimal;
+    }
+
+    public function setNomAnimal(?string $nomAnimal): static
+    {
+        $this->nomAnimal = $nomAnimal;
+        return $this;
+    }
+
+    public function getEspeceAnimal(): ?string
+    {
+        return $this->especeAnimal;
+    }
+
+    public function setEspeceAnimal(?string $especeAnimal): static
+    {
+        $this->especeAnimal = $especeAnimal;
+        return $this;
+    }
+
+    public function getStatutBadgeClass(): string
+    {
+        return match($this->statut) {
+            'en_attente' => 'warning',
+            'confirme' => 'success',
+            'refuse' => 'danger',
+            'termine' => 'info',
+            'annule' => 'secondary',
+            default => 'secondary'
+        };
+    }
+
+    public function getStatutPaiementBadgeClass(): string
+    {
+        return match($this->statutPaiement) {
+            'non_paye' => 'danger',
+            'paye' => 'success',
+            'partiel' => 'warning',
+            'rembourse' => 'info',
+            default => 'secondary'
+        };
     }
 }

@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver un rendez-vous - VetCare{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-check"></i>
+                        Confirmer votre rendez-vous
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if rendezvous.dateHeure %}
+                        <div class="alert alert-info mb-4">
+                            <h5>Créneau sélectionné:</h5>
+                            <p class="mb-0">
+                                <i class="far fa-calendar"></i> {{ rendezvous.dateHeure|date('d/m/Y') }} à 
+                                <i class="far fa-clock"></i> {{ rendezvous.dateHeure|date('H:i') }}
+                                {% if rendezvous.veterinaire %}
+                                    <br>
+                                    <i class="fas fa-user-md"></i> Avec {{ rendezvous.veterinaire }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endif %}
+
+                    {{ form_start(form) }}
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                {{ form_row(form.nomClient) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.emailClient) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.telephoneClient) }}
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h5 class="mb-3">Informations sur votre animal</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.nomAnimal) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.especeAnimal) }}
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-3">
+                            {{ form_row(form.type) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(form.notesClient) }}
+                        </div>
+
+                        {{ form_rest(form) }}
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check"></i> Confirmer la demande de rendez-vous
+                            </button>
+                            <a href="{{ path('rendezvous_new') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour
+                            </a>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
