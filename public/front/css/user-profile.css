@@ -1,0 +1,109 @@
+/* Avatar & Photo Upload Styles */
+.avatar-upload-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: 3px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    z-index: 10;
+}
+
+.avatar-upload-btn:hover {
+    background: linear-gradient(135deg, var(--primary-dark), #1c6ea4);
+    transform: scale(1.1);
+}
+
+.avatar-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.camera-container {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: var(--dark-color);
+}
+
+#camera-preview {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+}
+
+.avatar-item {
+    transition: var(--transition);
+    padding: 10px;
+    border-radius: var(--border-radius);
+}
+
+.avatar-item:hover {
+    background-color: var(--gray-light);
+    transform: scale(1.05);
+}
+
+.avatar-item img {
+    transition: var(--transition);
+    border: 3px solid transparent;
+}
+
+.avatar-item:hover img {
+    border-color: var(--primary-color);
+}
+
+.avatar-item.selected img {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3);
+}
+
+/* Modal Avatar */
+#avatarModal .modal-content {
+    border-radius: var(--border-radius);
+    border: none;
+}
+
+#avatarModal .modal-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+#avatarTabs .nav-link {
+    color: var(--gray-dark);
+    border: none;
+    padding: 12px 20px;
+    font-weight: 600;
+}
+
+#avatarTabs .nav-link.active {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    background: transparent;
+}
+
+/* Upload Progress */
+.upload-progress {
+    height: 6px;
+    background-color: var(--gray-light);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.upload-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+    width: 0%;
+    transition: width 0.3s ease;
+}

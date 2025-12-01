@@ -1,0 +1,282 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques des Utilisateurs{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-chart-bar"></i> Statistiques des Utilisateurs</h1>
+        <div class="btn-group">
+            <a href="{{ path('app_user_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+            <a href="{{ path('app_user_export_csv') }}" class="btn btn-success">
+                <i class="fas fa-file-export"></i> Exporter CSV
+            </a>
+        </div>
+    </div>
+
+    <!-- Cartes de statistiques -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Total Utilisateurs</h6>
+                            <h2 class="mb-0">{{ stats.total }}</h2>
+                        </div>
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Clients</h6>
+                            <h2 class="mb-0">{{ stats.Client }}</h2>
+                            <small class="opacity-75">{{ (stats.Client / stats.total * 100)|round(1) }}%</small>
+                        </div>
+                        <i class="fas fa-user fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Vétérinaires</h6>
+                            <h2 class="mb-0">{{ stats.Vétérinaire }}</h2>
+                            <small class="opacity-75">{{ (stats.Vétérinaire / stats.total * 100)|round(1) }}%</small>
+                        </div>
+                        <i class="fas fa-stethoscope fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Administrateurs</h6>
+                            <h2 class="mb-0">{{ stats.Administrateur }}</h2>
+                            <small class="opacity-75">{{ (stats.Administrateur / stats.total * 100)|round(1) }}%</small>
+                        </div>
+                        <i class="fas fa-cogs fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphique de répartition -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Répartition par rôle</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="roleChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Légende</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><span class="badge bg-success me-2">●</span> Clients</span>
+                            <span class="badge bg-success rounded-pill">{{ stats.Client }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><span class="badge bg-warning me-2">●</span> Vétérinaires</span>
+                            <span class="badge bg-warning rounded-pill">{{ stats.Vétérinaire }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><span class="badge bg-danger me-2">●</span> Administrateurs</span>
+                            <span class="badge bg-danger rounded-pill">{{ stats.Administrateur }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><strong>Total</strong></span>
+                            <span class="badge bg-primary rounded-pill">{{ stats.total }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Derniers utilisateurs inscrits -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Derniers utilisateurs inscrits</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Utilisateur</th>
+                                    <th>Email</th>
+                                    <th>Rôle</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for user in recent_users %}
+                                <tr>
+                                    <td>
+                                        <small class="text-muted">{{ user.createdAt|date('d/m/Y H:i') }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if user.profilePhoto %}
+                                                <img src="{{ asset(user.profilePhoto) }}" alt="{{ user.fullName }}" 
+                                                     class="avatar-small rounded-circle me-2">
+                                            {% else %}
+                                                <div class="avatar-small rounded-circle bg-light me-2 d-flex align-items-center justify-content-center">
+                                                    <span class="text-muted small">{{ user.initials }}</span>
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <strong>{{ user.firstName }} {{ user.lastName }}</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        {% if user.isAdmin() %}
+                                            <span class="badge bg-danger">Admin</span>
+                                        {% elseif user.isVeterinarian() %}
+                                            <span class="badge bg-warning">Vétérinaire</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Client</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-3">
+                                        Aucun utilisateur récent
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-small {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.list-group-item {
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+</style>
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Données pour le graphique
+    const roleData = {
+        labels: ['Clients', 'Vétérinaires', 'Administrateurs'],
+        datasets: [{
+            data: [{{ stats.Client }}, {{ stats.Vétérinaire }}, {{ stats.Administrateur }}],
+            backgroundColor: [
+                'rgba(40, 167, 69, 0.8)',
+                'rgba(255, 193, 7, 0.8)',
+                'rgba(220, 53, 69, 0.8)'
+            ],
+            borderColor: [
+                'rgb(40, 167, 69)',
+                'rgb(255, 193, 7)',
+                'rgb(220, 53, 69)'
+            ],
+            borderWidth: 1,
+            hoverOffset: 15
+        }]
+    };
+    
+    // Configuration du graphique
+    const config = {
+        type: 'doughnut',
+        data: roleData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = {{ stats.total }};
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    };
+    
+    // Création du graphique
+    const ctx = document.getElementById('roleChart').getContext('2d');
+    new Chart(ctx, config);
+});
+</script>
+{% endblock %}
+{% endblock %}
