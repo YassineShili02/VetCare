@@ -11,8 +11,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+<<<<<<< HEAD
 #[ORM\Table(name: 'users')]
 #[ORM\HasLifecycleCallbacks]
+=======
+#[ORM\Table(name: 'users')]  // ← Doit être 'users' et non 'user'
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -20,15 +24,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+<<<<<<< HEAD
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column(type: Types::JSON)]
+=======
+    #[ORM\Column(length: 180, unique: true)] // Changé à 180 pour Symfony
+    private ?string $email = null;
+
+    #[ORM\Column(type: Types::JSON)] // Changé à JSON au lieu de ARRAY
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
     private array $roles = [];
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
+<<<<<<< HEAD
     #[ORM\Column(length: 100)]
     private ?string $firstName = null;
 
@@ -36,29 +48,49 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+=======
+    #[ORM\Column(length: 100)] // Longueur réduite
+    private ?string $firstName = null;
+
+    #[ORM\Column(length: 100)] // Longueur réduite
+    private ?string $lastName = null;
+
+    #[ORM\Column(length: 255, nullable: true)] // Rendue nullable
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
     private ?string $address = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+<<<<<<< HEAD
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 20, nullable: true)]
+=======
+    #[ORM\Column(nullable: true)] // Rendue nullable et nom corrigé
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(length: 20, nullable: true)] // Longueur réduite
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
     private ?string $phone = null;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Animal::class)]
     private Collection $animals;
 
+<<<<<<< HEAD
     #[ORM\Column(name: 'profile_photo', length: 255, nullable: true)]
     private ?string $profilePhoto = null;
 
+=======
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->animals = new ArrayCollection();
     }
 
+<<<<<<< HEAD
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
@@ -73,6 +105,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->updatedAt = new \DateTimeImmutable();
     }
 
+=======
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
     public function getId(): ?int
     {
         return $this->id;
@@ -83,9 +117,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
+<<<<<<< HEAD
     public function setEmail(string $email): static
     {
         $this->email = $email;
+=======
+    public function setEmail(string $email): static // Retiré nullable
+    {
+        $this->email = $email;
+
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         return $this;
     }
 
@@ -93,12 +134,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         return array_unique($roles);
     }
 
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
+<<<<<<< HEAD
         return $this;
     }
 
@@ -120,6 +166,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function getPassword(): string
+=======
+
+        return $this;
+    }
+
+    public function getPassword(): string // Retiré nullable
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
     {
         return $this->password;
     }
@@ -127,6 +180,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         return $this;
     }
 
@@ -138,6 +195,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFirstName(string $firstName): static
     {
         $this->firstName = $firstName;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         return $this;
     }
 
@@ -149,6 +210,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastName(string $lastName): static
     {
         $this->lastName = $lastName;
+<<<<<<< HEAD
         return $this;
     }
 
@@ -158,6 +220,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getFullName(): string
     {
         return $this->firstName . ' ' . $this->lastName;
+=======
+
+        return $this;
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
     }
 
     public function getAddress(): ?string
@@ -165,9 +231,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->address;
     }
 
+<<<<<<< HEAD
     public function setAddress(?string $address): static
     {
         $this->address = $address;
+=======
+    public function setAddress(?string $address): static // Corrigé le nom de variable
+    {
+        $this->address = $address; // Corrigé "adresse" en "address"
+
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         return $this;
     }
 
@@ -179,17 +252,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+<<<<<<< HEAD
         return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeImmutable
+=======
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable // Nom corrigé
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
     {
         return $this->updatedAt;
     }
 
+<<<<<<< HEAD
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+=======
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static // Nom corrigé
+    {
+        $this->updatedAt = $updatedAt;
+
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         return $this;
     }
 
@@ -201,6 +289,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhone(?string $phone): static
     {
         $this->phone = $phone;
+<<<<<<< HEAD
         return $this;
     }
 
@@ -212,6 +301,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProfilePhoto(?string $profilePhoto): static
     {
         $this->profilePhoto = $profilePhoto;
+=======
+
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         return $this;
     }
 
@@ -244,6 +336,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+<<<<<<< HEAD
+=======
+    // Méthodes requises par UserInterface et PasswordAuthenticatedUserInterface
+
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
@@ -253,6 +350,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // Si tu stockes des données temporaires sensibles, efface-les ici
     }
+<<<<<<< HEAD
 
     /**
      * Méthode ajoutée : Renvoie le nom du rôle sous forme lisible
@@ -454,3 +552,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return implode(', ', $formatted);
     }
 }
+=======
+}
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee

@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 
+<<<<<<< HEAD
 {% block title %}Profil de {{ user.firstName }} {{ user.lastName }}{% endblock %}
 
 {% block body %}
@@ -152,6 +153,12 @@
     </div>
 
     <!-- Colonne informations utilisateur -->
+=======
+{% block title %}Détail Utilisateur - {{ user.firstName }} {{ user.lastName }}{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
     <div class="col-md-8">
         <div class="card">
             <div class="card-header bg-primary text-white">
@@ -160,6 +167,7 @@
                         <i class="fas fa-user"></i> {{ user.firstName }} {{ user.lastName }}
                     </h2>
                     <div class="btn-group">
+<<<<<<< HEAD
                         {% if app.user.id == user.id or is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i> Modifier le profil
@@ -167,6 +175,16 @@
                         {% endif %}
                         <a href="{{ path('app_user_index') }}" class="btn btn-secondary btn-sm">
                             <i class="fas fa-arrow-left"></i> Retour à la liste
+=======
+                        {# Bouton modifier - visible si l'utilisateur est le propriétaire ou ADMIN #}
+                        {% if app.user.id == user.id or is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                        {% endif %}
+                        <a href="{{ path('app_user_index') }}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Retour
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
                         </a>
                     </div>
                 </div>
@@ -222,6 +240,7 @@
                     </div>
                 </div>
 
+<<<<<<< HEAD
                 <!-- Statistiques -->
                 <div class="row mt-4">
                     <div class="col-md-4">
@@ -254,6 +273,18 @@
                 </div>
 
                 <!-- Section actions -->
+=======
+                {# Section Animaux - Temporairement désactivée #}
+                <div class="mt-4 pt-3 border-top">
+                    <h5><i class="fas fa-paw"></i> Animaux</h5>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        Section animaux en cours de développement.
+                    </div>
+                </div>
+
+                {# Actions #}
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
                 <div class="mt-4 pt-3 border-top">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -262,6 +293,24 @@
                             </a>
                         </div>
                         <div class="btn-group">
+<<<<<<< HEAD
+=======
+                            {# Bouton changer mot de passe - visible si l'utilisateur est le propriétaire ou ADMIN #}
+                            {% if app.user.id == user.id or is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('app_user_change_password', {'id': user.id}) }}" class="btn btn-info">
+                                    <i class="fas fa-key"></i> Changer mot de passe
+                                </a>
+                            {% endif %}
+                            
+                            {# Bouton modifier - visible si l'utilisateur est le propriétaire ou ADMIN #}
+                            {% if app.user.id == user.id or is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-warning">
+                                    <i class="fas fa-edit"></i> Modifier profil
+                                </a>
+                            {% endif %}
+                            
+                            {# Bouton supprimer - visible seulement pour les ADMIN et pas sur son propre profil #}
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
                             {% if is_granted('ROLE_ADMIN') and app.user.id != user.id %}
                                 <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" 
                                       onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.');"
@@ -275,6 +324,10 @@
                         </div>
                     </div>
                     
+<<<<<<< HEAD
+=======
+                    {# Message d'information pour les non-ADMIN #}
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
                     {% if not is_granted('ROLE_ADMIN') and app.user.id == user.id %}
                         <div class="alert alert-info mt-3">
                             <i class="fas fa-info-circle"></i>
@@ -287,6 +340,7 @@
     </div>
 </div>
 
+<<<<<<< HEAD
 <!-- Modal pour la galerie d'avatars -->
 <div class="modal fade" id="avatarGalleryModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -427,10 +481,13 @@
 <input type="hidden" id="csrf-token-update-photo" value="{{ csrf_token('update_photo_' ~ user.id) }}">
 <input type="hidden" id="csrf-token-reset-photo" value="{{ csrf_token('reset_photo_' ~ user.id) }}">
 
+=======
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
 <style>
 .card {
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     border: 1px solid rgba(0, 0, 0, 0.125);
+<<<<<<< HEAD
     border-radius: 8px;
 }
 .card-header {
@@ -1204,4 +1261,20 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+=======
+}
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+.border-bottom {
+    border-bottom: 2px solid #dee2e6 !important;
+}
+.border-top {
+    border-top: 2px solid #dee2e6 !important;
+}
+.btn-group .btn {
+    margin-right: 0.25rem;
+}
+</style>
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
 {% endblock %}

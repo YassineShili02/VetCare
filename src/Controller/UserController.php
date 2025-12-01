@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+<<<<<<< HEAD
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -18,6 +19,10 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+=======
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Annotation\Route;
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -38,6 +43,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()]);
         }
 
+<<<<<<< HEAD
         // Récupérer les utilisateurs avec filtres par défaut
         $users = $userRepository->searchAndFilter([], ['field' => 'u.lastName', 'direction' => 'ASC']);
         
@@ -113,6 +119,10 @@ class UserController extends AbstractController
             'sort' => $sort,
             'stats' => $stats,
             'total_users' => count($users),
+=======
+        return $this->render('user/index.html.twig', [
+            'users' => $userRepository->findAll(),
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         ]);
     }
 
@@ -126,6 +136,7 @@ class UserController extends AbstractController
         }
 
         $user = new User();
+<<<<<<< HEAD
         $isAdminCreating = $this->isGranted('ROLE_ADMIN') && $this->getUser();
         
         // MODIFICATION : Toujours afficher les rôles lors de la création
@@ -199,24 +210,63 @@ class UserController extends AbstractController
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Une erreur est survenue lors de la création de l\'utilisateur: ' . $e->getMessage());
             }
+=======
+        $form = $this->createForm(UserType::class, $user, ['is_creation' => true]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Hash du mot de passe
+            $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
+            $user->setPassword($hashedPassword);
+
+            // Par défaut, les nouveaux utilisateurs ont le rôle USER (sauf si ADMIN définit d'autres rôles)
+            if (empty($user->getRoles()) || ($this->getUser() && !$this->isGranted('ROLE_ADMIN'))) {
+                $user->setRoles(['ROLE_USER']);
+            }
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Utilisateur créé avec succès.');
+
+            // Rediriger vers la connexion si l'utilisateur n'est pas connecté (inscription publique)
+            if (!$this->getUser()) {
+                $this->addFlash('info', 'Vous pouvez maintenant vous connecter avec vos identifiants.');
+                return $this->redirectToRoute('app_login');
+            }
+
+            // Si un ADMIN crée un utilisateur, retour à la liste
+            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         }
 
         return $this->render('user/new.html.twig', [
             'user' => $user,
             'form' => $form,
+<<<<<<< HEAD
             'is_admin_creating' => $isAdminCreating
+=======
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         ]);
     }
 
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(User $user): Response
     {
+<<<<<<< HEAD
+=======
+        // Si l'utilisateur n'est pas connecté, rediriger vers la connexion
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         if (!$this->getUser()) {
             $this->addFlash('error', 'Vous devez être connecté pour accéder à cette page.');
             return $this->redirectToRoute('app_login');
         }
 
+<<<<<<< HEAD
         // Seuls les ADMIN peuvent voir tous les profils
+=======
+        // Un utilisateur ne peut voir que son propre profil, sauf si ADMIN
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         if ($this->getUser() !== $user && !$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Accès refusé. Vous ne pouvez voir que votre propre profil.');
             return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()]);
@@ -228,19 +278,30 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
+<<<<<<< HEAD
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
+=======
+    public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        // Si l'utilisateur n'est pas connecté, rediriger vers la connexion
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         if (!$this->getUser()) {
             $this->addFlash('error', 'Vous devez être connecté pour accéder à cette page.');
             return $this->redirectToRoute('app_login');
         }
 
+<<<<<<< HEAD
         // Seuls les ADMIN peuvent modifier tous les profils
+=======
+        // Un utilisateur ne peut modifier que son propre profil, sauf si ADMIN
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         if ($this->getUser() !== $user && !$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Accès refusé. Vous ne pouvez modifier que votre propre profil.');
             return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()]);
         }
 
+<<<<<<< HEAD
         $isAdminEditing = $this->isGranted('ROLE_ADMIN') && $this->getUser();
         
         $form = $this->createForm(UserType::class, $user, [
@@ -284,6 +345,18 @@ class UserController extends AbstractController
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Une erreur est survenue lors de la mise à jour de l\'utilisateur: ' . $e->getMessage());
             }
+=======
+        $form = $this->createForm(UserType::class, $user, ['is_creation' => false]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user->setUpdatedAt(new \DateTimeImmutable());
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Utilisateur modifié avec succès.');
+
+            return $this->redirectToRoute('app_user_show', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         }
 
         return $this->render('user/edit.html.twig', [
@@ -292,6 +365,7 @@ class UserController extends AbstractController
         ]);
     }
 
+<<<<<<< HEAD
     #[Route('/{id}/change-password-ajax', name: 'app_user_change_password_ajax', methods: ['POST'])]
     public function changePasswordAjax(
         Request $request,
@@ -419,6 +493,8 @@ class UserController extends AbstractController
         }
     }
 
+=======
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
     #[Route('/{id}/change-password', name: 'app_user_change_password', methods: ['GET', 'POST'])]
     public function changePassword(
         Request $request, 
@@ -426,11 +502,19 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager, 
         UserPasswordHasherInterface $passwordHasher
     ): Response {
+<<<<<<< HEAD
+=======
+        // Si l'utilisateur n'est pas connecté, rediriger vers la connexion
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         if (!$this->getUser()) {
             $this->addFlash('error', 'Vous devez être connecté pour accéder à cette page.');
             return $this->redirectToRoute('app_login');
         }
 
+<<<<<<< HEAD
+=======
+        // Un utilisateur ne peut changer que son propre mot de passe, sauf si ADMIN
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         if ($this->getUser() !== $user && !$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Accès refusé. Vous ne pouvez changer que votre propre mot de passe.');
             return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()]);
@@ -442,6 +526,7 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
+<<<<<<< HEAD
             try {
                 // Pour les ADMIN qui changent le mot de passe d'autres utilisateurs
                 if ($this->isGranted('ROLE_ADMIN') && $this->getUser() !== $user) {
@@ -473,6 +558,31 @@ class UserController extends AbstractController
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Une erreur est survenue lors du changement de mot de passe: ' . $e->getMessage());
             }
+=======
+            // Pour les ADMIN qui changent le mot de passe d'autres utilisateurs, pas besoin de vérifier l'ancien mot de passe
+            if ($this->getUser() === $user) {
+                // Vérifier le mot de passe actuel pour l'utilisateur lui-même
+                if (!$passwordHasher->isPasswordValid($user, $data['currentPassword'])) {
+                    $this->addFlash('error', 'Le mot de passe actuel est incorrect.');
+                    return $this->redirectToRoute('app_user_change_password', ['id' => $user->getId()]);
+                }
+            }
+
+            // Hasher et sauvegarder le nouveau mot de passe
+            $hashedPassword = $passwordHasher->hashPassword($user, $data['newPassword']);
+            $user->setPassword($hashedPassword);
+            $user->setUpdatedAt(new \DateTimeImmutable());
+
+            $entityManager->flush();
+
+            if ($this->getUser() === $user) {
+                $this->addFlash('success', 'Votre mot de passe a été modifié avec succès.');
+            } else {
+                $this->addFlash('success', 'Le mot de passe de l\'utilisateur a été modifié avec succès.');
+            }
+
+            return $this->redirectToRoute('app_user_show', ['id' => $user->getId()]);
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         }
 
         return $this->render('user/change_password.html.twig', [
@@ -481,6 +591,7 @@ class UserController extends AbstractController
         ]);
     }
 
+<<<<<<< HEAD
     #[Route('/{id}/upload-photo', name: 'app_user_upload_photo', methods: ['POST'])]
     public function uploadPhoto(
         Request $request, 
@@ -836,22 +947,37 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
+=======
+    #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
+    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        // Si l'utilisateur n'est pas connecté, rediriger vers la connexion
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         if (!$this->getUser()) {
             $this->addFlash('error', 'Vous devez être connecté pour accéder à cette page.');
             return $this->redirectToRoute('app_login');
         }
 
+<<<<<<< HEAD
+=======
+        // Seuls les ADMIN peuvent supprimer des utilisateurs
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Accès refusé. Vous devez être administrateur pour supprimer un utilisateur.');
             return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()]);
         }
 
+<<<<<<< HEAD
+=======
+        // Empêcher un admin de se supprimer lui-même
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         if ($this->getUser() === $user) {
             $this->addFlash('error', 'Vous ne pouvez pas supprimer votre propre compte.');
             return $this->redirectToRoute('app_user_index');
         }
 
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+<<<<<<< HEAD
             try {
                 // Supprimer la photo de profil si elle existe
                 $this->deleteProfilePhoto($user);
@@ -863,10 +989,17 @@ class UserController extends AbstractController
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Une erreur est survenue lors de la suppression de l\'utilisateur: ' . $e->getMessage());
             }
+=======
+            $entityManager->remove($user);
+            $entityManager->flush();
+            
+            $this->addFlash('success', 'Utilisateur supprimé avec succès.');
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
         }
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
+<<<<<<< HEAD
 
     #[Route('/export/filtered', name: 'app_user_export_filtered', methods: ['GET'])]
     public function exportFiltered(Request $request, UserRepository $userRepository): Response
@@ -1053,4 +1186,6 @@ class UserController extends AbstractController
         }
         return $value;
     }
+=======
+>>>>>>> 0693e84bb198da9483ca0f754855e4147ce8b3ee
 }
