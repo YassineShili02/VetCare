@@ -26,19 +26,23 @@
     <div class="card mb-4">
         <div class="card-body">
             <form method="get" class="row g-3">
-                <div class="col-md-5">
-                    <label for="statut" class="form-label">Statut</label>
-                    <select name="statut" id="statut" class="form-select">
-                        <option value="">Tous les statuts</option>
-                        <option value="en_attente" {% if currentStatut == 'en_attente' %}selected{% endif %}>En attente</option>
-                        <option value="confirme" {% if currentStatut == 'confirme' %}selected{% endif %}>Confirmé</option>
-                        <option value="refuse" {% if currentStatut == 'refuse' %}selected{% endif %}>Refusé</option>
-                        <option value="termine" {% if currentStatut == 'termine' %}selected{% endif %}>Terminé</option>
-                        <option value="annule" {% if currentStatut == 'annule' %}selected{% endif %}>Annulé</option>
+                <div class="col-md-4">
+                    <label for="clinique" class="form-label">
+                        <i class="fas fa-hospital"></i> Clinique
+                    </label>
+                    <select name="clinique" id="clinique" class="form-select">
+                        <option value="">Toutes les cliniques</option>
+                        {% for clinique in cliniques %}
+                            <option value="{{ clinique.id }}" {% if currentClinique == clinique.id %}selected{% endif %}>
+                                {{ clinique.nom }}
+                            </option>
+                        {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-5">
-                    <label for="vet" class="form-label">Vétérinaire</label>
+                <div class="col-md-3">
+                    <label for="vet" class="form-label">
+                        <i class="fas fa-user-md"></i> Vétérinaire
+                    </label>
                     <select name="vet" id="vet" class="form-select">
                         <option value="">Tous les vétérinaires</option>
                         {% for veterinaire in veterinaires %}
@@ -46,6 +50,19 @@
                                 {{ veterinaire }}
                             </option>
                         {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="statut" class="form-label">
+                        <i class="fas fa-info-circle"></i> Statut
+                    </label>
+                    <select name="statut" id="statut" class="form-select">
+                        <option value="">Tous les statuts</option>
+                        <option value="en_attente" {% if currentStatut == 'en_attente' %}selected{% endif %}>En attente</option>
+                        <option value="confirme" {% if currentStatut == 'confirme' %}selected{% endif %}>Confirmé</option>
+                        <option value="refuse" {% if currentStatut == 'refuse' %}selected{% endif %}>Refusé</option>
+                        <option value="termine" {% if currentStatut == 'termine' %}selected{% endif %}>Terminé</option>
+                        <option value="annule" {% if currentStatut == 'annule' %}selected{% endif %}>Annulé</option>
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
@@ -73,6 +90,7 @@
                                 <th>Client</th>
                                 <th>Animal</th>
                                 <th>Type</th>
+                                <th>Clinique</th>
                                 <th>Vétérinaire</th>
                                 <th>Statut</th>
                                 <th>Paiement</th>
@@ -106,8 +124,15 @@
                                         <span class="badge bg-info">{{ rdv.type }}</span>
                                     </td>
                                     <td>
+                                        {% if rdv.veterinaire and rdv.veterinaire.clinique %}
+                                            <i class="fas fa-hospital"></i> {{ rdv.veterinaire.clinique.nom }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
                                         {% if rdv.veterinaire %}
-                                            {{ rdv.veterinaire.prenom }} {{ rdv.veterinaire.nom }}
+                                            Dr. {{ rdv.veterinaire.prenom }} {{ rdv.veterinaire.nom }}
                                         {% else %}
                                             <span class="text-muted">Non assigné</span>
                                         {% endif %}

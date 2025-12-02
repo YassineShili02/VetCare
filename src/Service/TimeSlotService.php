@@ -18,56 +18,61 @@ class TimeSlotService
         $this->em = $em;
     }
 
-    /**
-     * Récupère les créneaux pour une date donnée
-     */
-    private function createDateTimeFromTime(\DateTime $date, \DateTime $time): \DateTime
-    {
-        return (clone $date)->setTime(
-            (int)$time->format('H'),
-            (int)$time->format('i')
-        );
-    }
-
     private function getSlotsForVet(\DateTime $date, Veterinaire $veterinaire): array
     {
         $slots = [];
-        $dayOfWeek = (int)$date->format('N');
+        $dayOfWeek = (int)$date->format('N'); // 1=Lundi, 7=Dimanche
 
-        // Trouver la dispo du jour
-        $disponibilite = null;
-        foreach ($veterinaire->getDisponibilites() as $dispo) {
-            if ($dispo->getJourSemaine() === $dayOfWeek) {
-                $disponibilite = $dispo;
-                break;
-            }
-        }
-
-        if (!$disponibilite) {
+        // Ignorer les dimanches
+        if ($dayOfWeek === 7) {
             return [];
         }
 
-        // Convertir les TIME SQL en DateTime du jour courant
-        $currentTime = $this->createDateTimeFromTime($date, $disponibilite->getHeureDebut());
-        $endTime = $this->createDateTimeFromTime($date, $disponibilite->getHeureFin());
+        // Définir les horaires par défaut
+        $horaires = $this->getDefaultHoraires($dayOfWeek);
+        
+        foreach ($horaires as $plage) {
+            $currentTime = clone $date;
+            $currentTime->setTime($plage['debut_h'], $plage['debut_m']);
+            
+            $endTime = clone $date;
+            $endTime->setTime($plage['fin_h'], $plage['fin_m']);
 
-        // Générer les créneaux
-        while ($currentTime < $endTime) {
+            // Générer les créneaux pour cette plage horaire
+            while ($currentTime < $endTime) {
+                if ($this->isSlotAvailable($currentTime, $veterinaire)) {
+                    $slots[] = [
+                        'datetime' => clone $currentTime,
+                        'time' => $currentTime->format('H:i'),
+                        'available' => true,
+                        'veterinaire' => $veterinaire
+                    ];
+                }
 
-            if ($this->isSlotAvailable($currentTime, $veterinaire)) {
-                $slots[] = [
-                    'datetime' => clone $currentTime,
-                    'time' => $currentTime->format('H:i'),
-                    'available' => true,
-                    'veterinaire' => $veterinaire
-                ];
+                $currentTime->modify('+' . self::SLOT_DURATION . ' minutes');
             }
-
-            // Passer au prochain créneau
-            $currentTime->modify('+' . self::SLOT_DURATION . ' minutes');
         }
 
         return $slots;
+    }
+
+    /**
+     * Retourne les horaires par défaut selon le jour de la semaine
+     */
+    private function getDefaultHoraires(int $dayOfWeek): array
+    {
+        // Samedi : uniquement le matin
+        if ($dayOfWeek === 6) {
+            return [
+                ['debut_h' => 9, 'debut_m' => 0, 'fin_h' => 12, 'fin_m' => 0]
+            ];
+        }
+
+        // Lundi à Vendredi : matin et après-midi
+        return [
+            ['debut_h' => 9, 'debut_m' => 0, 'fin_h' => 12, 'fin_m' => 0],  // Matin
+            ['debut_h' => 14, 'debut_m' => 0, 'fin_h' => 18, 'fin_m' => 0]  // Après-midi
+        ];
     }
 
     /**
@@ -120,15 +125,17 @@ class TimeSlotService
     {
         $all = [];
         $current = new \DateTime();
+        $current->setTime(0, 0, 0);
 
         for ($i = 0; $i < $days; $i++) {
             $day = (clone $current)->modify("+$i days");
             $daySlots = $this->getAvailableSlots($day, $veterinaire);
 
-            if ($daySlots) {
+            if (!empty($daySlots)) {
                 $all[$day->format('Y-m-d')] = [
                     'date' => $day,
                     'day_name' => $this->getFrenchDayName($day->format('N')),
+                    'date_formatted' => $day->format('d/m/Y'),
                     'slots' => $daySlots
                 ];
             }
@@ -147,6 +154,8 @@ class TimeSlotService
             '5' => 'Vendredi',
             '6' => 'Samedi',
             '7' => 'Dimanche'
-        ][$n];
+        ][$n] ?? 'Inconnu';
     }
 }
+
+

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Clinique;
 use App\Entity\Rendezvous;
 use App\Entity\Veterinaire;
 use App\Form\RendezvousType;
@@ -15,13 +16,20 @@ use Symfony\Component\Routing\Attribute\Route;
 final class RendezvousController extends AbstractController
 {
     /**
-     * Page principale: choisir un vétérinaire (optionnel) et voir les créneaux disponibles
+     * Page principale: choisir une clinique et/ou un vétérinaire, voir les créneaux disponibles
      */
     #[Route('/rendezvous/new', name: 'rendezvous_new')]
     public function new(Request $request, EntityManagerInterface $em, TimeSlotService $timeSlotService): Response
     {
+        $selectedCliniqueId = $request->query->get('clinique');
         $selectedVetId = $request->query->get('vet');
+        
+        $selectedClinique = null;
         $selectedVet = null;
+        
+        if ($selectedCliniqueId) {
+            $selectedClinique = $em->getRepository(Clinique::class)->find($selectedCliniqueId);
+        }
         
         if ($selectedVetId) {
             $selectedVet = $em->getRepository(Veterinaire::class)->find($selectedVetId);
@@ -30,11 +38,25 @@ final class RendezvousController extends AbstractController
         // Récupérer les créneaux disponibles pour les 7 prochains jours
         $availableSlots = $timeSlotService->getUpcomingAvailableSlots(7, $selectedVet);
         
-        // Liste des vétérinaires pour le dropdown
-        $veterinaires = $em->getRepository(Veterinaire::class)->findBy(['actif' => true]);
+        // Liste des cliniques actives
+        $cliniques = $em->getRepository(Clinique::class)->findBy(['actif' => true]);
+        
+        // Liste des vétérinaires (filtrés par clinique si sélectionnée)
+        $vetQueryBuilder = $em->getRepository(Veterinaire::class)->createQueryBuilder('v')
+            ->where('v.actif = :actif')
+            ->setParameter('actif', true);
+        
+        if ($selectedClinique) {
+            $vetQueryBuilder->andWhere('v.clinique = :clinique')
+                ->setParameter('clinique', $selectedClinique);
+        }
+        
+        $veterinaires = $vetQueryBuilder->getQuery()->getResult();
         
         return $this->render('rendezvous/new.html.twig', [
+            'cliniques' => $cliniques,
             'veterinaires' => $veterinaires,
+            'selectedClinique' => $selectedClinique,
             'selectedVet' => $selectedVet,
             'availableSlots' => $availableSlots,
         ]);
@@ -104,8 +126,10 @@ final class RendezvousController extends AbstractController
     {
         $statut = $request->query->get('statut');
         $vetId = $request->query->get('vet');
+        $cliniqueId = $request->query->get('clinique');
         
-        $qb = $em->getRepository(Rendezvous::class)->createQueryBuilder('r');
+        $qb = $em->getRepository(Rendezvous::class)->createQueryBuilder('r')
+            ->leftJoin('r.veterinaire', 'v');
         
         if ($statut) {
             $qb->andWhere('r.statut = :statut')
@@ -117,18 +141,26 @@ final class RendezvousController extends AbstractController
                ->setParameter('vet', $vetId);
         }
         
+        if ($cliniqueId) {
+            $qb->andWhere('v.clinique = :clinique')
+               ->setParameter('clinique', $cliniqueId);
+        }
+        
         $qb->orderBy('r.dateHeure', 'DESC');
         
         $rendezvous = $qb->getQuery()->getResult();
         
         // Pour les filtres
+        $cliniques = $em->getRepository(Clinique::class)->findBy(['actif' => true]);
         $veterinaires = $em->getRepository(Veterinaire::class)->findBy(['actif' => true]);
         
         return $this->render('rendezvous/list.html.twig', [
             'rendezvous' => $rendezvous,
+            'cliniques' => $cliniques,
             'veterinaires' => $veterinaires,
             'currentStatut' => $statut,
             'currentVet' => $vetId,
+            'currentClinique' => $cliniqueId,
         ]);
     }
 

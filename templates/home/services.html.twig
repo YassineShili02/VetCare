@@ -3,170 +3,75 @@
 {% block title %}Nos Services - VetCare{% endblock %}
 
 {% block body %}
-<section class="container py-5">
-    <h1 class="text-center mb-5" style="color:#2c3e50;">
-        🩺 Nos Services
-    </h1>
-
+<div class="container mt-5 mb-5">
+    <h1 class="text-center mb-5">Nos Services</h1>
+    
     <div class="row">
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-syringe fa-3x mb-3" style="color:#3498db;"></i>
-                    <h3 class="h5">Consultations & Vaccinations</h3>
-                    <p>
-                        Examens de routine, bilans de santé et mise à jour des vaccins 
-                        pour protéger vos compagnons.
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">🏥 Consultations</h3>
+                    <p class="card-text">
+                        Consultations générales et spécialisées pour tous types d'animaux de compagnie.
                     </p>
-                    <a href="{{ path('rendezvous_list') }}" class="btn btn-outline-primary btn-sm">
-                        Prendre rendez-vous
-                    </a>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-cut fa-3x mb-3" style="color:#e74c3c;"></i>
-                    <h3 class="h5">Chirurgie</h3>
-                    <p>
-                        Interventions chirurgicales avec équipements modernes : 
-                        stérilisation, opérations d'urgence et chirurgies programmées.
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">💉 Vaccinations</h3>
+                    <p class="card-text">
+                        Programme de vaccination complet pour protéger votre animal contre les maladies.
                     </p>
-                    <a href="{{ path('rendezvous_list') }}" class="btn btn-outline-primary btn-sm">
-                        Prendre rendez-vous
-                    </a>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-x-ray fa-3x mb-3" style="color:#9b59b6;"></i>
-                    <h3 class="h5">Imagerie Médicale</h3>
-                    <p>
-                        Radiographies, échographies et examens d'imagerie pour 
-                        des diagnostics précis et rapides.
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">🔬 Analyses</h3>
+                    <p class="card-text">
+                        Laboratoire d'analyses médicales sur place pour un diagnostic rapide.
                     </p>
-                    <a href="{{ path('rendezvous_list') }}" class="btn btn-outline-primary btn-sm">
-                        Prendre rendez-vous
-                    </a>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-flask fa-3x mb-3" style="color:#27ae60;"></i>
-                    <h3 class="h5">Analyses en Laboratoire</h3>
-                    <p>
-                        Analyses sanguines, urinaires et autres examens biologiques 
-                        pour surveiller la santé de vos animaux.
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">⚕️ Chirurgie</h3>
+                    <p class="card-text">
+                        Interventions chirurgicales avec équipement moderne et stérilisation complète.
                     </p>
-                    <a href="{{ path('rendezvous_list') }}" class="btn btn-outline-primary btn-sm">
-                        Prendre rendez-vous
-                    </a>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-tooth fa-3x mb-3" style="color:#f39c12;"></i>
-                    <h3 class="h5">Soins Dentaires</h3>
-                    <p>
-                        Détartrage, extractions dentaires et prévention des maladies 
-                        bucco-dentaires pour un sourire éclatant.
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">🦷 Soins Dentaires</h3>
+                    <p class="card-text">
+                        Détartrage, extraction et soins dentaires pour maintenir une bonne hygiène bucco-dentaire.
                     </p>
-                    <a href="{{ path('rendezvous_list') }}" class="btn btn-outline-primary btn-sm">
-                        Prendre rendez-vous
-                    </a>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-ambulance fa-3x mb-3" style="color:#e67e22;"></i>
-                    <h3 class="h5">Urgences</h3>
-                    <p>
-                        Service d'urgences disponible 24h/24 pour prendre en charge 
-                        rapidement les situations critiques.
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">🚨 Urgences</h3>
+                    <p class="card-text">
+                        Service d'urgence disponible pour les situations critiques de votre animal.
                     </p>
-                    <a href="tel:+33600000000" class="btn btn-danger btn-sm">
-                        Appeler urgences
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-pills fa-3x mb-3" style="color:#1abc9c;"></i>
-                    <h3 class="h5">Pharmacie & Nutrition</h3>
-                    <p>
-                        Médicaments vétérinaires et conseils nutritionnels personnalisés 
-                        pour le bien-être de vos animaux.
-                    </p>
-                    <a href="{{ path('rendezvous_list') }}" class="btn btn-outline-primary btn-sm">
-                        Prendre rendez-vous
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-hotel fa-3x mb-3" style="color:#34495e;"></i>
-                    <h3 class="h5">Hospitalisation</h3>
-                    <p>
-                        Structures d'hospitalisation adaptées pour assurer le suivi 
-                        et le rétablissement de vos compagnons.
-                    </p>
-                    <a href="{{ path('rendezvous_list') }}" class="btn btn-outline-primary btn-sm">
-                        Prendre rendez-vous
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-paw fa-3x mb-3" style="color:#e91e63;"></i>
-                    <h3 class="h5">Soins Préventifs</h3>
-                    <p>
-                        Vermifugation, traitement anti-parasitaire et programmes 
-                        de prévention sur mesure.
-                    </p>
-                    <a href="{{ path('rendezvous_list') }}" class="btn btn-outline-primary btn-sm">
-                        Prendre rendez-vous
-                    </a>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="row mt-5">
-        <div class="col-lg-8 mx-auto">
-            <div class="alert alert-info text-center">
-                <h4><i class="fas fa-info-circle"></i> Besoin de plus d'informations ?</h4>
-                <p class="mb-0">
-                    N'hésitez pas à nous contacter pour toute question concernant nos services. 
-                    Notre équipe se fera un plaisir de vous renseigner.
-                </p>
-                <a href="{{ path('contact') }}" class="btn btn-info mt-3">
-                    Nous contacter
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
+</div>
 {% endblock %}

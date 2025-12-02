@@ -2,6 +2,26 @@
 
 {% block title %}Réserver un rendez-vous - VetCare{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #dc3545;
+        }
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
 <div class="container my-5">
     <div class="row justify-content-center">
@@ -14,9 +34,25 @@
                     </h4>
                 </div>
                 <div class="card-body">
+                    {# Afficher les erreurs globales du formulaire #}
+                    {% if form.vars.errors|length > 0 %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-exclamation-triangle"></i> 
+                                Erreurs dans le formulaire
+                            </h5>
+                            <ul class="mb-0">
+                                {% for error in form.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+
                     {% if rendezvous.dateHeure %}
                         <div class="alert alert-info mb-4">
-                            <h5>Créneau sélectionné:</h5>
+                            <h5><i class="fas fa-info-circle"></i> Créneau sélectionné:</h5>
                             <p class="mb-0">
                                 <i class="far fa-calendar"></i> {{ rendezvous.dateHeure|date('d/m/Y') }} à 
                                 <i class="far fa-clock"></i> {{ rendezvous.dateHeure|date('H:i') }}
@@ -28,39 +64,95 @@
                         </div>
                     {% endif %}
 
-                    {{ form_start(form) }}
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                        
+                        <h5 class="mb-3">
+                            <i class="fas fa-user"></i> Vos informations
+                        </h5>
+                        <p class="text-muted small mb-3">
+                            <span class="text-danger">*</span> Champs obligatoires
+                        </p>
+
                         <div class="row">
                             <div class="col-md-12 mb-3">
-                                {{ form_row(form.nomClient) }}
+                                {{ form_row(form.nomClient, {
+                                    'label': 'Nom complet',
+                                    'label_attr': {'class': 'required-field'},
+                                    'attr': {
+                                        'placeholder': 'Ex: Jean Dupont',
+                                        'class': 'form-control'
+                                    }
+                                }) }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                {{ form_row(form.emailClient) }}
+                                {{ form_row(form.emailClient, {
+                                    'label': 'Email',
+                                    'attr': {
+                                        'placeholder': 'exemple@email.com',
+                                        'class': 'form-control'
+                                    }
+                                }) }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                {{ form_row(form.telephoneClient) }}
+                                {{ form_row(form.telephoneClient, {
+                                    'label': 'Téléphone',
+                                    'attr': {
+                                        'placeholder': '+216 XX XXX XXX',
+                                        'class': 'form-control'
+                                    }
+                                }) }}
                             </div>
                         </div>
 
-                        <hr>
+                        <hr class="my-4">
 
-                        <h5 class="mb-3">Informations sur votre animal</h5>
+                        <h5 class="mb-3">
+                            <i class="fas fa-paw"></i> Informations sur votre animal
+                        </h5>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                {{ form_row(form.nomAnimal) }}
+                                {{ form_row(form.nomAnimal, {
+                                    'label': 'Nom de l\'animal',
+                                    'attr': {
+                                        'placeholder': 'Ex: Max',
+                                        'class': 'form-control'
+                                    }
+                                }) }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                {{ form_row(form.especeAnimal) }}
+                                {{ form_row(form.especeAnimal, {
+                                    'label': 'Espèce',
+                                    'attr': {'class': 'form-select'},
+                                    'placeholder': 'Sélectionnez une espèce'
+                                }) }}
                             </div>
                         </div>
 
-                        <hr>
+                        <hr class="my-4">
+
+                        <h5 class="mb-3">
+                            <i class="fas fa-stethoscope"></i> Type de consultation
+                        </h5>
 
                         <div class="mb-3">
-                            {{ form_row(form.type) }}
+                            {{ form_row(form.type, {
+                                'label': 'Type de rendez-vous',
+                                'label_attr': {'class': 'required-field'},
+                                'attr': {'class': 'form-select'},
+                                'placeholder': 'Sélectionnez le type de consultation'
+                            }) }}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form_row(form.notesClient) }}
+                        <div class="mb-4">
+                            {{ form_row(form.notesClient, {
+                                'label': 'Notes ou commentaires',
+                                'help': 'Décrivez brièvement la raison de votre visite ou toute information utile',
+                                'attr': {
+                                    'placeholder': 'Ex: Mon chat tousse depuis 3 jours...',
+                                    'rows': 4,
+                                    'class': 'form-control'
+                                }
+                            }) }}
                         </div>
 
                         {{ form_rest(form) }}
@@ -76,7 +168,49 @@
                     {{ form_end(form) }}
                 </div>
             </div>
+
+            {# Aide contextuelle #}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-question-circle"></i> Besoin d'aide ?
+                    </h6>
+                    <p class="card-text small text-muted mb-0">
+                        En cas de problème, contactez-nous au <strong>+216 XX XXX XXX</strong> 
+                        ou par email à <strong>contact@vetcare.tn</strong>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Scroll automatique vers la première erreur
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstError = document.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
+        });
+
+        // Validation en temps réel (optionnel)
+        const form = document.querySelector('form');
+        if (form) {
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.hasAttribute('required') && !this.value.trim()) {
+                        this.classList.add('is-invalid');
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            });
+        }
+    </script>
 {% endblock %}

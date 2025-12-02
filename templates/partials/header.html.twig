@@ -8,7 +8,7 @@
                     <div class="col-xl-2 col-lg-2 col-md-1">
                         <div class="logo">
                             <a href="{{ path('app_home') }}">
-                                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="">
+                                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="VetCare Logo">
                             </a>
                         </div>
                     </div>
@@ -19,23 +19,18 @@
                             <div class="main-menu f-right d-none d-lg-block">
                                 <nav>
                                     <ul id="navigation">
-                                        <li><a href="{{ path('app_home') }}">Home</a></li>
-                                        <li><a href="{{ path('app_about') }}">About</a></li>
-                                        <li><a href="{{ path('app_services') }}">Services</a></li>
-
-                                        <li><a href="{{ path('app_blog') }}">Blog</a></li>
-
+                                        <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                                        <li><a href="{{ path('app_about') }}">À propos</a></li>
+                                        <li><a href="{{ path('app_services') }}">Nos Services</a></li>
+                                        <li><a href="{{ path('app_blog') }}">Actualités</a></li>
                                         <li><a href="{{ path('app_contact') }}">Contact</a></li>
-
-                                        <!-- 🔥 Lien ajouté -->
-                                        <!-- Nouveau (route publique) -->
-                                        <li><a href="{{ path('rendezvous_new') }}">Prendre RDV</a></li>
+                                        <li><a href="{{ path('rendezvous_new') }}" class="btn-rdv">Prendre RDV</a></li>
                                     </ul>
                                 </nav>
                             </div>
 
                             <div class="header-right-btn f-right d-none d-lg-block ml-30">
-                                <a href="#" class="header-btn">01654.066.456</a>
+                                <a href="tel:01654066456" class="header-btn">01654.066.456</a>
                             </div>
 
                         </div>

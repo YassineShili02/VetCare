@@ -32,6 +32,10 @@ class Veterinaire
     #[ORM\Column]
     private ?bool $actif = true;
 
+   #[ORM\ManyToOne(targetEntity: Clinique::class, inversedBy: 'veterinaires')]
+   #[ORM\JoinColumn(name: "clinique_id", referencedColumnName: "id", nullable: true)]
+   private ?Clinique $clinique = null;
+
     #[ORM\OneToMany(targetEntity: Rendezvous::class, mappedBy: 'veterinaire')]
     private Collection $rendezvous;
 
@@ -112,6 +116,17 @@ class Veterinaire
     public function setActif(bool $actif): static
     {
         $this->actif = $actif;
+        return $this;
+    }
+
+    public function getClinique(): ?Clinique
+    {
+        return $this->clinique;
+    }
+
+    public function setClinique(?Clinique $clinique): static
+    {
+        $this->clinique = $clinique;
         return $this;
     }
 

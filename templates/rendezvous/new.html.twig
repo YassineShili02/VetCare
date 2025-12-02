@@ -491,19 +491,31 @@
 
     <div class="vet-selector">
         <div class="vet-selector-header">
-            <i class="fas fa-user-md"></i>
-            <span>Choisir un vétérinaire (optionnel)</span>
+            <i class="fas fa-hospital"></i>
+            <span>Filtrer par clinique et vétérinaire (optionnel)</span>
         </div>
         <form method="get" action="{{ path('rendezvous_new') }}">
             <div class="vet-form-group">
                 <div>
+                    <label for="clinique" class="form-label">Clinique</label>
+                    <select name="clinique" id="clinique" class="form-select">
+                        <option value="">Toutes les cliniques</option>
+                        {% for clinique in cliniques %}
+                            <option value="{{ clinique.id }}" 
+                                {% if selectedClinique and selectedClinique.id == clinique.id %}selected{% endif %}>
+                                {{ clinique.nom }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
                     <label for="vet" class="form-label">Vétérinaire</label>
                     <select name="vet" id="vet" class="form-select">
-                        <option value="">Aucune préférence (tous les vétérinaires)</option>
+                        <option value="">Aucune préférence</option>
                         {% for veterinaire in veterinaires %}
                             <option value="{{ veterinaire.id }}" 
                                 {% if selectedVet and selectedVet.id == veterinaire.id %}selected{% endif %}>
-                                Dr. {{ veterinaire.nom }}
+                                Dr. {{ veterinaire.prenom }} {{ veterinaire.nom }}
                                 {% if veterinaire.specialite %}
                                     - {{ veterinaire.specialite }}
                                 {% endif %}
@@ -523,7 +535,9 @@
             <i class="fas fa-info-circle"></i>
             <span>
                 {% if selectedVet %}
-                    Aucun créneau disponible pour Dr. {{ selectedVet.nom }} dans les 7 prochains jours.
+                    Aucun créneau disponible pour Dr. {{ selectedVet.prenom }} {{ selectedVet.nom }} dans les 7 prochains jours.
+                {% elseif selectedClinique %}
+                    Aucun créneau disponible pour {{ selectedClinique.nom }} dans les 7 prochains jours.
                 {% else %}
                     Aucun créneau disponible dans les 7 prochains jours.
                 {% endif %}
@@ -608,7 +622,7 @@
                                                     {{ slot.time }}
                                                 </span>
                                                 {% if not selectedVet %}
-                                                    <span class="slot-vet-name">Dr. {{ slot.veterinaire.nom }}</span>
+                                                    <span class="slot-vet-name">Dr. {{ slot.veterinaire.prenom }} {{ slot.veterinaire.nom }}</span>
                                                 {% endif %}
                                                 <span class="slot-duration">30 min</span>
                                             </a>
@@ -646,7 +660,7 @@
                                                     {{ slot.time }}
                                                 </span>
                                                 {% if not selectedVet %}
-                                                    <span class="slot-vet-name">Dr. {{ slot.veterinaire.nom }}</span>
+                                                    <span class="slot-vet-name">Dr. {{ slot.veterinaire.prenom }} {{ slot.veterinaire.nom }}</span>
                                                 {% endif %}
                                                 <span class="slot-duration">30 min</span>
                                             </a>
@@ -674,7 +688,6 @@ if (dateSelectorBtn) {
         dateSelectorBtn.classList.toggle('active');
     });
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', function() {
         dateDropdown.classList.remove('show');
         dateSelectorBtn.classList.remove('active');
@@ -684,7 +697,6 @@ if (dateSelectorBtn) {
         e.stopPropagation();
     });
 
-    // Handle date selection
     const dateOptions = document.querySelectorAll('.date-option');
     dateOptions.forEach(option => {
         option.addEventListener('click', function() {
@@ -692,30 +704,32 @@ if (dateSelectorBtn) {
             const dateText = this.querySelector('.date-option-label').textContent.trim();
             const slotsCount = this.querySelector('.date-option-badge').textContent;
 
-            // Update button text
             document.getElementById('selectedDateText').textContent = dateText;
             document.getElementById('currentSlotsBadge').textContent = slotsCount;
 
-            // Update active state
             dateOptions.forEach(opt => opt.classList.remove('active'));
             this.classList.add('active');
 
-            // Show corresponding day content
             document.querySelectorAll('.day-content').forEach(content => {
                 content.style.display = content.dataset.date === selectedDate ? 'block' : 'none';
             });
 
-            // Close dropdown
             dateDropdown.classList.remove('show');
             dateSelectorBtn.classList.remove('active');
         });
     });
 }
 
-// Toggle time period collapse
 function togglePeriod(header) {
     const period = header.closest('.time-period');
     period.classList.toggle('collapsed');
 }
+
+// Filtrage dynamique clinique -> vétérinaire
+const cliniqueSelect = document.getElementById('clinique');
+cliniqueSelect.addEventListener('change', function() {
+    // Soumettre automatiquement le formulaire pour recharger les vétérinaires
+    this.form.submit();
+});
 </script>
 {% endblock %}

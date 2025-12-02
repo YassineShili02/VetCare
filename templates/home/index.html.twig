@@ -3,8 +3,18 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
+<div style="background-image: url('{{ asset('assets/img/hero/h1_hero.png') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 120px 0; position: relative; min-height: 500px;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255, 182, 193, 0.3);"></div>
+    
+    <div class="container" style="position: relative; z-index: 1;">
+        <div style="background-color: rgba(255, 255, 255, 0.95); padding: 50px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); max-width: 800px; margin: 0 auto;">
+            <h1 style="color: #ff6b35; font-size: 3rem; margin-bottom: 20px; font-weight: bold;">Bienvenue sur VetCare 🐾</h1>
+            <p style="font-size: 1.2rem; color: #555;">Ceci est la page d'accueil.</p>
+        </div>
+    </div>
+</div>
+
 <div class="container mt-5">
-    <h1>Bienvenue sur VetCare 🐾</h1>
-    <p>Ceci est la page d'accueil.</p>
+    <!-- Contenu additionnel -->
 </div>
 {% endblock %}
