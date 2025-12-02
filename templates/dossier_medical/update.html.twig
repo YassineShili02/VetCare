@@ -1,0 +1,27 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Modifier Dossier Médical{% endblock %}
+
+{% block content %}
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-white">
+            <h4>Modifier Dossier Médical</h4>
+        </div>
+        <div class="card-body">
+            {{ form_start(formDossier, {'attr': {'class': 'needs-validation', 'enctype': 'multipart/form-data'}}) }}
+            <div class="row g-3">
+                {% for field in formDossier %}
+                    {% if field.vars.block_prefixes[1] != 'hidden' %}
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(field, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(field) }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-warning mt-3">Modifier</button>
+            {{ form_end(formDossier) }}
+        </div>
+    </div>
+{% endblock %}

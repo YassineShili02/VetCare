@@ -1,20 +1,16 @@
-{% extends 'base.html.twig' %}
+{% extends 'template.html.twig' %}
 
-{% block title %}Hello DossierMedicalController!{% endblock %}
+{% block title %}Dossiers Médicaux{% endblock %}
 
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/xampp/htdocs/VetCare/src/Controller/DossierMedicalController.php</code></li>
-        <li>Your template at <code>C:/xampp/htdocs/VetCare/templates/dossier_medical/index.html.twig</code></li>
-    </ul>
-</div>
+{% block content %}
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-primary text-white">
+            <h4>Bienvenue sur le module Dossier Médical</h4>
+        </div>
+        <div class="card-body">
+            <p>Vous pouvez gérer les dossiers médicaux de vos animaux :</p>
+            <a href="{{ path('lists_dossiers') }}" class="btn btn-info">Voir la liste des dossiers</a>
+            <a href="{{ path('addForm_dossier') }}" class="btn btn-success">Ajouter un dossier</a>
+        </div>
+    </div>
 {% endblock %}
