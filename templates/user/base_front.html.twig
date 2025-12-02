@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}VetCare{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('front/css/front.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/css/user-front.css') }}">
+    <link rel="stylesheet" href="{{ asset('shared/css/base.css') }}">
+</head>
+<body class="frontend">
+    {% block body %}{% endblock %}
+    
+    <script src="{{ asset('front/js/front.js') }}"></script>
+    <script src="{{ asset('front/js/user-interactions.js') }}"></script>
+</body>
+</html>
