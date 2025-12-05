@@ -22,41 +22,41 @@ class TraitementController extends AbstractController
             throw $this->createAccessDeniedException('Accès non autorisé');
         }
     }
-
     #[Route('/', name: 'app_traitement_index', methods: ['GET'])]
-    public function index(
-        TraitementRepository $traitementRepository,
-        SessionInterface $session,
-        Request $request  // AJOUTER CE PARAMÈTRE
-    ): Response
+    public function index(TraitementRepository $traitementRepository, SessionInterface $session, Request $request): Response
     {
         $this->checkVeterinaryAccess($session);
 
-        // RÉCUPÉRER LES PARAMÈTRES DE L'URL
-        $sortBy = $request->query->get('sort', 'id');
-        $order = $request->query->get('order', 'ASC');
-        $statutFilter = $request->query->get('statut', 'all');
-        $searchTerm = $request->query->get('search', '');
+        $search = $request->query->get('search');
+        $statut = $request->query->get('statut');
 
-        // UTILISER LA NOUVELLE MÉTHODE AVEC FILTRES
-        $traitements = $traitementRepository->findWithFilters($sortBy, $order, $statutFilter, $searchTerm);
+        // Récupérer tous les traitements ou filtrer selon les paramètres
+        if ($search || $statut) {
+            // Utilisez la méthode existante ou créez une requête personnalisée
+            $traitements = $traitementRepository->createQueryBuilder('t')
+                ->leftJoin('t.medicaments', 'm')
+                ->where('1 = 1');
+
+            if ($search) {
+                $traitements->andWhere('t.nom LIKE :search OR t.description LIKE :search')
+                    ->setParameter('search', '%' . $search . '%');
+            }
+
+            if ($statut) {
+                $traitements->andWhere('t.statut = :statut')
+                    ->setParameter('statut', $statut);
+            }
+
+            $traitements = $traitements->getQuery()->getResult();
+        } else {
+            // Récupérer tous les traitements si pas de filtre
+            $traitements = $traitementRepository->findAll();
+        }
 
         return $this->render('backoffice/traitement/index.html.twig', [
             'traitements' => $traitements,
-            // AJOUTER CES VARIABLES POUR LA TEMPLATE
-            'currentSort' => $sortBy,
-            'currentOrder' => $order,
-            'currentStatut' => $statutFilter,
-            'currentSearch' => $searchTerm,
-            'statuts' => [
-                'all' => 'Tous les statuts',
-                'pending' => 'En attente',
-                'in_progress' => 'En cours',
-                'completed' => 'Terminé',
-                'cancelled' => 'Annulé',
-                'accepted' => 'Accepté',
-                'refused' => 'Refusé'
-            ]
+            'currentSearch' => $search,
+            'currentStatut' => $statut,
         ]);
     }
 

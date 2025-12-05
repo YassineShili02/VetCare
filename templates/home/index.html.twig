@@ -4,107 +4,176 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VetCare - Accueil</title>
-  <style>
-         * {
-             margin: 0;
-             padding: 0;
-             box-sizing: border-box;
-         }
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-         body {
-             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-             background: #ffffff; /* Fond blanc */
-             min-height: 100vh;
-             display: flex;
-             justify-content: center;
-             align-items: center;
-             color: #333333; /* Texte noir */
-             padding: 2rem;
-         }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333333;
+            padding: 2rem;
+        }
 
-         .container {
-             text-align: center;
-             max-width: 600px;
-         }
+        .container {
+            text-align: center;
+            max-width: 600px;
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.15);
+            border: 1px solid #e3f2fd;
+        }
 
-         .logo {
-             font-size: 4rem;
-             margin-bottom: 1rem;
-             color: #6c757d; /* Gris pour le logo */
-         }
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #2196F3; /* Bleu pour le logo */
+        }
 
-         h1 {
-             font-size: 3rem;
-             margin-bottom: 1rem;
-             color: #2c3e50; /* Bleu foncé pour le titre */
-         }
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            color: #1976D2; /* Bleu plus foncé pour le titre */
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-         .subtitle {
-             font-size: 1.2rem;
-             color: #6c757d; /* Gris pour le sous-titre */
-             margin-bottom: 3rem;
-             line-height: 1.6;
-         }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #546E7A; /* Gris bleuté pour le sous-titre */
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
 
-         .nav-links {
-             display: flex;
-             gap: 1.5rem;
-             justify-content: center;
-             flex-wrap: wrap;
-         }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
 
-         .nav-link {
-             display: inline-block;
-             padding: 1.2rem 2.5rem;
-             background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); /* Dégradé gris */
-             color: white;
-             text-decoration: none;
-             border-radius: 8px;
-             transition: all 0.3s ease;
-             font-weight: 600;
-             font-size: 1.1rem;
-             min-width: 200px;
-             border: none;
-         }
+        .nav-link {
+            display: inline-block;
+            padding: 1.2rem 2.5rem;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); /* Dégradé bleu */
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1.1rem;
+            min-width: 220px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
 
-         .nav-link.client {
-             background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); /* Gris */
-         }
+        .nav-link.client {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
 
-         .nav-link.veterinary {
-             background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); /* Gris */
-         }
+        .nav-link.veterinary {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
 
-         .nav-link:hover {
-             opacity: 0.9;
-             transform: translateY(-3px);
-             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-             background: linear-gradient(135deg, #5a6268 0%, #495057 100%); /* Gris plus foncé au survol */
-         }
+        .nav-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(33, 150, 243, 0.4);
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+        }
 
-         .description {
-             margin-top: 3rem;
-             padding: 2rem;
-             background: #f8f9fa; /* Fond gris clair */
-             border-radius: 10px;
-             border: 1px solid #dee2e6;
-         }
+        .description {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: #E3F2FD; /* Fond bleu très clair */
+            border-radius: 10px;
+            border: 2px solid #BBDEFB;
+            text-align: left;
+        }
 
-         .description h3 {
-             margin-bottom: 1rem;
-             color: #2c3e50; /* Bleu foncé */
-         }
+        .description h3 {
+            margin-bottom: 1rem;
+            color: #1976D2;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-         .description p {
-             color: #6c757d; /* Gris */
-             line-height: 1.6;
-         }
+        .description h3:before {
+            content: "💡";
+            font-size: 1.5rem;
+        }
+
+        .description p {
+            color: #455A64; /* Gris bleuté */
+            line-height: 1.7;
+        }
+
+        /* Animation pour le logo */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .logo {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .nav-link {
+                min-width: 100%;
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .logo {
+                font-size: 3rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="logo">🏥</div>
-        <h1>VetCare</h1>
+        <h1>VetCare Pro</h1>
         <p class="subtitle">Système de gestion des médicaments et traitements vétérinaires</p>
 
         <div class="nav-links">
@@ -119,10 +188,15 @@
         <div class="description">
             <h3>À propos de VetCare</h3>
             <p>
-                VetCare est une application web dédiée à la gestion des médicaments et traitements
-                dans un cabinet vétérinaire. L'interface client permet la consultation des données
-                tandis que l'espace vétérinaire offre des fonctionnalités complètes de gestion.
+                VetCare est une application web moderne dédiée à la gestion des médicaments et traitements
+                dans les cabinets vétérinaires. L'interface client permet aux propriétaires d'animaux de
+                consulter les informations disponibles, tandis que l'espace vétérinaire sécurisé offre
+                des fonctionnalités complètes de gestion pour les professionnels.
             </p>
+        </div>
+
+        <div style="margin-top: 2rem; color: #78909C; font-size: 0.9rem;">
+            <p>© 2024 VetCare Pro. Tous droits réservés.</p>
         </div>
     </div>
 </body>
