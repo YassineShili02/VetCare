@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Backoffice Vétérinaire{% endblock %}</title>
+   <style>
+
+       /* Styles pour les filtres */
+       .filter-form {
+           background: white;
+           padding: 1rem;
+           border-radius: 8px;
+           border: 1px solid #dee2e6;
+       }
+
+       .filter-form .form-group {
+           margin-bottom: 0;
+       }
+
+       .sort-link {
+           color: #3498db;
+           text-decoration: none;
+           display: flex;
+           align-items: center;
+           gap: 5px;
+       }
+
+       .sort-link:hover {
+           color: #2980b9;
+           text-decoration: underline;
+       }
+
+       .active-filters {
+           background: #e3f2fd;
+           padding: 1rem;
+           border-radius: 8px;
+           margin-bottom: 1rem;
+           border-left: 4px solid #2196f3;
+       }
+
+       .active-filters span {
+           background: #bbdefb;
+           padding: 0.2rem 0.5rem;
+           border-radius: 4px;
+           margin-right: 0.5rem;
+           font-size: 0.9rem;
+       }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .navbar-brand {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin-left: 2rem;
+        }
+
+        .navbar-nav a {
+            color: #5a6c7d;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .navbar-nav a:hover {
+            background-color: #e9ecef;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            border: 1px solid #e0e0e0;
+        }
+
+        .card-header {
+            background: #0000FF;
+            color: white;
+            padding: 1.5rem;
+            border-bottom: 1px solid #6ab7d8;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            color: #5a6c7d;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #3498db;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+        }
+
+        .btn-secondary {
+            background:#0000FF;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            background: #fff;
+            color: #333;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .statut-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+            min-width: 100px;
+        }
+
+        .statut-pending { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
+        .statut-in_progress { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
+        .statut-completed { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
+        .statut-cancelled { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
+        .statut-accepted { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
+        .statut-refused { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
+
+        .stock-indicator {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        .stock-high { background: #0000FF; color: white; border: 1px solid #6ab7d8; }
+        .stock-medium { background: #0000FF; color: white; border: 1px solid #6ab7d8; }
+        .stock-low { background: #0000FF; color: white; border: 1px solid #6ab7d8; }
+
+        .page-title {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    {% if app.request.attributes.get('_route') != 'app_login' %}
+    <nav class="navbar">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <a href="{{ path('app_home') }}" class="navbar-brand">🏥 VetCare Pro</a>
+            <ul class="navbar-nav">
+                <li><a href="{{ path('app_medicament_index') }}">💊 Médicaments</a></li>
+                <li><a href="{{ path('app_traitement_index') }}">📋 Traitements</a></li>
+                <li><a href="{{ path('app_client_interface') }}">👁️ Interface Client</a></li>
+                <li><a href="{{ path('app_logout') }}">🚪 Déconnexion</a></li>
+            </ul>
+        </div>
+    </nav>
+    {% endif %}
+
+    <div class="container">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-error">{{ message }}</div>
+        {% endfor %}
+
+        {% block body %}{% endblock %}
+    </div>
+</body>
+</html>

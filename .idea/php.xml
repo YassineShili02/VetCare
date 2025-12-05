@@ -142,7 +142,11 @@
       <path value="$PROJECT_DIR$/vendor/phpstan/phpdoc-parser" />
     </include_path>
   </component>
+<<<<<<< HEAD
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
+=======
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.2">
+>>>>>>> manel-dev
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
   <component name="PhpStanOptionsConfiguration">
