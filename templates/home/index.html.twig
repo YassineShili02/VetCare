@@ -4,98 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VetCare - Accueil</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <style>
+         * {
+             margin: 0;
+             padding: 0;
+             box-sizing: border-box;
+         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #ecf0f1;
-            padding: 2rem;
-        }
+         body {
+             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+             background: #ffffff; /* Fond blanc */
+             min-height: 100vh;
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             color: #333333; /* Texte noir */
+             padding: 2rem;
+         }
 
-        .container {
-            text-align: center;
-            max-width: 600px;
-        }
+         .container {
+             text-align: center;
+             max-width: 600px;
+         }
 
-        .logo {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
+         .logo {
+             font-size: 4rem;
+             margin-bottom: 1rem;
+             color: #6c757d; /* Gris pour le logo */
+         }
 
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #ecf0f1;
-        }
+         h1 {
+             font-size: 3rem;
+             margin-bottom: 1rem;
+             color: #2c3e50; /* Bleu foncé pour le titre */
+         }
 
-        .subtitle {
-            font-size: 1.2rem;
-            color: #bdc3c7;
-            margin-bottom: 3rem;
-            line-height: 1.6;
-        }
+         .subtitle {
+             font-size: 1.2rem;
+             color: #6c757d; /* Gris pour le sous-titre */
+             margin-bottom: 3rem;
+             line-height: 1.6;
+         }
 
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+         .nav-links {
+             display: flex;
+             gap: 1.5rem;
+             justify-content: center;
+             flex-wrap: wrap;
+         }
 
-        .nav-link {
-            display: inline-block;
-            padding: 1.2rem 2.5rem;
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            font-size: 1.1rem;
-            min-width: 200px;
-        }
+         .nav-link {
+             display: inline-block;
+             padding: 1.2rem 2.5rem;
+             background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); /* Dégradé gris */
+             color: white;
+             text-decoration: none;
+             border-radius: 8px;
+             transition: all 0.3s ease;
+             font-weight: 600;
+             font-size: 1.1rem;
+             min-width: 200px;
+             border: none;
+         }
 
-        .nav-link.client {
-            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
-        }
+         .nav-link.client {
+             background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); /* Gris */
+         }
 
-        .nav-link.veterinary {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        }
+         .nav-link.veterinary {
+             background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); /* Gris */
+         }
 
-        .nav-link:hover {
-            opacity: 0.9;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
+         .nav-link:hover {
+             opacity: 0.9;
+             transform: translateY(-3px);
+             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+             background: linear-gradient(135deg, #5a6268 0%, #495057 100%); /* Gris plus foncé au survol */
+         }
 
-        .description {
-            margin-top: 3rem;
-            padding: 2rem;
-            background: rgba(52, 73, 94, 0.5);
-            border-radius: 10px;
-            border: 1px solid #4a6572;
-        }
+         .description {
+             margin-top: 3rem;
+             padding: 2rem;
+             background: #f8f9fa; /* Fond gris clair */
+             border-radius: 10px;
+             border: 1px solid #dee2e6;
+         }
 
-        .description h3 {
-            margin-bottom: 1rem;
-            color: #ecf0f1;
-        }
+         .description h3 {
+             margin-bottom: 1rem;
+             color: #2c3e50; /* Bleu foncé */
+         }
 
-        .description p {
-            color: #bdc3c7;
-            line-height: 1.6;
-        }
+         .description p {
+             color: #6c757d; /* Gris */
+             line-height: 1.6;
+         }
     </style>
 </head>
 <body>

@@ -24,12 +24,39 @@ class TraitementController extends AbstractController
     }
 
     #[Route('/', name: 'app_traitement_index', methods: ['GET'])]
-    public function index(TraitementRepository $traitementRepository, SessionInterface $session): Response
+    public function index(
+        TraitementRepository $traitementRepository,
+        SessionInterface $session,
+        Request $request  // AJOUTER CE PARAMÈTRE
+    ): Response
     {
         $this->checkVeterinaryAccess($session);
 
+        // RÉCUPÉRER LES PARAMÈTRES DE L'URL
+        $sortBy = $request->query->get('sort', 'id');
+        $order = $request->query->get('order', 'ASC');
+        $statutFilter = $request->query->get('statut', 'all');
+        $searchTerm = $request->query->get('search', '');
+
+        // UTILISER LA NOUVELLE MÉTHODE AVEC FILTRES
+        $traitements = $traitementRepository->findWithFilters($sortBy, $order, $statutFilter, $searchTerm);
+
         return $this->render('backoffice/traitement/index.html.twig', [
-            'traitements' => $traitementRepository->findAll(),
+            'traitements' => $traitements,
+            // AJOUTER CES VARIABLES POUR LA TEMPLATE
+            'currentSort' => $sortBy,
+            'currentOrder' => $order,
+            'currentStatut' => $statutFilter,
+            'currentSearch' => $searchTerm,
+            'statuts' => [
+                'all' => 'Tous les statuts',
+                'pending' => 'En attente',
+                'in_progress' => 'En cours',
+                'completed' => 'Terminé',
+                'cancelled' => 'Annulé',
+                'accepted' => 'Accepté',
+                'refused' => 'Refusé'
+            ]
         ]);
     }
 
@@ -126,4 +153,5 @@ class TraitementController extends AbstractController
             'traitements' => $traitementRepository->findAll(),
         ]);
     }
+
 }

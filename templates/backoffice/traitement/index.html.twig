@@ -3,19 +3,48 @@
 {% block title %}Gestion des Traitements{% endblock %}
 
 {% block body %}
-<div class="card">
-    <div class="card-header">
-        <h1 class="page-title">📋 Gestion des Traitements</h1>
-    </div>
-    <div class="card-body">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <a href="{{ path('app_traitement_new') }}" class="btn btn-primary">
-                ➕ Ajouter un traitement
-            </a>
-            <div style="color: #6c757d; font-size: 0.9rem;">
-                Total: {{ traitements|length }} traitement(s)
+<!-- FORME DE FILTRAGE -->
+<div class="filters-section" style="margin-bottom: 2rem; background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
+    <h3 style="margin-bottom: 1rem; color: #2c3e50;">🔍 Filtres et Tri</h3>
+
+    <form method="get" action="{{ path('app_traitement_index') }}" class="filter-form">
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+
+            <!-- BARRE DE RECHERCHE -->
+            <div class="form-group" style="flex: 1; min-width: 250px;">
+                <label for="search" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Recherche :</label>
+                <input type="text"
+                       id="search"
+                       name="search"
+                       value="{{ currentSearch }}"
+                       class="form-control"
+                       placeholder="Nom ou description...">
+            </div>
+
+            <!-- FILTRE PAR STATUT -->
+            <div class="form-group" style="min-width: 200px;">
+                <label for="statut" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Statut :</label>
+                <select id="statut" name="statut" class="form-control">
+                    {% for key, label in statuts %}
+                        <option value="{{ key }}" {{ currentStatut == key ? 'selected' : '' }}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- BOUTONS D'ACTION -->
+            <div class="form-group" style="display: flex; gap: 0.5rem;">
+                <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                    🔍 Appliquer les filtres
+                </button>
+                <a href="{{ path('app_traitement_index') }}" class="btn btn-secondary">
+                    🗑️ Réinitialiser
+                </a>
             </div>
         </div>
+    </form>
+</div>
 
         <table class="table">
             <thead>
@@ -73,7 +102,7 @@
                                   onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce traitement ?');"
                                   style="display: inline;">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ traitement.id) }}">
-                                <button class="btn btn-danger" title="Supprimer">🗑️</button>
+                                <button class="btn btn-secondary" title="Supprimer">🗑️</button>
                             </form>
                         </div>
                     </td>

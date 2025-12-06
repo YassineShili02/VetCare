@@ -4,7 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Backoffice Vétérinaire{% endblock %}</title>
-    <style>
+   <style>
+
+       /* Styles pour les filtres */
+       .filter-form {
+           background: white;
+           padding: 1rem;
+           border-radius: 8px;
+           border: 1px solid #dee2e6;
+       }
+
+       .filter-form .form-group {
+           margin-bottom: 0;
+       }
+
+       .sort-link {
+           color: #3498db;
+           text-decoration: none;
+           display: flex;
+           align-items: center;
+           gap: 5px;
+       }
+
+       .sort-link:hover {
+           color: #2980b9;
+           text-decoration: underline;
+       }
+
+       .active-filters {
+           background: #e3f2fd;
+           padding: 1rem;
+           border-radius: 8px;
+           margin-bottom: 1rem;
+           border-left: 4px solid #2196f3;
+       }
+
+       .active-filters span {
+           background: #bbdefb;
+           padding: 0.2rem 0.5rem;
+           border-radius: 4px;
+           margin-right: 0.5rem;
+           font-size: 0.9rem;
+       }
         * {
             margin: 0;
             padding: 0;
@@ -66,14 +107,13 @@
             margin-bottom: 2rem;
             border: 1px solid #e0e0e0;
         }
-    .card-header {
-        background: #6c757d; /* Gris Bootstrap */
-        color: white; /* Texte blanc pour meilleur contraste */
-        padding: 1.5rem;
-        border-bottom: 1px solid #5a6268;
-    }
 
-
+        .card-header {
+            background: #0000FF;
+            color: white;
+            padding: 1.5rem;
+            border-bottom: 1px solid #6ab7d8;
+        }
 
         .card-body {
             padding: 1.5rem;
@@ -142,7 +182,7 @@
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background:#0000FF;
         }
 
         .btn:hover {
@@ -203,12 +243,12 @@
             min-width: 100px;
         }
 
-        .statut-pending { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-        .statut-in_progress { background: #cce7ff; color: #004085; border: 1px solid #b3d7ff; }
-        .statut-completed { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .statut-cancelled { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .statut-accepted { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-        .statut-refused { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .statut-pending { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
+        .statut-in_progress { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
+        .statut-completed { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
+        .statut-cancelled { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
+        .statut-accepted { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
+        .statut-refused { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
 
         .stock-indicator {
             padding: 0.4rem 0.8rem;
@@ -220,9 +260,9 @@
             min-width: 80px;
         }
 
-        .stock-high { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .stock-medium { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-        .stock-low { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .stock-high { background: #0000FF; color: white; border: 1px solid #6ab7d8; }
+        .stock-medium { background: #0000FF; color: white; border: 1px solid #6ab7d8; }
+        .stock-low { background: #0000FF; color: white; border: 1px solid #6ab7d8; }
 
         .page-title {
             color: #2c3e50;
