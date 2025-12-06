@@ -22,8 +22,8 @@ class TraitementController extends AbstractController
             throw $this->createAccessDeniedException('Accès non autorisé');
         }
     }
-
     #[Route('/', name: 'app_traitement_index', methods: ['GET'])]
+<<<<<<< HEAD
     public function index(
         TraitementRepository $traitementRepository,
         SessionInterface $session,
@@ -57,6 +57,42 @@ class TraitementController extends AbstractController
                 'accepted' => 'Accepté',
                 'refused' => 'Refusé'
             ]
+=======
+    public function index(TraitementRepository $traitementRepository, SessionInterface $session, Request $request): Response
+    {
+        $this->checkVeterinaryAccess($session);
+
+        $search = $request->query->get('search');
+        $statut = $request->query->get('statut');
+
+        // Récupérer tous les traitements ou filtrer selon les paramètres
+        if ($search || $statut) {
+            // Utilisez la méthode existante ou créez une requête personnalisée
+            $traitements = $traitementRepository->createQueryBuilder('t')
+                ->leftJoin('t.medicaments', 'm')
+                ->where('1 = 1');
+
+            if ($search) {
+                $traitements->andWhere('t.nom LIKE :search OR t.description LIKE :search')
+                    ->setParameter('search', '%' . $search . '%');
+            }
+
+            if ($statut) {
+                $traitements->andWhere('t.statut = :statut')
+                    ->setParameter('statut', $statut);
+            }
+
+            $traitements = $traitements->getQuery()->getResult();
+        } else {
+            // Récupérer tous les traitements si pas de filtre
+            $traitements = $traitementRepository->findAll();
+        }
+
+        return $this->render('backoffice/traitement/index.html.twig', [
+            'traitements' => $traitements,
+            'currentSearch' => $search,
+            'currentStatut' => $statut,
+>>>>>>> b6761558382befb7bc1ed9cd98c8a635fb427a25
         ]);
     }
 
