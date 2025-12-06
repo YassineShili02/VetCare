@@ -1,0 +1,57 @@
+<?php
+$avatarDir = __DIR__ . '/front/images/avatars/';
+
+if (!is_dir($avatarDir)) {
+    mkdir($avatarDir, 0777, true);
+}
+
+// URLs d'avatars génériques (placeholders)
+$avatarUrls = [
+    'https://api.dicebear.com/7.x/avataaars/png?seed=1&size=150',
+    'https://api.dicebear.com/7.x/avataaars/png?seed=2&size=150',
+    'https://api.dicebear.com/7.x/avataaars/png?seed=3&size=150',
+    'https://api.dicebear.com/7.x/avataaars/png?seed=4&size=150',
+    'https://api.dicebear.com/7.x/avataaars/png?seed=5&size=150',
+    'https://api.dicebear.com/7.x/avataaars/png?seed=6&size=150',
+    'https://api.dicebear.com/7.x/avataaars/png?seed=7&size=150',
+    'https://api.dicebear.com/7.x/avataaars/png?seed=8&size=150',
+    'https://api.dicebear.com/7.x/avataaars/png?seed=9&size=150',
+    'https://api.dicebear.com/7.x/avataaars/png?seed=10&size=150',
+    'https://api.dicebear.com/7.x/avataaars/png?seed=11&size=150',
+    'https://api.dicebear.com/7.x/avataaars/png?seed=12&size=150',
+];
+
+foreach ($avatarUrls as $index => $url) {
+    $avatarNumber = $index + 1;
+    $imageData = @file_get_contents($url);
+    
+    if ($imageData !== false) {
+        file_put_contents($avatarDir . "avatar{$avatarNumber}.png", $imageData);
+        echo "✓ Avatar {$avatarNumber} téléchargé<br>";
+    } else {
+        // Créer un avatar simple en cas d'échec
+        $image = imagecreatetruecolor(150, 150);
+        $bgColor = imagecolorallocate($image, 
+            rand(50, 200), 
+            rand(50, 200), 
+            rand(50, 200)
+        );
+        imagefill($image, 0, 0, $bgColor);
+        
+        $textColor = imagecolorallocate($image, 255, 255, 255);
+        $text = (string)$avatarNumber;
+        $font = 5;
+        $textWidth = imagefontwidth($font) * strlen($text);
+        $textHeight = imagefontheight($font);
+        $x = (150 - $textWidth) / 2;
+        $y = (150 - $textHeight) / 2;
+        
+        imagestring($image, $font, $x, $y, $text, $textColor);
+        imagepng($image, $avatarDir . "avatar{$avatarNumber}.png");
+        imagedestroy($image);
+        
+        echo "✓ Avatar {$avatarNumber} créé localement<br>";
+    }
+}
+
+echo "<br><strong>✅ Tous les avatars sont prêts !</strong>";

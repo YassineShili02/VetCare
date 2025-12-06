@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Admin - VetCare{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('back/css/back.css') }}">
+    <link rel="stylesheet" href="{{ asset('back/css/user-back.css') }}">
+    <link rel="stylesheet" href="{{ asset('shared/css/base.css') }}">
+</head>
+<body class="backend">
+    {% block body %}{% endblock %}
+    
+    <script src="{{ asset('back/js/back.js') }}"></script>
+    <script src="{{ asset('back/js/user-management.js') }}"></script>
+</body>
+</html>
