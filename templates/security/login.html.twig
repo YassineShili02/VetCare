@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html.twig' %}
 
 {% block title %}Connexion - VetCare{% endblock %}
@@ -78,3 +79,347 @@
     </div>
 </div>
 {% endblock %}
+=======
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès Vétérinaire - VetCare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333333;
+            padding: 2rem;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 1rem;
+        }
+
+        .login-box {
+            background: white;
+            padding: 3rem 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.2);
+            border: 2px solid #bbdefb;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #2196F3 0%, #1976D2 100%);
+        }
+
+        .login-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: #2196F3;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .login-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #1976D2;
+            font-weight: 700;
+        }
+
+        .login-subtitle {
+            color: #546E7A;
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+            color: #37474F;
+            font-size: 1.05rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid #bbdefb;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            background: #f8fdff;
+            color: #333333;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+            background: white;
+        }
+
+        .form-control::placeholder {
+            color: #90A4AE;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            width: 100%;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .alert {
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 1.8rem;
+            text-align: left;
+            font-size: 1rem;
+            border-left: 4px solid;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-error {
+            background-color: #ffebee;
+            border-color: #ef5350;
+            color: #c62828;
+        }
+
+        .alert-success {
+            background-color: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: #2196F3;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+
+        .back-link:hover {
+            color: #1976D2;
+            background: #e3f2fd;
+            text-decoration: none;
+            transform: translateX(-5px);
+        }
+
+        .password-hint {
+            font-size: 0.9rem;
+            color: #78909C;
+            margin-top: 0.8rem;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .security-note {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #e3f2fd;
+            border-radius: 8px;
+            border: 1px dashed #90CAF9;
+            color: #546E7A;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .login-box {
+                padding: 2.5rem 2rem;
+            }
+
+            .login-title {
+                font-size: 1.8rem;
+            }
+
+            .login-icon {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 2rem 1.5rem;
+            }
+
+            .login-title {
+                font-size: 1.6rem;
+            }
+
+            .form-control {
+                padding: 0.9rem 1rem;
+            }
+
+            .btn {
+                padding: 0.9rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-icon">🔐</div>
+            <h1 class="login-title">Accès Vétérinaire</h1>
+            <p class="login-subtitle">Espace sécurisé réservé aux professionnels vétérinaires</p>
+
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-error">{{ message }}</div>
+            {% endfor %}
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+
+            <form method="post">
+                <div class="form-group">
+                    <label class="form-label">Mot de passe vétérinaire :</label>
+                    <input type="password" name="password" class="form-control" required
+                           placeholder="Entrez votre mot de passe professionnel"
+                           autocomplete="current-password">
+                </div>
+
+                <input type="hidden" name="user_type" value="veterinary">
+
+                <button type="submit" class="btn btn-primary">
+                    🔐 Se connecter
+                </button>
+
+                <div class="password-hint">
+                    Accès restreint au personnel vétérinaire autorisé
+                </div>
+            </form>
+
+            <div class="security-note">
+                <strong>⚠️ Sécurité :</strong> Cet espace est protégé. Veuillez garder vos identifiants confidentiels.
+            </div>
+
+            <a href="{{ path('app_home') }}" class="back-link">
+                ← Retour à la page d'accueil
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Focus automatique sur le champ mot de passe
+            const passwordInput = document.querySelector('input[name="password"]');
+            if (passwordInput) {
+                setTimeout(() => {
+                    passwordInput.focus();
+                }, 300);
+            }
+
+            // Animation de soumission
+            const form = document.querySelector('form');
+            const button = document.querySelector('.btn');
+
+            if (form && button) {
+                form.addEventListener('submit', function(e) {
+                    const password = document.querySelector('input[name="password"]').value;
+
+                    if (!password.trim()) {
+                        e.preventDefault();
+                        alert('Veuillez entrer le mot de passe vétérinaire.');
+                        return;
+                    }
+
+                    button.innerHTML = '🔐 Connexion en cours...';
+                    button.disabled = true;
+                    button.style.opacity = '0.8';
+                });
+            }
+
+            // Ajouter un effet visuel sur le champ password au focus
+            const passwordField = document.querySelector('input[type="password"]');
+            if (passwordField) {
+                passwordField.addEventListener('focus', function() {
+                    this.style.transform = 'scale(1.02)';
+                });
+
+                passwordField.addEventListener('blur', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+>>>>>>> manel-dev
