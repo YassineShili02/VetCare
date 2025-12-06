@@ -1,0 +1,54 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Dossier Médical{% endblock %}
+
+{% block content %}
+    <section class="main-content section-padding">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h3>
+                                <i class="fas fa-notes-medical me-2"></i>
+                                Dossier Médical de {{ dossier.animal.nom }}
+                            </h3>
+                        </div>
+                        <div class="card-body">
+
+                            <p><strong>Numéro :</strong> {{ dossier.numeroDossier }}</p>
+                            <p><strong>Date de création :</strong> {{ dossier.dateCreation ? dossier.dateCreation|date('d/m/Y') : '' }}</p>
+                            <p><strong>Poids :</strong> {{ dossier.poids }} kg</p>
+                            <p><strong>État :</strong> {{ dossier.etat }}</p>
+                            <p><strong>Notes vétérinaire :</strong> {{ dossier.notesVeterinaire }}</p>
+                            <p><strong>Allergies :</strong> {{ dossier.allergies }}</p>
+                            <p><strong>Vaccinations :</strong> {{ dossier.vaccinations }}</p>
+                            <p><strong>Antécédents médicaux :</strong> {{ dossier.antecedentsMedicaux }}</p>
+
+                            <hr>
+
+                            <h5>Images Médicales :</h5>
+                            <div class="row g-3">
+                                {% for image in dossier.images %}
+                                    <div class="col-md-4">
+                                        <a href="{{ asset('uploads/dossier_medical/' ~ image) }}" target="_blank" download>
+                                            <img src="{{ asset('uploads/dossier_medical/' ~ image) }}"
+                                                 class="img-fluid rounded shadow-sm"
+                                                 style="cursor: zoom-in;"
+                                                 alt="Image médicale">
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <p>Aucune image disponible.</p>
+                                {% endfor %}
+                            </div>
+
+                            <a href="{{ path('lists_dossiers') }}" class="btn btn-secondary mt-3">Retour</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

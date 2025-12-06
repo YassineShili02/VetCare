@@ -16,6 +16,14 @@ class DossierMedicalRepository extends ServiceEntityRepository
         parent::__construct($registry, DossierMedical::class);
     }
 
+    public function findAllOrderByNewest(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.date_creation', 'DESC') // DESC = du plus récent au plus ancien
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return DossierMedical[] Returns an array of DossierMedical objects
     //     */

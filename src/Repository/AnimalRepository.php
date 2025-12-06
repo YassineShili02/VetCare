@@ -16,6 +16,32 @@ class AnimalRepository extends ServiceEntityRepository
         parent::__construct($registry, Animal::class);
     }
 
+    public function findAllSorted(string $sort, string $order): array
+    {
+        $allowedSorts = [
+            'nom' => 'a.nom',
+            'type_animal' => 'a.type_animal',
+            'sexe' => 'a.sexe',
+            'poids' => 'a.poids',
+            'couleur' => 'a.couleur',
+            'date_naissance' => 'a.date_naissance',
+            'date_enregistrement' => 'a.date_enregistrement',
+        ];
+
+        if (!isset($allowedSorts[$sort])) {
+            $sort = 'date_enregistrement';
+        }
+
+        $order = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
+
+        return $this->createQueryBuilder('a')
+            ->orderBy($allowedSorts[$sort], $order)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
     //    /**
     //     * @return Animal[] Returns an array of Animal objects
     //     */

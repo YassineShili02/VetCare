@@ -1,1 +1,63 @@
-{{ form() }}
+{% extends 'template.html.twig' %}
+
+{% block title %}Liste des Dossiers Médicaux{% endblock %}
+
+{% block content %}
+    <section class="main-content section-padding">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h3><i class="fas fa-notes-medical me-2"></i>Liste des Dossiers Médicaux</h3>
+                        </div>
+                        <div class="card-body">
+
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Numéro Dossier</th>
+                                    <th>Date Création</th>
+                                    <th>Poids</th>
+                                    <th>État</th>
+                                    <th>Animal</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for dossier in tabdossiers %}
+                                    <tr>
+                                        <td>{{ dossier.idDossier }}</td>
+                                        <td>{{ dossier.numeroDossier }}</td>
+                                        <td>{{ dossier.dateCreation ? dossier.dateCreation|date('d/m/Y') : '' }}</td>
+                                        <td>{{ dossier.poids }}</td>
+                                        <td>{{ dossier.etat }}</td>
+                                        <td>{{ dossier.animal.nom }}</td>
+                                        <td>
+                                            <a href="{{ path('update_dossier', {'id': dossier.idDossier}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                                            <a href="{{ path('remove_dossier', {'id': dossier.idDossier}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer ce dossier ?')">Supprimer</a>
+                                            <a href="{{ path('show_dossier', {'id': dossier.idDossier}) }}" class="btn btn-info btn-sm">Voir</a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center">Aucun dossier médical trouvé.</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+
+                            <div class="text-end mt-3">
+                                <a href="{{ path('addForm_dossier') }}" class="btn btn-success">
+                                    <i class="fas fa-plus me-1"></i>Ajouter un Dossier Médical
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

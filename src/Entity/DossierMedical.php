@@ -4,34 +4,35 @@ namespace App\Entity;
 
 use App\Repository\DossierMedicalRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: DossierMedicalRepository::class)]
 class DossierMedical
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column]
+    #[ORM\Column(name: "id_dossier")]
     private ?int $id_dossier = null;
 
     #[ORM\Column(length: 255)]
     private ?string $numero_dossier = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: "datetime")]
     private ?\DateTime $date_creation = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(nullable: true)]
     private ?float $poids = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Etat est obligatoire")]
     private ?string $etat = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?array $images = null;
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $images = [];
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(message: "Les notes sont obligatoires")]
     private ?string $notes_Veterinaire = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -43,25 +44,15 @@ class DossierMedical
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $antecedents_medicaux = null;
 
-    #[ORM\ManyToOne(inversedBy: 'dossier_animal')]
-    #[ORM\JoinColumn(nullable: false)]
+    // --- RELATION ONE TO ONE ---
+    #[ORM\OneToOne(inversedBy: 'dossier_animal', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: "animal_id", referencedColumnName: "id_animal", nullable: true)]
     private ?Animal $animal = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
+    // --- GETTERS & SETTERS ---
     public function getIdDossier(): ?int
     {
         return $this->id_dossier;
-    }
-
-    public function setIdDossier(int $id_dossier): static
-    {
-        $this->id_dossier = $id_dossier;
-
-        return $this;
     }
 
     public function getNumeroDossier(): ?string
@@ -72,7 +63,6 @@ class DossierMedical
     public function setNumeroDossier(string $numero_dossier): static
     {
         $this->numero_dossier = $numero_dossier;
-
         return $this;
     }
 
@@ -84,19 +74,17 @@ class DossierMedical
     public function setDateCreation(\DateTime $date_creation): static
     {
         $this->date_creation = $date_creation;
-
         return $this;
     }
 
-    public function getPoids(): ?string
+    public function getPoids(): ?float
     {
         return $this->poids;
     }
 
-    public function setPoids(?string $poids): static
+    public function setPoids(?float $poids): static
     {
         $this->poids = $poids;
-
         return $this;
     }
 
@@ -108,7 +96,6 @@ class DossierMedical
     public function setEtat(string $etat): static
     {
         $this->etat = $etat;
-
         return $this;
     }
 
@@ -120,7 +107,6 @@ class DossierMedical
     public function setImages(?array $images): static
     {
         $this->images = $images;
-
         return $this;
     }
 
@@ -132,7 +118,6 @@ class DossierMedical
     public function setNotesVeterinaire(?string $notes_Veterinaire): static
     {
         $this->notes_Veterinaire = $notes_Veterinaire;
-
         return $this;
     }
 
@@ -144,7 +129,6 @@ class DossierMedical
     public function setAllergies(?string $allergies): static
     {
         $this->allergies = $allergies;
-
         return $this;
     }
 
@@ -156,7 +140,6 @@ class DossierMedical
     public function setVaccinations(?string $vaccinations): static
     {
         $this->vaccinations = $vaccinations;
-
         return $this;
     }
 
@@ -168,7 +151,6 @@ class DossierMedical
     public function setAntecedentsMedicaux(?string $antecedents_medicaux): static
     {
         $this->antecedents_medicaux = $antecedents_medicaux;
-
         return $this;
     }
 
@@ -180,6 +162,11 @@ class DossierMedical
     public function setAnimal(?Animal $animal): static
     {
         $this->animal = $animal;
+
+        // Assure la liaison inverse
+        if ($animal !== null && $animal->getDossierAnimal() !== $this) {
+            $animal->setDossierAnimal($this);
+        }
 
         return $this;
     }

@@ -1,1 +1,50 @@
-{{ form(formAnimal) }}
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un Animal{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3><i class="fas fa-paw me-2"></i>Ajouter un Nouvel Animal</h3>
+                    </div>
+
+                    <div class="card-body">
+
+                        {{ form_start(formAnimal, {
+                            'attr': {'class': 'needs-validation', 'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}
+                        }) }}
+
+                        <div class="row g-3">
+
+                            {# On ignore _token pour éviter qu’il apparaisse dans les champs #}
+                            {% for field in formAnimal %}
+                                {% if field.vars.name != '_token' %}
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(field, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                        {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(field) }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                Ajouter l'animal
+                            </button>
+                        </div>
+
+                        {{ form_end(formAnimal) }}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
