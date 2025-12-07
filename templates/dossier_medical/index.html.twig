@@ -1,0 +1,16 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Dossiers Médicaux{% endblock %}
+
+{% block content %}
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-primary text-white">
+            <h4>Bienvenue sur le module Dossier Médical</h4>
+        </div>
+        <div class="card-body">
+            <p>Vous pouvez gérer les dossiers médicaux de vos animaux :</p>
+            <a href="{{ path('lists_dossiers') }}" class="btn btn-info">Voir la liste des dossiers</a>
+            <a href="{{ path('addForm_dossier') }}" class="btn btn-success">Ajouter un dossier</a>
+        </div>
+    </div>
+{% endblock %}
