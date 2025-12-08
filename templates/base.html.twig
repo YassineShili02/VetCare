@@ -7,9 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Système de gestion vétérinaire complet pour animaux de compagnie">
 
-    {# Favicon et CSS #}
+    {# Favicon #}
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('front/img/favicon.ico') }}">
-    <link rel="stylesheet" href="{{ asset('front/css/bootstrap.min.css') }}">
+    
+    {# Bootstrap 5 depuis CDN - IMPORTANT POUR LES FORMULAIRES #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    {# CSS personnalisés #}
     <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('front/css/responsive.css') }}">
     
@@ -54,177 +58,7 @@
             flex: 1;
             padding-top: 100px; /* Compense le header fixe */
             background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
-        }
-
-        /* ============ HEADER AMÉLIORÉ ============ */
-        .header-area {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #1e4620 100%);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-
-        .header-bottom {
-            padding: 15px 0;
-        }
-
-        .logo img {
-            max-height: 60px;
-            transition: var(--transition);
-        }
-
-        .logo img:hover {
-            transform: scale(1.05);
-        }
-
-        /* ============ NAVIGATION MENU ============ */
-        #navigation {
-            list-style: none;
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-
-        #navigation li {
-            position: relative;
-        }
-
-        #navigation li a {
-            color: #ffffff;
-            text-decoration: none;
-            padding: 12px 20px;
-            display: block;
-            font-weight: 500;
-            font-size: 15px;
-            border-radius: 8px;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        #navigation li a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        #navigation li a::after {
-            content: '';
-            position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%) scaleX(0);
-            width: 60%;
-            height: 2px;
-            background-color: var(--secondary-color);
-            transition: var(--transition);
-        }
-
-        #navigation li a:hover::after {
-            transform: translateX(-50%) scaleX(1);
-        }
-
-        /* Boutons spéciaux dans le menu */
-        #navigation li a[href*="logout"] {
-            background-color: rgba(220, 53, 69, 0.2);
-            border: 1px solid rgba(220, 53, 69, 0.3);
-        }
-
-        #navigation li a[href*="logout"]:hover {
-            background-color: var(--danger-color);
-            border-color: var(--danger-color);
-        }
-
-        #navigation li a[href*="user_new"] {
-            background-color: var(--secondary-color);
-            color: var(--dark-text);
-            font-weight: 600;
-        }
-
-        #navigation li a[href*="user_new"]:hover {
-            background-color: #a8d16f;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(151, 188, 98, 0.4);
-        }
-
-        /* ============ USER INFO DANS LE HEADER ============ */
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50px;
-            margin-left: 15px;
-        }
-
-        .user-info .avatar-small {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--secondary-color);
-        }
-
-        .user-info span {
-            color: #ffffff;
-            font-weight: 500;
-        }
-
-        /* ============ BADGES DE RÔLE ============ */
-        .role-badge {
-            display: inline-block;
-            font-size: 0.75rem;
-            padding: 0.35rem 0.8rem;
-            border-radius: 20px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .badge-user {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-        }
-
-        .badge-vet {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            color: white;
-        }
-
-        .badge-admin {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-        }
-
-        /* ============ AVATARS ============ */
-        .avatar-small {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--secondary-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        .avatar-medium {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--secondary-color);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-        }
-
-        .avatar-large {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--secondary-color);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            min-height: 70vh;
         }
 
         /* ============ MESSAGES FLASH AMÉLIORÉS ============ */
@@ -289,93 +123,6 @@
             padding: 20px;
         }
 
-        /* ============ FOOTER AMÉLIORÉ ============ */
-        footer {
-            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
-            color: #ecf0f1;
-            margin-top: 60px;
-        }
-
-        .footer-area {
-            padding: 60px 0 30px;
-        }
-
-        .single-footer-caption h4 {
-            color: var(--secondary-color);
-            font-weight: 600;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-        }
-
-        .footer-pera p {
-            color: #bdc3c7;
-            line-height: 1.8;
-        }
-
-        .footer-social {
-            margin-top: 25px;
-            display: flex;
-            gap: 15px;
-        }
-
-        .footer-social a {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.1);
-            color: #ecf0f1;
-            border-radius: 50%;
-            transition: var(--transition);
-            font-size: 1.2rem;
-        }
-
-        .footer-social a:hover {
-            background: var(--secondary-color);
-            color: var(--dark-text);
-            transform: translateY(-5px);
-        }
-
-        .footer-tittle ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-tittle ul li {
-            margin-bottom: 12px;
-        }
-
-        .footer-tittle ul li a {
-            color: #bdc3c7;
-            text-decoration: none;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-        }
-
-        .footer-tittle ul li a:hover {
-            color: var(--secondary-color);
-            padding-left: 5px;
-        }
-
-        .footer-tittle ul li a::before {
-            content: '▸';
-            margin-right: 8px;
-            color: var(--secondary-color);
-        }
-
-        .footer-bottom-area {
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 20px 0;
-            text-align: center;
-        }
-
-        .footer-bottom-area p {
-            margin: 0;
-            color: #95a5a6;
-        }
-
         /* ============ SCROLLBAR PERSONNALISÉE ============ */
         ::-webkit-scrollbar {
             width: 10px;
@@ -399,15 +146,6 @@
             .main-content {
                 padding-top: 80px;
             }
-
-            #navigation {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .user-info {
-                margin: 15px 0;
-            }
         }
 
         /* ============ ANIMATIONS UTILES ============ */
@@ -425,75 +163,8 @@
 </head>
 <body>
 
-    {# ================== HEADER ================== #}
-    <header>
-        <div class="header-area header-transparent">
-            <div class="main-header">
-                <div class="header-bottom header-sticky">
-                    <div class="container-fluid">
-                        <div class="menu-wrapper d-flex align-items-center justify-content-between">
-
-                            <!-- Logo -->
-                            <div class="logo">
-                                <a href="{{ path('home') }}">
-                                    <img src="{{ asset('assets/img/logo/logo.png') }}" alt="VetCare Logo">
-                                </a>
-                            </div>
-
-                            <!-- Menu Principal -->
-                            <div class="main-menu f-right d-none d-lg-block">
-                                <nav>
-                                    <ul id="navigation">
-                                        <li><a href="{{ path('home') }}"><i class="fas fa-home"></i> Accueil</a></li>
-                                        <li><a href="#"><i class="fas fa-info-circle"></i> À propos</a></li>
-                                        <li><a href="#"><i class="fas fa-stethoscope"></i> Services</a></li>
-                                        <li><a href="{{ path('lists_animaux') }}"><i class="fas fa-paw"></i> Animaux</a></li>
-                                        <li><a href="{{ path('lists_dossiers') }}"><i class="fas fa-folder-open"></i> Dossiers</a></li>
-
-                                        {% if app.user %}
-                                            {% if is_granted('ROLE_ADMIN') %}
-                                                <li><a href="{{ path('app_user_index') }}"><i class="fas fa-users"></i> Utilisateurs</a></li>
-                                            {% endif %}
-                                            <li><a href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
-                                        {% else %}
-                                            <li><a href="{{ path('app_login') }}"><i class="fas fa-sign-in-alt"></i> Connexion</a></li>
-                                        {% endif %}
-
-                                        <li><a href="{{ path('app_user_new') }}"><i class="fas fa-user-plus"></i> Créer un compte</a></li>
-                                    </ul>
-                                </nav>
-                            </div>
-
-                            <!-- Info Utilisateur (si connecté) -->
-                            {% if app.user %}
-                                <div class="user-info d-none d-lg-flex">
-                                    {% if app.user.profilePhoto %}
-                                        <img src="{{ asset('uploads/profiles/' ~ app.user.profilePhoto) }}" 
-                                             alt="Avatar" class="avatar-small">
-                                    {% else %}
-                                        <div class="avatar-small d-flex align-items-center justify-content-center bg-secondary text-white" 
-                                             style="font-weight: bold; font-size: 0.9rem;">
-                                            {{ app.user.initials }}
-                                        </div>
-                                    {% endif %}
-                                    <span>{{ app.user.fullName }}</span>
-                                    <span class="role-badge {{ app.user.roleCssClass }} ms-2">
-                                        {{ app.user.roleLabel }}
-                                    </span>
-                                </div>
-                            {% endif %}
-
-                            <!-- Mobile Menu Toggle -->
-                            <div class="header-right-btn f-right d-lg-none">
-                                <i class="fas fa-bars" style="color: white; font-size: 1.5rem;"></i>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    {# ================== HEADER (PARTIAL) ================== #}
+    {% include 'partials/header.html.twig' %}
 
     {# ================== CONTENU PRINCIPAL ================== #}
     <div class="main-content fade-in">
@@ -538,107 +209,25 @@
         </div>
     </div>
 
-    {# ================== FOOTER ================== #}
-    <footer>
-        <div class="footer-area footer-padding">
-            <div class="container">
-                <div class="row d-flex justify-content-between">
-
-                    <!-- Section À propos -->
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                        <div class="single-footer-caption mb-50">
-                            <div class="footer-logo mb-25">
-                                <a href="{{ path('home') }}">
-                                    <img src="{{ asset('front/img/logo/logo2_footer.png') }}" alt="VetCare Logo">
-                                </a>
-                            </div>
-                            <div class="footer-pera">
-                                <p>Votre clinique vétérinaire de confiance. Nous prenons soin de vos compagnons avec professionnalisme et dévouement.</p>
-                            </div>
-                            <div class="footer-social">
-                                <a href="#" title="Facebook"><i class="fab fa-facebook-square"></i></a>
-                                <a href="#" title="Twitter"><i class="fab fa-twitter-square"></i></a>
-                                <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                                <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Navigation rapide -->
-                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6">
-                        <div class="footer-tittle">
-                            <h4>Navigation</h4>
-                            <ul>
-                                <li><a href="{{ path('home') }}">Accueil</a></li>
-                                <li><a href="{{ path('lists_animaux') }}">Animaux</a></li>
-                                <li><a href="{{ path('lists_dossiers') }}">Dossiers</a></li>
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    <li><a href="{{ path('app_user_index') }}">Utilisateurs</a></li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Services -->
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                        <div class="footer-tittle">
-                            <h4>Nos Services</h4>
-                            <ul>
-                                <li><a href="#">Consultations</a></li>
-                                <li><a href="#">Vaccinations</a></li>
-                                <li><a href="#">Chirurgie</a></li>
-                                <li><a href="#">Analyses</a></li>
-                                <li><a href="#">Urgences 24/7</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Contact -->
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                        <div class="footer-tittle">
-                            <h4>Contactez-nous</h4>
-                            <ul>
-                                <li><a href="tel:+21612345678"><i class="fas fa-phone"></i> +216 12 345 678</a></li>
-                                <li><a href="mailto:contact@vetcare.tn"><i class="fas fa-envelope"></i> contact@vetcare.tn</a></li>
-                                <li><a href="#"><i class="fas fa-map-marker-alt"></i> Tunis, Tunisie</a></li>
-                                <li><a href="#"><i class="fas fa-clock"></i> Lun-Sam: 8h-20h</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer Bottom -->
-        <div class="footer-bottom-area">
-            <div class="container">
-                <div class="footer-border">
-                    <div class="row d-flex align-items-center">
-                        <div class="col-xl-12 text-center">
-                            <p>
-                                &copy; {{ "now"|date("Y") }} <strong>VetCare</strong> - Système de Gestion Vétérinaire 
-                                | Tous droits réservés | 
-                                <a href="#" style="color: var(--secondary-color);">Politique de confidentialité</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+    {# ================== FOOTER (PARTIAL) ================== #}
+    {% include 'partials/footer.html.twig' %}
 
     {# ================== SCRIPTS ================== #}
-    <script src="{{ asset('front/js/vendor/modernizr-3.5.0.min.js') }}"></script>
+    {# jQuery - Nécessaire pour certains plugins #}
     <script src="{{ asset('front/js/vendor/jquery-1.12.4.min.js') }}"></script>
-    <script src="{{ asset('front/js/popper.min.js') }}"></script>
-    <script src="{{ asset('front/js/bootstrap.min.js') }}"></script>
+    
+    {# Bootstrap 5 Bundle (includes Popper) #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {# Autres scripts personnalisés #}
+    <script src="{{ asset('front/js/vendor/modernizr-3.5.0.min.js') }}"></script>
     <script src="{{ asset('front/js/jquery.slicknav.min.js') }}"></script>
     <script src="{{ asset('front/js/owl.carousel.min.js') }}"></script>
     <script src="{{ asset('front/js/slick.min.js') }}"></script>
     <script src="{{ asset('front/js/wow.min.js') }}"></script>
     <script src="{{ asset('front/js/jquery.magnific-popup.js') }}"></script>
-    <script src="{{ asset('front/js/jquery.nice-select.min.js') }}"></script>
+    {# NICE-SELECT DÉSACTIVÉ - Conflit avec Bootstrap 5 forms #}
+    {# <script src="{{ asset('front/js/jquery.nice-select.min.js') }}"></script> #}
     <script src="{{ asset('front/js/jquery.sticky.js') }}"></script>
     <script src="{{ asset('front/js/plugins.js') }}"></script>
     <script src="{{ asset('front/js/main.js') }}"></script>

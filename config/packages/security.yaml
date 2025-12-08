@@ -1,13 +1,13 @@
 security:
   enable_authenticator_manager: true
 
-  # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+  # Password hashing
   password_hashers:
-    Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: auto
     App\Entity\User:
       algorithm: auto
 
-  # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+  # User provider (User en base de données)
   providers:
     app_user_provider:
       entity:
@@ -25,9 +25,7 @@ security:
       custom_authenticator: App\Security\AppAuthenticator
       logout:
         path: app_logout
-        # target: app_homepage
 
-  # Access control rules
   access_control:
   # - { path: ^/admin, roles: ROLE_ADMIN }
   # - { path: ^/profile, roles: ROLE_USER }
