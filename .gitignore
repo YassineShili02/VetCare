@@ -9,14 +9,14 @@
 /public/bundles/
 /var/
 /vendor/
-/migrations/
+
 ###< symfony/framework-bundle ###
-/Security/
+
 ###> phpunit/phpunit ###
 /phpunit.xml
 /.phpunit.cache/
 ###< phpunit/phpunit ###
-/Repository/
+
 ###> symfony/asset-mapper ###
 /public/assets/
 /assets/vendor/
