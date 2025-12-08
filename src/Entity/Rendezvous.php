@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RendezvousRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Rendezvous
 {
     #[ORM\Id]
@@ -18,6 +19,7 @@ class Rendezvous
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\NotBlank(message: "La date et l'heure sont obligatoires")]
     #[Assert\Type(\DateTimeInterface::class, message: "Format de date invalide")]
+    #[Assert\GreaterThan("today", message: "La date du rendez-vous doit être dans le futur")]
     private ?\DateTimeInterface $dateHeure = null;
 
     #[ORM\Column(length: 100)]
@@ -32,10 +34,6 @@ class Rendezvous
     )]
     private ?string $type = null;
 
-    #[ORM\ManyToOne(inversedBy: 'rendezvous')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Veterinaire $veterinaire = null;
-
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank(message: "Le statut est obligatoire")]
     #[Assert\Choice(
@@ -45,9 +43,17 @@ class Rendezvous
     private ?string $statut = 'en_attente';
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(
+        max: 1000,
+        maxMessage: "Les notes ne peuvent pas dépasser {{ limit }} caractères"
+    )]
     private ?string $notesClient = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(
+        max: 2000,
+        maxMessage: "Les notes ne peuvent pas dépasser {{ limit }} caractères"
+    )]
     private ?string $notesVeterinaire = null;
 
     #[ORM\Column(length: 50)]
@@ -65,7 +71,7 @@ class Rendezvous
 
     #[ORM\Column(length: 50, nullable: true)]
     #[Assert\Choice(
-        choices: ['especes', 'carte_bancaire', 'cheque', 'virement'],
+        choices: ['especes', 'carte_bancaire', 'cheque', 'virement', 'mobile_payment'],
         message: "Veuillez sélectionner une méthode de paiement valide"
     )]
     private ?string $methodePaiement = null;
@@ -81,6 +87,10 @@ class Rendezvous
         max: 255,
         minMessage: "Le nom doit contenir au moins {{ limit }} caractères",
         maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères"
+    )]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-ZÀ-ÿ\s\-']+$/u",
+        message: "Le nom ne peut contenir que des lettres"
     )]
     private ?string $nomClient = null;
 
@@ -110,14 +120,56 @@ class Rendezvous
         max: 255,
         maxMessage: "Le nom de l'animal ne peut pas dépasser {{ limit }} caractères"
     )]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-ZÀ-ÿ\s\-']+$/u",
+        message: "Le nom de l'animal ne peut contenir que des lettres"
+    )]
     private ?string $nomAnimal = null;
 
     #[ORM\Column(length: 50, nullable: true)]
     #[Assert\Choice(
-        choices: ['chien', 'chat', 'oiseau', 'rongeur', 'reptile', 'autre'],
+        choices: ['chien', 'chat', 'oiseau', 'rongeur', 'reptile', 'lapin', 'furet', 'autre'],
         message: "Veuillez sélectionner une espèce valide"
     )]
     private ?string $especeAnimal = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $dateCreation = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $dateModification = null;
+
+    // --- RELATIONS (UNIDIRECTIONNELLES - pas besoin de modifier les autres entités) ---
+    
+    // Relation avec User - UNIDIRECTIONNELLE (pas d'inversedBy)
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'client_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $client = null;
+
+    // Relation avec Animal - UNIDIRECTIONNELLE (pas d'inversedBy)
+    #[ORM\ManyToOne(targetEntity: Animal::class)]
+    #[ORM\JoinColumn(name: 'animal_id', referencedColumnName: 'id_animal', nullable: true, onDelete: 'SET NULL')]
+    private ?Animal $animal = null;
+
+    // Relation avec Clinique - BIDIRECTIONNELLE
+    #[ORM\ManyToOne(targetEntity: Clinique::class, inversedBy: 'rendezvous')]
+    #[ORM\JoinColumn(name: 'clinique_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?Clinique $clinique = null;
+
+    public function __construct()
+    {
+        $this->dateCreation = new \DateTime();
+        $this->statut = 'en_attente';
+        $this->statutPaiement = 'non_paye';
+    }
+
+    #[ORM\PreUpdate]
+    public function setDateModificationValue(): void
+    {
+        $this->dateModification = new \DateTime();
+    }
+
+    // --- GETTERS & SETTERS ---
 
     public function getId(): ?int
     {
@@ -143,17 +195,6 @@ class Rendezvous
     public function setType(string $type): static
     {
         $this->type = $type;
-        return $this;
-    }
-
-    public function getVeterinaire(): ?Veterinaire
-    {
-        return $this->veterinaire;
-    }
-
-    public function setVeterinaire(?Veterinaire $veterinaire): static
-    {
-        $this->veterinaire = $veterinaire;
         return $this;
     }
 
@@ -289,6 +330,65 @@ class Rendezvous
         return $this;
     }
 
+    public function getDateCreation(): ?\DateTimeInterface
+    {
+        return $this->dateCreation;
+    }
+
+    public function setDateCreation(\DateTimeInterface $dateCreation): static
+    {
+        $this->dateCreation = $dateCreation;
+        return $this;
+    }
+
+    public function getDateModification(): ?\DateTimeInterface
+    {
+        return $this->dateModification;
+    }
+
+    public function setDateModification(?\DateTimeInterface $dateModification): static
+    {
+        $this->dateModification = $dateModification;
+        return $this;
+    }
+
+    // --- RELATIONS GETTERS & SETTERS ---
+
+    public function getClient(): ?User
+    {
+        return $this->client;
+    }
+
+    public function setClient(?User $client): static
+    {
+        $this->client = $client;
+        return $this;
+    }
+
+    public function getAnimal(): ?Animal
+    {
+        return $this->animal;
+    }
+
+    public function setAnimal(?Animal $animal): static
+    {
+        $this->animal = $animal;
+        return $this;
+    }
+
+    public function getClinique(): ?Clinique
+    {
+        return $this->clinique;
+    }
+
+    public function setClinique(?Clinique $clinique): static
+    {
+        $this->clinique = $clinique;
+        return $this;
+    }
+
+    // --- MÉTHODES UTILITAIRES ---
+
     public function getStatutBadgeClass(): string
     {
         return match($this->statut) {
@@ -310,5 +410,84 @@ class Rendezvous
             'rembourse' => 'info',
             default => 'secondary'
         };
+    }
+
+    public function getTypeBadgeClass(): string
+    {
+        return match($this->type) {
+            'urgence' => 'danger',
+            'chirurgie' => 'warning',
+            'vaccination' => 'info',
+            'consultation' => 'primary',
+            default => 'secondary'
+        };
+    }
+
+    public function getStatutLabel(): string
+    {
+        return match($this->statut) {
+            'en_attente' => 'En attente',
+            'confirme' => 'Confirmé',
+            'refuse' => 'Refusé',
+            'termine' => 'Terminé',
+            'annule' => 'Annulé',
+            default => 'Inconnu'
+        };
+    }
+
+    public function getTypeLabel(): string
+    {
+        return match($this->type) {
+            'consultation' => 'Consultation',
+            'vaccination' => 'Vaccination',
+            'chirurgie' => 'Chirurgie',
+            'urgence' => 'Urgence',
+            'controle' => 'Contrôle',
+            'sterilisation' => 'Stérilisation',
+            'dentaire' => 'Soins dentaires',
+            'autre' => 'Autre',
+            default => 'Non défini'
+        };
+    }
+
+    public function isPasse(): bool
+    {
+        return $this->dateHeure < new \DateTime();
+    }
+
+    public function isAVenir(): bool
+    {
+        return $this->dateHeure > new \DateTime();
+    }
+
+    public function isAujourdhui(): bool
+    {
+        $aujourd_hui = new \DateTime();
+        return $this->dateHeure->format('Y-m-d') === $aujourd_hui->format('Y-m-d');
+    }
+
+    public function getDuree(): int
+    {
+        // Retourne la durée estimée en minutes selon le type
+        return match($this->type) {
+            'chirurgie' => 120,
+            'urgence' => 60,
+            'vaccination' => 30,
+            'consultation' => 45,
+            'controle' => 30,
+            'sterilisation' => 90,
+            'dentaire' => 60,
+            default => 45
+        };
+    }
+
+    public function __toString(): string
+    {
+        return sprintf(
+            'RDV #%d - %s le %s',
+            $this->id ?? 0,
+            $this->nomClient ?? 'Client',
+            $this->dateHeure ? $this->dateHeure->format('d/m/Y H:i') : 'Date inconnue'
+        );
     }
 }

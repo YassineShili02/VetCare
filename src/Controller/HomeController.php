@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Form\ContactType;
+use App\Repository\MedicamentRepository;
+use App\Repository\TraitementRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
@@ -47,6 +49,17 @@ class HomeController extends AbstractController
 
         return $this->render('home/contact.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/client', name: 'app_client_interface')]
+    public function clientInterface(
+        MedicamentRepository $medicamentRepository,
+        TraitementRepository $traitementRepository
+    ): Response {
+        return $this->render('client/interface.html.twig', [
+            'medicaments' => $medicamentRepository->findAll(),
+            'traitements' => $traitementRepository->findAll(),
         ]);
     }
 }

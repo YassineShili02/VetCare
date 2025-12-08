@@ -1,46 +1,236 @@
-<header>
-    <div class="header-area">
-        <div class="main-header header-sticky">
-            <div class="container-fluid">
-                <div class="row align-items-center">
+{# templates/partials/header.html.twig #}
 
-                    <!-- Logo -->
-                    <div class="col-xl-2 col-lg-2 col-md-1">
+<style>
+    /* ============ HEADER STYLES ============ */
+    .header-area {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #1e4620 100%);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+    }
+
+    .header-bottom {
+        padding: 15px 0;
+    }
+
+    .logo img {
+        max-height: 60px;
+        transition: var(--transition);
+    }
+
+    .logo img:hover {
+        transform: scale(1.05);
+    }
+
+    /* ============ NAVIGATION MENU ============ */
+    #navigation {
+        list-style: none;
+        display: flex;
+        gap: 5px;
+        align-items: center;
+    }
+
+    #navigation li {
+        position: relative;
+    }
+
+    #navigation li a {
+        color: #ffffff;
+        text-decoration: none;
+        padding: 12px 20px;
+        display: block;
+        font-weight: 500;
+        font-size: 15px;
+        border-radius: 8px;
+        transition: var(--transition);
+        position: relative;
+    }
+
+    #navigation li a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    #navigation li a::after {
+        content: '';
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%) scaleX(0);
+        width: 60%;
+        height: 2px;
+        background-color: var(--secondary-color);
+        transition: var(--transition);
+    }
+
+    #navigation li a:hover::after {
+        transform: translateX(-50%) scaleX(1);
+    }
+
+    /* Boutons spéciaux dans le menu */
+    #navigation li a[href*="logout"] {
+        background-color: rgba(220, 53, 69, 0.2);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+
+    #navigation li a[href*="logout"]:hover {
+        background-color: var(--danger-color);
+        border-color: var(--danger-color);
+    }
+
+    #navigation li a[href*="user_new"] {
+        background-color: var(--secondary-color);
+        color: var(--dark-text);
+        font-weight: 600;
+    }
+
+    #navigation li a[href*="user_new"]:hover {
+        background-color: #a8d16f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(151, 188, 98, 0.4);
+    }
+
+    /* ============ USER INFO ============ */
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        margin-left: 15px;
+    }
+
+    .user-info .avatar-small {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--secondary-color);
+    }
+
+    .user-info span {
+        color: #ffffff;
+        font-weight: 500;
+    }
+
+    /* ============ BADGES DE RÔLE ============ */
+    .role-badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        padding: 0.35rem 0.8rem;
+        border-radius: 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .badge-user {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+    }
+
+    .badge-vet {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        color: white;
+    }
+
+    .badge-admin {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+    }
+
+    /* ============ AVATARS ============ */
+    .avatar-small {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--secondary-color);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 991px) {
+        #navigation {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .user-info {
+            margin: 15px 0;
+        }
+    }
+</style>
+
+<header>
+    <div class="header-area header-transparent">
+        <div class="main-header">
+            <div class="header-bottom header-sticky">
+                <div class="container-fluid">
+                    <div class="menu-wrapper d-flex align-items-center justify-content-between">
+
+                        <!-- Logo -->
                         <div class="logo">
-                            <a href="{{ path('app_home') }}">
+                            <a href="{{ path('home') }}">
                                 <img src="{{ asset('assets/img/logo/logo.png') }}" alt="VetCare Logo">
                             </a>
                         </div>
-                    </div>
 
-                    <div class="col-xl-10 col-lg-10 col-md-10">
-                        <div class="menu-main d-flex align-items-center justify-content-end">
+                        <!-- Menu Principal -->
+                        <div class="main-menu f-right d-none d-lg-block">
+                            <nav>
+                                <ul id="navigation">
+                                    <li><a href="{{ path('home') }}"><i class="fas fa-home"></i> Accueil</a></li>
+                                    <li>  <a href="{{ path('rendezvous_new') }}" class="nav-btn rdv-btn">📅 Rendez-vous</a></li>
+                                    <li><a href="#"><i class="fas fa-info-circle"></i> À propos</a></li>
+                                    <li><a href="#"><i class="fas fa-stethoscope"></i> Services</a></li>
+                                    <li><a href="{{ path('lists_animaux') }}"><i class="fas fa-paw"></i> Animaux</a></li>
+                                    <li><a href="{{ path('lists_dossiers') }}"><i class="fas fa-folder-open"></i> Dossiers</a></li>
 
-                            <div class="main-menu f-right d-none d-lg-block">
-                                <nav>
-                                    <ul id="navigation">
-                                        <li><a href="{{ path('app_home') }}">Accueil</a></li>
-                                        <li><a href="{{ path('app_about') }}">À propos</a></li>
-                                        <li><a href="{{ path('app_services') }}">Nos Services</a></li>
-                                        <li><a href="{{ path('app_blog') }}">Actualités</a></li>
-                                        <li><a href="{{ path('app_contact') }}">Contact</a></li>
-                                        <li><a href="{{ path('rendezvous_new') }}" class="btn-rdv">Prendre RDV</a></li>
-                                    </ul>
-                                </nav>
-                            </div>
+                                    {% if app.user %}
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <li><a href="{{ path('app_user_index') }}"><i class="fas fa-users"></i> Utilisateurs</a></li>
+                                        {% endif %}
+                                        <li><a href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+                                    {% else %}
+                                        <li><a href="{{ path('app_login') }}"><i class="fas fa-sign-in-alt"></i> Connexion</a></li>
+                                    {% endif %}
 
-                            <div class="header-right-btn f-right d-none d-lg-block ml-30">
-                                <a href="tel:01654066456" class="header-btn">01654.066.456</a>
-                            </div>
-
+                                    <li><a href="{{ path('app_user_new') }}"><i class="fas fa-user-plus"></i> Créer un compte</a></li>
+                                </ul>
+                            </nav>
                         </div>
-                    </div>
 
-                    <!-- Mobile menu -->
-                    <div class="col-12">
-                        <div class="mobile_menu d-block d-lg-none"></div>
-                    </div>
+                        <!-- Info Utilisateur (si connecté) -->
+                        {% if app.user %}
+                            <div class="user-info d-none d-lg-flex">
+                                {% if app.user.profilePhoto %}
+                                    <img src="{{ asset('uploads/profiles/' ~ app.user.profilePhoto) }}" 
+                                         alt="Avatar" class="avatar-small">
+                                {% else %}
+                                    <div class="avatar-small d-flex align-items-center justify-content-center bg-secondary text-white" 
+                                         style="font-weight: bold; font-size: 0.9rem;">
+                                        {{ app.user.initials }}
+                                    </div>
+                                {% endif %}
+                                <span>{{ app.user.fullName }}</span>
+                                <span class="role-badge {{ app.user.roleCssClass }} ms-2">
+                                    {{ app.user.roleLabel }}
+                                </span>
+                            </div>
+                        {% endif %}
 
+                        <!-- Mobile Menu Toggle -->
+                        <div class="header-right-btn f-right d-lg-none">
+                            <i class="fas fa-bars" style="color: white; font-size: 1.5rem;"></i>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

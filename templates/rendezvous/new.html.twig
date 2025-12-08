@@ -2,734 +2,377 @@
 
 {% block title %}Prendre rendez-vous - VetCare{% endblock %}
 
-{% block body %}
-<style>
-    :root {
-        --primary-color: #667eea;
-        --primary-light: #f0f3ff;
-        --success-color: #48bb78;
-        --text-dark: #2d3748;
-        --text-light: #718096;
-        --border-color: #e2e8f0;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-    }
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --primary-light: #f0f3ff;
+            --success-color: #48bb78;
+            --text-dark: #2d3748;
+            --text-light: #718096;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
 
-    .appointment-wrapper {
-        max-width: 900px;
-        margin: 3rem auto;
-        padding: 0 1.5rem;
-    }
-
-    .page-header {
-        text-align: center;
-        margin-bottom: 2.5rem;
-    }
-
-    .page-header h1 {
-        color: var(--text-dark);
-        font-weight: 700;
-        font-size: 2.25rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .page-header p {
-        color: var(--text-light);
-        font-size: 1.05rem;
-    }
-
-    .vet-selector {
-        background: white;
-        border-radius: 12px;
-        padding: 1.75rem;
-        margin-bottom: 2.5rem;
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-color);
-    }
-
-    .vet-selector-header {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        margin-bottom: 1.25rem;
-        color: var(--text-dark);
-        font-weight: 600;
-        font-size: 1.05rem;
-    }
-
-    .vet-selector-header i {
-        color: var(--primary-color);
-        font-size: 1.2rem;
-    }
-
-    .vet-form-group {
-        display: flex;
-        gap: 1rem;
-        align-items: end;
-    }
-
-    .vet-form-group > div {
-        flex: 1;
-    }
-
-    .form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: var(--text-dark);
-        font-weight: 500;
-        font-size: 0.9rem;
-    }
-
-    .form-select {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 2px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 0.95rem;
-        transition: all 0.2s;
-        background: white;
-    }
-
-    .form-select:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    .btn-search {
-        padding: 0.75rem 1.5rem;
-        background: linear-gradient(135deg, var(--primary-color) 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        white-space: nowrap;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .btn-search:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .btn-search i {
-        margin-right: 0.4rem;
-    }
-
-    .alert-custom {
-        background: var(--primary-light);
-        border-left: 4px solid var(--primary-color);
-        border-radius: 10px;
-        padding: 1.1rem 1.3rem;
-        display: flex;
-        align-items: center;
-        gap: 0.9rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .alert-custom i {
-        color: var(--primary-color);
-        font-size: 1.3rem;
-    }
-
-    .slots-section-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .slots-section-header h2 {
-        color: var(--text-dark);
-        font-weight: 700;
-        font-size: 1.75rem;
-        margin-bottom: 0.4rem;
-    }
-
-    .slots-section-header p {
-        color: var(--text-light);
-        font-size: 0.95rem;
-    }
-
-    .day-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-color);
-        overflow: hidden;
-    }
-
-    .day-card-header {
-        background: linear-gradient(135deg, var(--primary-color) 0%, #764ba2 100%);
-        padding: 1.25rem 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .date-selector-wrapper {
-        position: relative;
-        flex: 1;
-    }
-
-    .date-selector-btn {
-        background: rgba(255, 255, 255, 0.15);
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        padding: 0.65rem 1.25rem;
-        border-radius: 8px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 1.2rem;
-        font-weight: 700;
-        transition: all 0.2s;
-        width: 100%;
-        max-width: 400px;
-    }
-
-    .date-selector-btn:hover {
-        background: rgba(255, 255, 255, 0.25);
-    }
-
-    .date-selector-btn i.fa-calendar-alt {
-        font-size: 1.3rem;
-    }
-
-    .date-selector-btn i.fa-chevron-down {
-        margin-left: auto;
-        font-size: 0.9rem;
-        transition: transform 0.3s;
-    }
-
-    .date-selector-btn.active i.fa-chevron-down {
-        transform: rotate(180deg);
-    }
-
-    .date-dropdown {
-        position: absolute;
-        top: calc(100% + 0.5rem);
-        left: 0;
-        right: 0;
-        background: white;
-        border-radius: 10px;
-        box-shadow: var(--shadow-lg);
-        border: 1px solid var(--border-color);
-        max-height: 300px;
-        overflow-y: auto;
-        z-index: 1000;
-        display: none;
-    }
-
-    .date-dropdown.show {
-        display: block;
-    }
-
-    .date-option {
-        padding: 0.9rem 1.25rem;
-        cursor: pointer;
-        transition: background 0.2s;
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .date-option:last-child {
-        border-bottom: none;
-    }
-
-    .date-option:hover {
-        background: var(--primary-light);
-    }
-
-    .date-option.active {
-        background: var(--primary-light);
-        color: var(--primary-color);
-        font-weight: 600;
-    }
-
-    .date-option-label {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-    }
-
-    .date-option-badge {
-        background: #e2e8f0;
-        color: var(--text-dark);
-        padding: 0.2rem 0.6rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-
-    .date-option.active .date-option-badge {
-        background: var(--primary-color);
-        color: white;
-    }
-
-    .slots-badge {
-        background: rgba(255, 255, 255, 0.25);
-        color: white;
-        padding: 0.3rem 0.75rem;
-        border-radius: 15px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-
-    .timeline-container {
-        padding: 1.75rem 1.5rem;
-    }
-
-    .time-period {
-        margin-bottom: 1.5rem;
-    }
-
-    .time-period:last-child {
-        margin-bottom: 0;
-    }
-
-    .time-period-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.85rem 1rem;
-        background: var(--primary-light);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
-        margin-bottom: 1rem;
-    }
-
-    .time-period-header:hover {
-        background: #e5ebff;
-    }
-
-    .time-period-header-left {
-        display: flex;
-        align-items: center;
-        gap: 0.65rem;
-    }
-
-    .time-period-icon {
-        width: 36px;
-        height: 36px;
-        background: white;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-color);
-        font-size: 1.1rem;
-    }
-
-    .time-period-title {
-        color: var(--text-dark);
-        font-weight: 600;
-        font-size: 1.05rem;
-        margin: 0;
-    }
-
-    .time-period-subtitle {
-        color: var(--text-light);
-        font-size: 0.82rem;
-        margin: 0;
-    }
-
-    .time-period-toggle {
-        width: 28px;
-        height: 28px;
-        background: white;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-color);
-        font-size: 0.85rem;
-        transition: transform 0.3s;
-    }
-
-    .time-period.collapsed .time-period-toggle {
-        transform: rotate(-90deg);
-    }
-
-    .time-period-content {
-        max-height: 1000px;
-        overflow: hidden;
-        transition: max-height 0.3s ease, opacity 0.3s ease;
-        opacity: 1;
-    }
-
-    .time-period.collapsed .time-period-content {
-        max-height: 0;
-        opacity: 0;
-    }
-
-    .slots-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 0.85rem;
-    }
-
-    .slot-card {
-        background: white;
-        border: 2px solid var(--border-color);
-        border-radius: 10px;
-        padding: 1rem 1.1rem;
-        text-decoration: none;
-        color: var(--text-dark);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.45rem;
-        transition: all 0.25s ease;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .slot-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--primary-color), #764ba2);
-        transform: scaleX(0);
-        transition: transform 0.25s ease;
-    }
-
-    .slot-card:hover {
-        border-color: var(--primary-color);
-        background: var(--primary-light);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .slot-card:hover::before {
-        transform: scaleX(1);
-    }
-
-    .slot-time-display {
-        font-weight: 700;
-        font-size: 1.15rem;
-        color: var(--text-dark);
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-    }
-
-    .slot-time-display i {
-        color: var(--primary-color);
-        font-size: 1rem;
-    }
-
-    .slot-vet-name {
-        font-size: 0.8rem;
-        color: var(--text-light);
-        font-weight: 500;
-        text-align: center;
-    }
-
-    .slot-card:hover .slot-vet-name {
-        color: var(--primary-color);
-    }
-
-    .slot-duration {
-        font-size: 0.7rem;
-        color: var(--text-light);
-        background: #f7fafc;
-        padding: 0.15rem 0.5rem;
-        border-radius: 5px;
-    }
-
-    @media (max-width: 768px) {
         .appointment-wrapper {
-            max-width: 100%;
-            padding: 0 1rem;
-            margin: 2rem auto;
+            max-width: 1100px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
         }
 
         .page-header h1 {
-            font-size: 1.75rem;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
         }
 
-        .vet-form-group {
-            flex-direction: column;
-            align-items: stretch;
+        .page-header p {
+            color: var(--text-light);
+            font-size: 1.05rem;
         }
 
-        .date-selector-btn {
-            font-size: 1rem;
-            max-width: 100%;
+        .clinique-selector {
+            background: white;
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
         }
 
-        .slots-grid {
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 0.7rem;
+        .clinique-selector-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.25rem;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 1.05rem;
         }
 
-        .slot-card {
-            padding: 0.85rem 0.9rem;
+        .clinique-selector-header i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
         }
 
-        .day-card-header {
-            padding: 1rem 1.25rem;
+        .cliniques-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
-    }
-</style>
 
+        .clinique-card {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .clinique-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .clinique-card.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+        }
+
+        .clinique-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .clinique-name {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .clinique-badge {
+            background: #48bb78;
+            color: white;
+            padding: 0.25rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .clinique-info {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .clinique-info i {
+            width: 20px;
+            color: var(--primary-color);
+        }
+
+        .clinique-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .stat-item i {
+            color: var(--primary-color);
+        }
+
+        .select-btn {
+            margin-top: 1rem;
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .select-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            color: white;
+        }
+
+        .alert-custom {
+            background: var(--primary-light);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 1.1rem 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-custom i {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+        }
+
+        /* ===== CORRECTION NICE-SELECT ===== */
+        /* Désactiver nice-select pour tous les selects */
+        .form-select,
+        select {
+            display: block !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            position: relative !important;
+            z-index: 1 !important;
+            visibility: visible !important;
+        }
+        
+        /* Cacher les wrappers de nice-select */
+        .nice-select {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .cliniques-grid {
+                grid-template-columns: 1fr;
+            }
+            .page-header h1 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
 <div class="appointment-wrapper">
     <div class="page-header">
-        <h1>Prendre rendez-vous</h1>
-        <p>Choisissez un créneau qui vous convient</p>
+        <h1><i class="fas fa-calendar-plus"></i> Prendre rendez-vous</h1>
+        <p>Choisissez votre clinique vétérinaire</p>
     </div>
 
-    <div class="vet-selector">
-        <div class="vet-selector-header">
-            <i class="fas fa-hospital"></i>
-            <span>Filtrer par clinique et vétérinaire (optionnel)</span>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <form method="get" action="{{ path('rendezvous_new') }}">
-            <div class="vet-form-group">
-                <div>
-                    <label for="clinique" class="form-label">Clinique</label>
-                    <select name="clinique" id="clinique" class="form-select">
-                        <option value="">Toutes les cliniques</option>
-                        {% for clinique in cliniques %}
-                            <option value="{{ clinique.id }}" 
-                                {% if selectedClinique and selectedClinique.id == clinique.id %}selected{% endif %}>
-                                {{ clinique.nom }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label for="vet" class="form-label">Vétérinaire</label>
-                    <select name="vet" id="vet" class="form-select">
-                        <option value="">Aucune préférence</option>
-                        {% for veterinaire in veterinaires %}
-                            <option value="{{ veterinaire.id }}" 
-                                {% if selectedVet and selectedVet.id == veterinaire.id %}selected{% endif %}>
-                                Dr. {{ veterinaire.prenom }} {{ veterinaire.nom }}
-                                {% if veterinaire.specialite %}
-                                    - {{ veterinaire.specialite }}
-                                {% endif %}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <button type="submit" class="btn-search">
-                    <i class="fas fa-search"></i> Voir
-                </button>
-            </div>
-        </form>
-    </div>
+    {% endfor %}
 
-    {% if availableSlots is empty %}
+    {% if cliniquesData is empty %}
         <div class="alert-custom">
             <i class="fas fa-info-circle"></i>
-            <span>
-                {% if selectedVet %}
-                    Aucun créneau disponible pour Dr. {{ selectedVet.prenom }} {{ selectedVet.nom }} dans les 7 prochains jours.
-                {% elseif selectedClinique %}
-                    Aucun créneau disponible pour {{ selectedClinique.nom }} dans les 7 prochains jours.
-                {% else %}
-                    Aucun créneau disponible dans les 7 prochains jours.
-                {% endif %}
-            </span>
+            <span>Aucune clinique disponible pour le moment. Veuillez réessayer plus tard.</span>
         </div>
     {% else %}
-        <div class="slots-section-header">
-            <h2>Créneaux disponibles</h2>
-            <p>Sélectionnez votre date et horaire</p>
-        </div>
-
-        {% set firstDateKey = availableSlots|keys|first %}
-        {% set allDates = availableSlots %}
-
-        <div class="day-card">
-            <div class="day-card-header">
-                <div class="date-selector-wrapper">
-                    <button type="button" class="date-selector-btn" id="dateSelectorBtn">
-                        <i class="far fa-calendar-alt"></i>
-                        <span id="selectedDateText">{{ allDates[firstDateKey].day_name }} {{ allDates[firstDateKey].date|date('d/m/Y') }}</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="date-dropdown" id="dateDropdown">
-                        {% for dateKey, dayData in allDates %}
-                            <div class="date-option {% if dateKey == firstDateKey %}active{% endif %}" data-date="{{ dateKey }}">
-                                <span class="date-option-label">
-                                    <i class="far fa-calendar"></i>
-                                    {{ dayData.day_name }} {{ dayData.date|date('d/m/Y') }}
-                                </span>
-                                <span class="date-option-badge">{{ dayData.slots|length }} créneaux</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <span class="slots-badge" id="currentSlotsBadge">{{ allDates[firstDateKey].slots|length }} créneaux</span>
+        <div class="clinique-selector">
+            <div class="clinique-selector-header">
+                <i class="fas fa-hospital"></i>
+                <span>Sélectionnez une clinique</span>
             </div>
 
-            <div class="timeline-container">
-                {% for dateKey, dayData in allDates %}
-                    {% set slotsByTime = {} %}
-                    {% for slot in dayData.slots %}
-                        {% set timeKey = slot.datetime|date('H:i') %}
-                        {% set slotsByTime = slotsByTime|merge({(timeKey): (slotsByTime[timeKey]|default([]))|merge([slot])}) %}
-                    {% endfor %}
-
-                    {% set morningSlots = [] %}
-                    {% set afternoonSlots = [] %}
-                    {% for slot in dayData.slots %}
-                        {% if slot.datetime|date('H') < 12 %}
-                            {% set morningSlots = morningSlots|merge([slot]) %}
-                        {% else %}
-                            {% set afternoonSlots = afternoonSlots|merge([slot]) %}
-                        {% endif %}
-                    {% endfor %}
-
-                    <div class="day-content" data-date="{{ dateKey }}" style="{% if dateKey != firstDateKey %}display: none;{% endif %}">
-                        {% if morningSlots|length > 0 %}
-                            <div class="time-period">
-                                <div class="time-period-header" onclick="togglePeriod(this)">
-                                    <div class="time-period-header-left">
-                                        <div class="time-period-icon">
-                                            <i class="fas fa-sun"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="time-period-title">Matinée</h4>
-                                            <p class="time-period-subtitle">{{ morningSlots|length }} créneaux disponibles</p>
-                                        </div>
-                                    </div>
-                                    <div class="time-period-toggle">
-                                        <i class="fas fa-chevron-down"></i>
-                                    </div>
-                                </div>
-                                <div class="time-period-content">
-                                    <div class="slots-grid">
-                                        {% for slot in morningSlots %}
-                                            <a href="{{ path('rendezvous_book', {
-                                                'datetime': slot.datetime|date('Y-m-d H:i:s'),
-                                                'vet': slot.veterinaire.id
-                                            }) }}" class="slot-card">
-                                                <span class="slot-time-display">
-                                                    <i class="far fa-clock"></i>
-                                                    {{ slot.time }}
-                                                </span>
-                                                {% if not selectedVet %}
-                                                    <span class="slot-vet-name">Dr. {{ slot.veterinaire.prenom }} {{ slot.veterinaire.nom }}</span>
-                                                {% endif %}
-                                                <span class="slot-duration">30 min</span>
-                                            </a>
-                                        {% endfor %}
-                                    </div>
-                                </div>
+            <div class="cliniques-grid">
+                {% for data in cliniquesData %}
+                    {% set clinique = data.clinique %}
+                    <div class="clinique-card {% if selectedClinique and selectedClinique.id == clinique.id %}selected{% endif %}">
+                        <div class="clinique-card-header">
+                            <div>
+                                <h3 class="clinique-name">{{ clinique.nom }}</h3>
                             </div>
-                        {% endif %}
+                            {% if data.isOuvertAujourdhui %}
+                                <span class="clinique-badge">
+                                    <i class="fas fa-check"></i> Ouvert
+                                </span>
+                            {% else %}
+                                <span class="clinique-badge" style="background: #e53e3e;">
+                                    <i class="fas fa-times"></i> Fermé
+                                </span>
+                            {% endif %}
+                        </div>
 
-                        {% if afternoonSlots|length > 0 %}
-                            <div class="time-period">
-                                <div class="time-period-header" onclick="togglePeriod(this)">
-                                    <div class="time-period-header-left">
-                                        <div class="time-period-icon">
-                                            <i class="fas fa-cloud-sun"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="time-period-title">Après-midi</h4>
-                                            <p class="time-period-subtitle">{{ afternoonSlots|length }} créneaux disponibles</p>
-                                        </div>
-                                    </div>
-                                    <div class="time-period-toggle">
-                                        <i class="fas fa-chevron-down"></i>
-                                    </div>
-                                </div>
-                                <div class="time-period-content">
-                                    <div class="slots-grid">
-                                        {% for slot in afternoonSlots %}
-                                            <a href="{{ path('rendezvous_book', {
-                                                'datetime': slot.datetime|date('Y-m-d H:i:s'),
-                                                'vet': slot.veterinaire.id
-                                            }) }}" class="slot-card">
-                                                <span class="slot-time-display">
-                                                    <i class="far fa-clock"></i>
-                                                    {{ slot.time }}
-                                                </span>
-                                                {% if not selectedVet %}
-                                                    <span class="slot-vet-name">Dr. {{ slot.veterinaire.prenom }} {{ slot.veterinaire.nom }}</span>
-                                                {% endif %}
-                                                <span class="slot-duration">30 min</span>
-                                            </a>
-                                        {% endfor %}
-                                    </div>
-                                </div>
+                        <div class="clinique-info">
+                            <div class="mb-2">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ clinique.adresseComplete }}
                             </div>
-                        {% endif %}
+                            {% if clinique.telephone %}
+                            <div class="mb-2">
+                                <i class="fas fa-phone"></i>
+                                {{ clinique.telephone }}
+                            </div>
+                            {% endif %}
+                            {% if data.horairesAujourdhui and data.horairesAujourdhui.ouvert %}
+                            <div>
+                                <i class="far fa-clock"></i>
+                                {{ data.horairesAujourdhui.debut }} - {{ data.horairesAujourdhui.fin }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="clinique-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>{{ data.nombreRendezvous }} RDV</span>
+                            </div>
+                            {% if clinique.noteGlobale %}
+                            <div class="stat-item">
+                                <i class="fas fa-star"></i>
+                                <span>{{ clinique.noteGlobale|number_format(1) }}/5</span>
+                            </div>
+                            {% endif %}
+                            {% if clinique.tarifConsultation %}
+                            <div class="stat-item">
+                                <i class="fas fa-money-bill"></i>
+                                <span>{{ clinique.tarifConsultation }} TND</span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <a href="{{ path('rendezvous_book', {clinique: clinique.id}) }}" class="select-btn">
+                            <i class="fas fa-arrow-right"></i> Choisir cette clinique
+                        </a>
                     </div>
                 {% endfor %}
             </div>
         </div>
+
+        {% if selectedClinique %}
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> 
+                        Informations sur {{ selectedClinique.nom }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-map-marker-alt"></i> Adresse</h6>
+                            <p>{{ selectedClinique.adresseComplete }}</p>
+
+                            <h6><i class="fas fa-phone"></i> Contact</h6>
+                            <p>
+                                Téléphone: {{ selectedClinique.telephone }}<br>
+                                {% if selectedClinique.email %}
+                                Email: {{ selectedClinique.email }}
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            {% if selectedClinique.description %}
+                            <h6><i class="fas fa-info-circle"></i> Description</h6>
+                            <p>{{ selectedClinique.description }}</p>
+                            {% endif %}
+
+                            {% if selectedClinique.services %}
+                            <h6><i class="fas fa-list"></i> Services proposés</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for service in selectedClinique.services %}
+                                    <span class="badge bg-secondary">{{ service }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-center">
+                        <a href="{{ path('rendezvous_book', {clinique: selectedClinique.id}) }}" 
+                           class="btn btn-success btn-lg">
+                            <i class="fas fa-calendar-check"></i> Prendre rendez-vous
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     {% endif %}
 </div>
+{% endblock %}
 
-<script>
-// Date selector dropdown
-const dateSelectorBtn = document.getElementById('dateSelectorBtn');
-const dateDropdown = document.getElementById('dateDropdown');
-
-if (dateSelectorBtn) {
-    dateSelectorBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        dateDropdown.classList.toggle('show');
-        dateSelectorBtn.classList.toggle('active');
-    });
-
-    document.addEventListener('click', function() {
-        dateDropdown.classList.remove('show');
-        dateSelectorBtn.classList.remove('active');
-    });
-
-    dateDropdown.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
-
-    const dateOptions = document.querySelectorAll('.date-option');
-    dateOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            const selectedDate = this.dataset.date;
-            const dateText = this.querySelector('.date-option-label').textContent.trim();
-            const slotsCount = this.querySelector('.date-option-badge').textContent;
-
-            document.getElementById('selectedDateText').textContent = dateText;
-            document.getElementById('currentSlotsBadge').textContent = slotsCount;
-
-            dateOptions.forEach(opt => opt.classList.remove('active'));
-            this.classList.add('active');
-
-            document.querySelectorAll('.day-content').forEach(content => {
-                content.style.display = content.dataset.date === selectedDate ? 'block' : 'none';
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Désactiver nice-select sur tous les selects
+            const allSelects = document.querySelectorAll('select');
+            allSelects.forEach(function(select) {
+                // Supprimer nice-select wrapper si existant
+                const niceSelectWrapper = select.parentElement.querySelector('.nice-select');
+                if (niceSelectWrapper) {
+                    niceSelectWrapper.remove();
+                }
+                // S'assurer que le select natif est visible
+                select.style.display = 'block';
+                select.style.opacity = '1';
+                select.style.pointerEvents = 'auto';
             });
-
-            dateDropdown.classList.remove('show');
-            dateSelectorBtn.classList.remove('active');
         });
-    });
-}
-
-function togglePeriod(header) {
-    const period = header.closest('.time-period');
-    period.classList.toggle('collapsed');
-}
-
-// Filtrage dynamique clinique -> vétérinaire
-const cliniqueSelect = document.getElementById('clinique');
-cliniqueSelect.addEventListener('change', function() {
-    // Soumettre automatiquement le formulaire pour recharger les vétérinaires
-    this.form.submit();
-});
-</script>
+    </script>
 {% endblock %}

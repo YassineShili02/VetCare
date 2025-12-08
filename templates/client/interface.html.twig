@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface Client - VetCare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .navbar-brand {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .tables-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .tables-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .table-section {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #dee2e6;
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: #2196F3;
+            padding: 1.5rem;
+            border-bottom: 1px solid #1e88e5;
+        }
+
+        .table-header h2 {
+            color: #ffffff;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-body {
+            padding: 0;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+            color: #333;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #2196F3;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .statut-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        .statut-pending { background: #ff9800; color: white; }
+        .statut-in_progress { background: #2196F3; color: white; }
+        .statut-completed { background: #4caf50; color: white; }
+        .statut-cancelled { background: #f44336; color: white; }
+        .statut-accepted { background: #4caf50; color: white; }
+        .statut-refused { background: #f44336; color: white; }
+
+        .stock-indicator {
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        .stock-high { background: #4caf50; color: white; }
+        .stock-medium { background: #ff9800; color: white; }
+        .stock-low { background: #f44336; color: white; }
+
+        .empty-message {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ path('app_home') }}" class="navbar-brand">🏥 VetCare Pro - Interface Client</a>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>👁️ Interface Client</h1>
+            <p>Consultation des médicaments et traitements disponibles</p>
+        </div>
+
+        <div class="tables-container">
+            <!-- Table des Médicaments -->
+            <div class="table-section">
+                <div class="table-header">
+                    <h2>📦 Médicaments Disponibles</h2>
+                </div>
+                <div class="table-body">
+                    {% if medicaments is not empty %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for medicament in medicaments %}
+                                <tr>
+                                    <td><strong>{{ medicament.nom }}</strong></td>
+                                    <td>{{ medicament.description|default('Aucune description')|slice(0, 50) }}{% if medicament.description and medicament.description|length > 50 %}...{% endif %}</td>
+                                    <td>
+                                        <span class="stock-indicator {{ medicament.stock > 10 ? 'stock-high' : (medicament.stock > 0 ? 'stock-medium' : 'stock-low') }}">
+                                            {{ medicament.stock }} unités
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-message">
+                        Aucun médicament disponible pour le moment
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Table des Traitements -->
+            <div class="table-section">
+                <div class="table-header">
+                    <h2>💊 Traitements en Cours</h2>
+                </div>
+                <div class="table-body">
+                    {% if traitements is not empty %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>Statut</th>
+                                <th>Médicaments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for traitement in traitements %}
+                                <tr>
+                                    <td><strong>{{ traitement.nom }}</strong></td>
+                                    <td>{{ traitement.description|default('Aucune description')|slice(0, 50) }}{% if traitement.description and traitement.description|length > 50 %}...{% endif %}</td>
+                                    <td>
+                                        <span class="statut-badge statut-{{ traitement.statut }}">
+                                            {% if traitement.statut == 'pending' %}⏳ En attente
+                                            {% elseif traitement.statut == 'in_progress' %}🔄 En cours
+                                            {% elseif traitement.statut == 'completed' %}✅ Terminé
+                                            {% elseif traitement.statut == 'cancelled' %}❌ Annulé
+                                            {% elseif traitement.statut == 'accepted' %}👍 Accepté
+                                            {% elseif traitement.statut == 'refused' %}👎 Refusé
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>{{ traitement.medicaments|length }} médicament(s)</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-message">
+                        Aucun traitement disponible pour le moment
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="{{ path('app_home') }}" class="btn">🏠 Retour à l'accueil</a>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 VetCare Pro - Interface Client. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

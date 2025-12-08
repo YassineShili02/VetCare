@@ -3,17 +3,20 @@
 /.env.local
 /.env.local.php
 /.env.*.local
+/.env
+/Version20251202125523.php
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
 /vendor/
+/migrations/
 ###< symfony/framework-bundle ###
-
+/Security/
 ###> phpunit/phpunit ###
 /phpunit.xml
 /.phpunit.cache/
 ###< phpunit/phpunit ###
-
+/Repository/
 ###> symfony/asset-mapper ###
 /public/assets/
 /assets/vendor/

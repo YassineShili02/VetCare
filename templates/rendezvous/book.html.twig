@@ -19,6 +19,13 @@
             content: " *";
             color: #dc3545;
         }
+        .info-section {
+            background: #f8f9fa;
+            border-left: 4px solid #0d6efd;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.375rem;
+        }
     </style>
 {% endblock %}
 
@@ -26,7 +33,7 @@
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
                         <i class="fas fa-calendar-check"></i>
@@ -35,6 +42,13 @@
                 </div>
                 <div class="card-body">
                     {# Afficher les erreurs globales du formulaire #}
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i> {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+
                     {% if form.vars.errors|length > 0 %}
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <h5 class="alert-heading">
@@ -51,22 +65,23 @@
                     {% endif %}
 
                     {% if rendezvous.dateHeure %}
-                        <div class="alert alert-info mb-4">
-                            <h5><i class="fas fa-info-circle"></i> Créneau sélectionné:</h5>
-                            <p class="mb-0">
-                                <i class="far fa-calendar"></i> {{ rendezvous.dateHeure|date('d/m/Y') }} à 
-                                <i class="far fa-clock"></i> {{ rendezvous.dateHeure|date('H:i') }}
-                                {% if rendezvous.veterinaire %}
-                                    <br>
-                                    <i class="fas fa-user-md"></i> Avec {{ rendezvous.veterinaire }}
-                                {% endif %}
+                        <div class="info-section">
+                            <h5><i class="fas fa-info-circle"></i> Créneau sélectionné :</h5>
+                            <p class="mb-2">
+                                <i class="far fa-calendar"></i> <strong>{{ rendezvous.dateHeure|date('d/m/Y') }}</strong> à 
+                                <i class="far fa-clock"></i> <strong>{{ rendezvous.dateHeure|date('H:i') }}</strong>
                             </p>
+                            {% if rendezvous.clinique %}
+                                <p class="mb-0">
+                                    <i class="fas fa-hospital"></i> {{ rendezvous.clinique.nom }}
+                                </p>
+                            {% endif %}
                         </div>
                     {% endif %}
 
                     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
                         
-                        <h5 class="mb-3">
+                        <h5 class="mb-3 mt-3">
                             <i class="fas fa-user"></i> Vos informations
                         </h5>
                         <p class="text-muted small mb-3">
@@ -77,7 +92,7 @@
                             <div class="col-md-12 mb-3">
                                 {{ form_row(form.nomClient, {
                                     'label': 'Nom complet',
-                                    'label_attr': {'class': 'required-field'},
+                                    'label_attr': {'class': 'form-label required-field'},
                                     'attr': {
                                         'placeholder': 'Ex: Jean Dupont',
                                         'class': 'form-control'
@@ -87,6 +102,7 @@
                             <div class="col-md-6 mb-3">
                                 {{ form_row(form.emailClient, {
                                     'label': 'Email',
+                                    'label_attr': {'class': 'form-label'},
                                     'attr': {
                                         'placeholder': 'exemple@email.com',
                                         'class': 'form-control'
@@ -96,6 +112,7 @@
                             <div class="col-md-6 mb-3">
                                 {{ form_row(form.telephoneClient, {
                                     'label': 'Téléphone',
+                                    'label_attr': {'class': 'form-label'},
                                     'attr': {
                                         'placeholder': '+216 XX XXX XXX',
                                         'class': 'form-control'
@@ -109,10 +126,24 @@
                         <h5 class="mb-3">
                             <i class="fas fa-paw"></i> Informations sur votre animal
                         </h5>
+
+                        {# Affichage conditionnel du sélecteur d'animal si connecté #}
+                        {% if form.animal is defined %}
+                            <div class="mb-3">
+                                {{ form_row(form.animal, {
+                                    'label': 'Sélectionner un animal existant',
+                                    'label_attr': {'class': 'form-label'},
+                                    'attr': {'class': 'form-select'},
+                                    'help': 'Ou remplissez les informations ci-dessous pour un nouvel animal'
+                                }) }}
+                            </div>
+                        {% endif %}
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 {{ form_row(form.nomAnimal, {
                                     'label': 'Nom de l\'animal',
+                                    'label_attr': {'class': 'form-label'},
                                     'attr': {
                                         'placeholder': 'Ex: Max',
                                         'class': 'form-control'
@@ -122,8 +153,8 @@
                             <div class="col-md-6 mb-3">
                                 {{ form_row(form.especeAnimal, {
                                     'label': 'Espèce',
-                                    'attr': {'class': 'form-select'},
-                                    'placeholder': 'Sélectionnez une espèce'
+                                    'label_attr': {'class': 'form-label'},
+                                    'attr': {'class': 'form-select'}
                                 }) }}
                             </div>
                         </div>
@@ -131,21 +162,38 @@
                         <hr class="my-4">
 
                         <h5 class="mb-3">
-                            <i class="fas fa-stethoscope"></i> Type de consultation
+                            <i class="fas fa-stethoscope"></i> Détails de la consultation
                         </h5>
 
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.clinique, {
+                                    'label': 'Clinique',
+                                    'label_attr': {'class': 'form-label required-field'},
+                                    'attr': {'class': 'form-select'}
+                                }) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.type, {
+                                    'label': 'Type de rendez-vous',
+                                    'label_attr': {'class': 'form-label required-field'},
+                                    'attr': {'class': 'form-select'}
+                                }) }}
+                            </div>
+                        </div>
+
                         <div class="mb-3">
-                            {{ form_row(form.type, {
-                                'label': 'Type de rendez-vous',
-                                'label_attr': {'class': 'required-field'},
-                                'attr': {'class': 'form-select'},
-                                'placeholder': 'Sélectionnez le type de consultation'
+                            {{ form_row(form.dateHeure, {
+                                'label': 'Date et heure',
+                                'label_attr': {'class': 'form-label required-field'},
+                                'attr': {'class': 'form-control'}
                             }) }}
                         </div>
 
                         <div class="mb-4">
                             {{ form_row(form.notesClient, {
                                 'label': 'Notes ou commentaires',
+                                'label_attr': {'class': 'form-label'},
                                 'help': 'Décrivez brièvement la raison de votre visite ou toute information utile',
                                 'attr': {
                                     'placeholder': 'Ex: Mon chat tousse depuis 3 jours...',
@@ -198,7 +246,7 @@
             }
         });
 
-        // Validation en temps réel (optionnel)
+        // Validation en temps réel
         const form = document.querySelector('form');
         if (form) {
             const inputs = form.querySelectorAll('input, select, textarea');
@@ -210,6 +258,19 @@
                         this.classList.remove('is-invalid');
                     }
                 });
+            });
+        }
+
+        // Si un animal est sélectionné, désactiver les champs manuels
+        const animalSelect = document.querySelector('select[name*="[animal]"]');
+        if (animalSelect) {
+            const nomAnimalInput = document.querySelector('input[name*="[nomAnimal]"]');
+            const especeAnimalSelect = document.querySelector('select[name*="[especeAnimal]"]');
+            
+            animalSelect.addEventListener('change', function() {
+                const isSelected = this.value !== '';
+                if (nomAnimalInput) nomAnimalInput.disabled = isSelected;
+                if (especeAnimalSelect) especeAnimalSelect.disabled = isSelected;
             });
         }
     </script>

@@ -1,76 +1,53 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Confirmation - VetCare{% endblock %}
+{% block title %}Confirmation du rendez-vous{% endblock %}
 
 {% block body %}
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow">
-                <div class="card-body text-center py-5">
-                    <div class="mb-4">
-                        <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
-                    </div>
-                    <h2 class="text-success mb-3">Demande envoyée avec succès !</h2>
-                    <p class="lead mb-4">
-                        Votre demande de rendez-vous a été transmise au vétérinaire.
-                    </p>
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-check-circle"></i>
+                        Rendez-vous confirmé
+                    </h4>
+                </div>
 
-                    <div class="card bg-light mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">Récapitulatif:</h5>
-                            <ul class="list-unstyled text-start mb-0">
-                                <li class="mb-2">
-                                    <i class="far fa-calendar text-primary"></i>
-                                    <strong>Date:</strong> {{ rendezvous.dateHeure|date('d/m/Y') }}
-                                </li>
-                                <li class="mb-2">
-                                    <i class="far fa-clock text-primary"></i>
-                                    <strong>Heure:</strong> {{ rendezvous.dateHeure|date('H:i') }}
-                                </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-stethoscope text-primary"></i>
-                                    <strong>Type:</strong> {{ rendezvous.type }}
-                                </li>
-                                {% if rendezvous.veterinaire %}
-                                <li class="mb-2">
-                                    <i class="fas fa-user-md text-primary"></i>
-                                    <strong>Vétérinaire:</strong> {{ rendezvous.veterinaire }}
-                                </li>
-                                {% endif %}
-                                <li class="mb-2">
-                                    <i class="fas fa-paw text-primary"></i>
-                                    <strong>Animal:</strong> 
-                                    {{ rendezvous.nomAnimal ? rendezvous.nomAnimal : 'Non spécifié' }}
-                                    {% if rendezvous.especeAnimal %}
-                                        ({{ rendezvous.especeAnimal }})
-                                    {% endif %}
-                                </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-info-circle text-warning"></i>
-                                    <strong>Statut:</strong> 
-                                    <span class="badge bg-warning">En attente de confirmation</span>
-                                </li>
-                            </ul>
-                        </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        Votre demande de rendez-vous a été enregistrée avec succès ✅
                     </div>
 
-                    <div class="alert alert-info text-start">
-                        <i class="fas fa-info-circle"></i>
-                        <strong>Prochaines étapes:</strong>
-                        <ul class="mb-0 mt-2">
-                            <li>Le vétérinaire va examiner votre demande</li>
-                            <li>Vous recevrez un email de confirmation ou de modification</li>
-                            <li>En cas d'urgence, contactez directement la clinique</li>
-                        </ul>
-                    </div>
+                    <h5 class="mt-4">📋 Détails du rendez-vous</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Date :</strong>
+                            {{ rendezvous.dateHeure|date('d/m/Y H:i') }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Clinique :</strong>
+                            {{ rendezvous.clinique.nom }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Client :</strong>
+                            {{ rendezvous.nomClient }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Téléphone :</strong>
+                            {{ rendezvous.telephoneClient }}
+                        </li>
+                        {% if rendezvous.animal %}
+                        <li class="list-group-item">
+                            <strong>Animal :</strong>
+                            {{ rendezvous.animal.nom }}
+                        </li>
+                        {% endif %}
+                    </ul>
 
-                    <div class="d-grid gap-2 mt-4">
-                        <a href="{{ path('app_home') }}" class="btn btn-primary btn-lg">
-                            <i class="fas fa-home"></i> Retour à l'accueil
-                        </a>
-                        <a href="{{ path('rendezvous_new') }}" class="btn btn-outline-secondary">
-                            <i class="fas fa-plus"></i> Prendre un autre rendez-vous
+                    <div class="mt-4 text-center">
+                        <a href="{{ path('rendezvous_new') }}" class="btn btn-primary">
+                            Prendre un autre rendez-vous
                         </a>
                     </div>
                 </div>
