@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 app_home:
     path: /
     controller: App\Controller\HomeController::index
@@ -7,13 +7,6 @@ app_client_interface:
     path: /client
     controller: App\Controller\HomeController::clientInterface
 
-app_login:
-    path: /login
-    controller: App\Controller\SecurityController::login
-
-app_logout:
-    path: /logout
-    controller: App\Controller\SecurityController::logout
 
 app_medicament:
     resource: '../src/Controller/MedicamentController.php'
@@ -22,7 +15,7 @@ app_medicament:
 app_traitement:
     resource: '../src/Controller/TraitementController.php'
     type: attribute
-=======
+
 # Déclaration globale des controllers via attributes
 controllers:
   resource:
@@ -55,4 +48,4 @@ app_medicament:
 app_traitement:
   resource: '../src/Controller/TraitementController.php'
   type: attribute
->>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e
+
