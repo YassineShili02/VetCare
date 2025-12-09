@@ -1,175 +1,94 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}PetCare - Gestion Vétérinaire{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+{% extends 'backoffice/base.html.twig' %}
 
-        {% block stylesheets %}
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-        <style>
-            :root {
-                --primary-color: #2c3e50;
-                --secondary-color: #3498db;
-                --accent-color: #e74c3c;
-                --light-bg: #ecf0f1;
-                --success-color: #27ae60;
-            }
+{% block title %}Gestion des Traitements{% endblock %}
+{% block breadcrumb %}Traitements{% endblock %}
 
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background-color: #f8f9fa;
-                color: #333;
-            }
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">📋 Gestion des Traitements</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="text-end pe-3 mb-3">
+                        <a href="{{ path('app_traitement_new') }}" class="btn btn-dark btn-sm">
+                            ➕ Nouveau traitement
+                        </a>
+                    </div>
 
-            .navbar {
-                background: linear-gradient(135deg, var(--primary-color), #34495e);
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }
-
-            .navbar-brand {
-                font-weight: bold;
-                font-size: 1.5rem;
-            }
-
-            .card {
-                border: none;
-                border-radius: 15px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-                transition: transform 0.3s ease;
-            }
-
-            .card:hover {
-                transform: translateY(-5px);
-            }
-
-            .card-header {
-                background: linear-gradient(135deg, var(--secondary-color), #2980b9);
-                color: white;
-                border-radius: 15px 15px 0 0 !important;
-                border: none;
-            }
-
-            .btn-primary {
-                background: linear-gradient(135deg, var(--secondary-color), #2980b9);
-                border: none;
-                border-radius: 25px;
-                padding: 10px 25px;
-                font-weight: 600;
-            }
-
-            .btn-success {
-                background: linear-gradient(135deg, var(--success-color), #229954);
-                border: none;
-                border-radius: 25px;
-                padding: 10px 25px;
-                font-weight: 600;
-            }
-
-            .btn-warning {
-                background: linear-gradient(135deg, #f39c12, #e67e22);
-                border: none;
-                border-radius: 25px;
-                padding: 10px 25px;
-                font-weight: 600;
-            }
-
-            .btn-danger {
-                background: linear-gradient(135deg, var(--accent-color), #c0392b);
-                border: none;
-                border-radius: 25px;
-                padding: 10px 25px;
-                font-weight: 600;
-            }
-
-            .table {
-                border-radius: 10px;
-                overflow: hidden;
-            }
-
-            .table thead {
-                background: linear-gradient(135deg, var(--primary-color), #34495e);
-                color: white;
-            }
-
-            .badge {
-                border-radius: 20px;
-                padding: 8px 15px;
-                font-weight: 500;
-            }
-
-            .hero-section {
-                background: linear-gradient(135deg, var(--primary-color), #34495e);
-                color: white;
-                padding: 60px 0;
-                margin-bottom: 40px;
-                border-radius: 0 0 30px 30px;
-            }
-
-            .form-control {
-                border-radius: 10px;
-                border: 2px solid #e9ecef;
-                padding: 12px 15px;
-            }
-
-            .form-control:focus {
-                border-color: var(--secondary-color);
-                box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
-            }
-
-            .action-buttons .btn {
-                margin: 0 2px;
-            }
-        </style>
-        {% endblock %}
-
-        {% block javascripts %}
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-        {% endblock %}
-    </head>
-    <body>
-        <!-- Navigation -->
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container">
-                <a class="navbar-brand" href="{{ path('traitement_index') }}">
-                    <i class="fas fa-paw me-2"></i>PetCare
-                </a>
-
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('traitement_index') }}">
-                                <i class="fas fa-stethoscope me-1"></i>Traitements
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('medicament_index') }}">
-                                <i class="fas fa-pills me-1"></i>Médicaments
-                            </a>
-                        </li>
-                    </ul>
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nom</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Description</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Statut</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Médicaments</th>
+                                    <th class="text-secondary opacity-7">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if traitements is not empty %}
+                                    {% for traitement in traitements %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex px-2 py-1">
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <h6 class="mb-0 text-sm">{{ traitement.nom }}</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0">
+                                                    {{ traitement.description|default('Aucune description')|slice(0, 50) }}{% if traitement.description and traitement.description|length > 50 %}...{% endif %}
+                                                </p>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <span class="badge badge-sm 
+                                                    {% if traitement.statut == 'pending' %}bg-warning
+                                                    {% elseif traitement.statut == 'in_progress' %}bg-info
+                                                    {% elseif traitement.statut == 'completed' %}bg-success
+                                                    {% elseif traitement.statut == 'cancelled' %}bg-danger
+                                                    {% else %}bg-secondary{% endif %}">
+                                                    {{ traitement.statut }}
+                                                </span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span class="text-secondary text-xs font-weight-bold">
+                                                    {{ traitement.medicaments|length }}
+                                                </span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <a href="{{ path('app_traitement_show', {'id': traitement.id}) }}" class="btn btn-info btn-sm">
+                                                    👁️
+                                                </a>
+                                                <a href="{{ path('app_traitement_edit', {'id': traitement.id}) }}" class="btn btn-warning btn-sm">
+                                                    ✏️
+                                                </a>
+                                                <form method="post" action="{{ path('app_traitement_delete', {'id': traitement.id}) }}" style="display: inline;">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ traitement.id) }}">
+                                                    <button class="btn btn-danger btn-sm">🗑️</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">
+                                            Aucun traitement trouvé
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </nav>
-
-        <!-- Main Content -->
-        <div class="container mt-4">
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>{{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
-
-            {% block body %}{% endblock %}
         </div>
-    </body>
-</html>
+    </div>
+</div>
+{% endblock %}

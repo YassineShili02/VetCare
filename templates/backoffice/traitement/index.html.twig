@@ -1,0 +1,93 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Gestion des Traitements{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h1 class="page-title">📋 Gestion des Traitements</h1>
+    </div>
+    <div class="card-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <a href="{{ path('app_traitement_new') }}" class="btn btn-primary">
+                ➕ Ajouter un traitement
+            </a>
+            <div style="color: #6c757d; font-size: 0.9rem;">
+                Total: {{ traitements|length }} traitement(s)
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Statut</th>
+                    <th>Médicaments</th>
+                    <th>Date création</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for traitement in traitements %}
+                <tr>
+                    <td><strong>#{{ traitement.id }}</strong></td>
+                    <td>
+                        <div style="font-weight: 600; color: #2c3e50;">{{ traitement.nom }}</div>
+                    </td>
+                    <td>
+                        <div style="max-width: 200px;">
+                            {{ traitement.description|default('Aucune description')|slice(0, 60) }}
+                            {% if traitement.description and traitement.description|length > 60 %}...{% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="statut-badge statut-{{ traitement.statut }}">
+                            {% if traitement.statut == 'pending' %}⏳ En attente
+                            {% elseif traitement.statut == 'in_progress' %}🔄 En cours
+                            {% elseif traitement.statut == 'completed' %}✅ Terminé
+                            {% elseif traitement.statut == 'cancelled' %}❌ Annulé
+                            {% elseif traitement.statut == 'accepted' %}👍 Accepté
+                            {% elseif traitement.statut == 'refused' %}👎 Refusé
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        {% if traitement.medicaments|length > 0 %}
+                            <span style="color: #27ae60; font-weight: 600;">{{ traitement.medicaments|length }}</span> médicament(s)
+                        {% else %}
+                            <span style="color: #6c757d;">Aucun</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ traitement.dateCreation|date('d/m/Y H:i') }}</td>
+                    <td>
+                        <div class="actions">
+                            <a href="{{ path('app_traitement_show', {'id': traitement.id}) }}" class="btn btn-info" title="Voir détails">
+                                👁️
+                            </a>
+                            <a href="{{ path('app_traitement_edit', {'id': traitement.id}) }}" class="btn btn-warning" title="Modifier">
+                                ✏️
+                            </a>
+                            <form method="post" action="{{ path('app_traitement_delete', {'id': traitement.id}) }}"
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce traitement ?');"
+                                  style="display: inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ traitement.id) }}">
+                                <button class="btn btn-secondary" title="Supprimer">🗑️</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 2rem; color: #6c757d;">
+                        <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">📭</div>
+                        Aucun traitement trouvé
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,10 +1,9 @@
 <?php
+// src/Entity/Medicament.php
 
 namespace App\Entity;
 
 use App\Repository\MedicamentRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MedicamentRepository::class)]
@@ -15,19 +14,27 @@ class Medicament
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 150)]
+    #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(length: 1000, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToMany(targetEntity: Traitement::class, mappedBy: "medicaments")]
-    private Collection $traitements;
+    #[ORM\Column(nullable: true)]
+    private ?int $stock = 0;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $statut = 'pending'; // AJOUTER CETTE LIGNE
+
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $dateCreation = null;
 
     public function __construct()
     {
-        $this->traitements = new ArrayCollection();
+        $this->dateCreation = new \DateTime();
     }
+
+    // Getters et Setters existants...
 
     public function getId(): ?int
     {
@@ -42,6 +49,7 @@ class Medicament
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
+
         return $this;
     }
 
@@ -53,28 +61,44 @@ class Medicament
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
         return $this;
     }
 
-    public function getTraitements(): Collection
+    public function getStock(): ?int
     {
-        return $this->traitements;
+        return $this->stock;
     }
-    // Ajoutez ces méthodes après getTraitements()
-    public function addTraitement(Traitement $traitement): static
+
+    public function setStock(?int $stock): static
     {
-        if (!$this->traitements->contains($traitement)) {
-            $this->traitements->add($traitement);
-            $traitement->addMedicament($this);
-        }
+        $this->stock = $stock;
+
         return $this;
     }
 
-    public function removeTraitement(Traitement $traitement): static
+    // AJOUTER CES DEUX MÉTHODES POUR LE STATUT
+    public function getStatut(): ?string
     {
-        if ($this->traitements->removeElement($traitement)) {
-            $traitement->removeMedicament($this);
-        }
+        return $this->statut;
+    }
+
+    public function setStatut(?string $statut): static
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getDateCreation(): ?\DateTimeInterface
+    {
+        return $this->dateCreation;
+    }
+
+    public function setDateCreation(\DateTimeInterface $dateCreation): static
+    {
+        $this->dateCreation = $dateCreation;
+
         return $this;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+// src/Controller/MedicamentController.php
 
 namespace App\Controller;
 
@@ -9,22 +10,35 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/medicament')]
+#[Route('/backoffice/medicament')]
 class MedicamentController extends AbstractController
 {
-    #[Route('/', name: 'medicament_index', methods: ['GET'])]
-    public function index(MedicamentRepository $medicamentRepository): Response
+    private function checkVeterinaryAccess(SessionInterface $session): void
     {
-        return $this->render('medicament/index.html.twig', [
+        if (!$session->get('veterinary_logged_in')) {
+            $this->addFlash('error', 'Accès réservé aux vétérinaires. Veuillez vous connecter.');
+            throw $this->createAccessDeniedException('Accès non autorisé');
+        }
+    }
+
+    #[Route('/', name: 'app_medicament_index', methods: ['GET'])]
+    public function index(MedicamentRepository $medicamentRepository, SessionInterface $session): Response
+    {
+        $this->checkVeterinaryAccess($session);
+
+        return $this->render('backoffice/medicament/index.html.twig', [
             'medicaments' => $medicamentRepository->findAll(),
         ]);
     }
 
-    #[Route('/new', name: 'medicament_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'app_medicament_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, SessionInterface $session): Response
     {
+        $this->checkVeterinaryAccess($session);
+
         $medicament = new Medicament();
         $form = $this->createForm(MedicamentType::class, $medicament);
         $form->handleRequest($request);
@@ -33,44 +47,88 @@ class MedicamentController extends AbstractController
             $entityManager->persist($medicament);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Médicament créé avec succès!');
-            return $this->redirectToRoute('medicament_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Médicament créé avec succès.');
+
+            return $this->redirectToRoute('app_medicament_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('medicament/new.html.twig', [
+        return $this->render('backoffice/medicament/new.html.twig', [
             'medicament' => $medicament,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'medicament_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Medicament $medicament, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_medicament_show', methods: ['GET'])]
+    public function show(Medicament $medicament, SessionInterface $session): Response
     {
+        $this->checkVeterinaryAccess($session);
+
+        return $this->render('backoffice/medicament/show.html.twig', [
+            'medicament' => $medicament,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_medicament_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Medicament $medicament, EntityManagerInterface $entityManager, SessionInterface $session): Response
+    {
+        $this->checkVeterinaryAccess($session);
+
         $form = $this->createForm(MedicamentType::class, $medicament);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            $this->addFlash('success', 'Médicament modifié avec succès!');
-            return $this->redirectToRoute('medicament_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Médicament modifié avec succès.');
+
+            return $this->redirectToRoute('app_medicament_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('medicament/edit.html.twig', [
+        return $this->render('backoffice/medicament/edit.html.twig', [
             'medicament' => $medicament,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    #[Route('/{id}', name: 'medicament_delete', methods: ['POST'])]
-    public function delete(Request $request, Medicament $medicament, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_medicament_delete', methods: ['POST'])]
+    public function delete(Request $request, Medicament $medicament, EntityManagerInterface $entityManager, SessionInterface $session): Response
     {
+        $this->checkVeterinaryAccess($session);
+
         if ($this->isCsrfTokenValid('delete'.$medicament->getId(), $request->request->get('_token'))) {
             $entityManager->remove($medicament);
             $entityManager->flush();
-            $this->addFlash('success', 'Médicament supprimé avec succès!');
+
+            $this->addFlash('success', 'Médicament supprimé avec succès.');
         }
 
-        return $this->redirectToRoute('medicament_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_medicament_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/update-statut', name: 'app_medicament_update_statut', methods: ['POST'])]
+    public function updateStatut(Request $request, Medicament $medicament, EntityManagerInterface $entityManager): Response
+    {
+        // Pas de vérification d'authentification - accessible au client
+        $nouveauStatut = $request->request->get('statut');
+
+        if (in_array($nouveauStatut, ['accepted', 'refused', 'pending'])) {
+            $medicament->setStatut($nouveauStatut);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Statut du médicament mis à jour.');
+        } else {
+            $this->addFlash('error', 'Statut invalide.');
+        }
+
+        return $this->redirectToRoute('app_client_interface');
+    }
+
+    #[Route('/frontoffice/medicaments', name: 'app_frontoffice_medicaments')]
+    public function frontofficeMedicaments(MedicamentRepository $medicamentRepository): Response
+    {
+        // Pas de vérification d'authentification - accessible au client
+        return $this->render('frontoffice/medicament_list.html.twig', [
+            'medicaments' => $medicamentRepository->findAll(),
+        ]);
     }
 }

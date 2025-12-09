@@ -1,0 +1,13 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Nouveau médicament{% endblock %}
+
+{% block body %}
+    <h1>Créer un médicament</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-success">Créer</button>
+        <a href="{{ path('app_medicament_index') }}" class="btn">Retour</a>
+    {{ form_end(form) }}
+{% endblock %}

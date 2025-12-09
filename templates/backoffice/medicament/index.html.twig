@@ -1,0 +1,79 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Gestion des Médicaments{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h1 class="page-title">💊 Gestion des Médicaments</h1>
+    </div>
+    <div class="card-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <a href="{{ path('app_medicament_new') }}" class="btn btn-primary">
+                ➕ Ajouter un médicament
+            </a>
+            <div style="color: #6c757d; font-size: 0.9rem;">
+                Total: {{ medicaments|length }} médicament(s)
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Stock</th>
+                    <th>Date création</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for medicament in medicaments %}
+                <tr>
+                    <td><strong>#{{ medicament.id }}</strong></td>
+                    <td>
+                        <div style="font-weight: 600; color: #2c3e50;">{{ medicament.nom }}</div>
+                    </td>
+                    <td>
+                        <div style="max-width: 200px;">
+                            {{ medicament.description|default('Aucune description')|slice(0, 60) }}
+                            {% if medicament.description and medicament.description|length > 60 %}...{% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="stock-indicator {{ medicament.stock > 10 ? 'stock-high' : (medicament.stock > 0 ? 'stock-medium' : 'stock-low') }}">
+                            {{ medicament.stock }} unités
+                        </span>
+                    </td>
+                    <td>{{ medicament.dateCreation|date('d/m/Y H:i') }}</td>
+                    <td>
+                        <div class="actions">
+                            <a href="{{ path('app_medicament_show', {'id': medicament.id}) }}" class="btn btn-info" title="Voir détails">
+                                👁️
+                            </a>
+                            <a href="{{ path('app_medicament_edit', {'id': medicament.id}) }}" class="btn btn-warning" title="Modifier">
+                                ✏️
+                            </a>
+                            <form method="post" action="{{ path('app_medicament_delete', {'id': medicament.id}) }}"
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce médicament ?');"
+                                  style="display: inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ medicament.id) }}">
+                                <button class="btn btn-danger" title="Supprimer">🗑️</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #6c757d;">
+                        <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">📭</div>
+                        Aucun médicament trouvé
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
