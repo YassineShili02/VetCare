@@ -25,12 +25,45 @@ class MedicamentController extends AbstractController
     }
 
     #[Route('/', name: 'app_medicament_index', methods: ['GET'])]
+<<<<<<< HEAD
     public function index(MedicamentRepository $medicamentRepository, SessionInterface $session): Response
     {
         $this->checkVeterinaryAccess($session);
 
         return $this->render('backoffice/medicament/index.html.twig', [
             'medicaments' => $medicamentRepository->findAll(),
+=======
+    public function index(
+        MedicamentRepository $medicamentRepository,
+        SessionInterface $session,
+        Request $request  // AJOUTER CE PARAMÈTRE
+    ): Response
+    {
+        $this->checkVeterinaryAccess($session);
+
+        // RÉCUPÉRER LES PARAMÈTRES DE L'URL
+        $sortBy = $request->query->get('sort', 'id');
+        $order = $request->query->get('order', 'ASC');
+        $stockFilter = $request->query->get('stock', 'all');
+        $searchTerm = $request->query->get('search', '');
+
+        // UTILISER LA NOUVELLE MÉTHODE AVEC FILTRES
+        $medicaments = $medicamentRepository->findWithFilters($sortBy, $order, $stockFilter, $searchTerm);
+
+        return $this->render('backoffice/medicament/index.html.twig', [
+            'medicaments' => $medicaments,
+            // AJOUTER CES VARIABLES POUR LA TEMPLATE
+            'currentSort' => $sortBy,
+            'currentOrder' => $order,
+            'currentStock' => $stockFilter,
+            'currentSearch' => $searchTerm,
+            'stockOptions' => [
+                'all' => 'Tous les stocks',
+                'low' => 'Stock faible (< 5)',
+                'medium' => 'Stock moyen (5-20)',
+                'high' => 'Stock élevé (> 20)'
+            ]
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e
         ]);
     }
 

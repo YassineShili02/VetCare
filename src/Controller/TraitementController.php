@@ -24,6 +24,7 @@ class TraitementController extends AbstractController
     }
 
     #[Route('/', name: 'app_traitement_index', methods: ['GET'])]
+<<<<<<< HEAD
     public function index(TraitementRepository $traitementRepository, SessionInterface $session): Response
     {
         $this->checkVeterinaryAccess($session);
@@ -34,6 +35,37 @@ class TraitementController extends AbstractController
     }
 
     // AJOUTER CES ROUTES MANQUANTES
+=======
+    public function index(TraitementRepository $traitementRepository, SessionInterface $session, Request $request): Response
+    {
+        $this->checkVeterinaryAccess($session);
+
+        $sortBy = $request->query->get('sort', 'id');
+        $order = $request->query->get('order', 'ASC');
+        $statutFilter = $request->query->get('statut', 'all');
+        $searchTerm = $request->query->get('search', '');
+
+        $traitements = $traitementRepository->findWithFilters($sortBy, $order, $statutFilter, $searchTerm);
+
+        return $this->render('backoffice/traitement/index.html.twig', [
+            'traitements' => $traitements,
+            'currentSort' => $sortBy,
+            'currentOrder' => $order,
+            'currentStatut' => $statutFilter,
+            'currentSearch' => $searchTerm,
+            'statuts' => [
+                'all' => 'Tous les statuts',
+                'pending' => 'En attente',
+                'in_progress' => 'En cours',
+                'completed' => 'Terminé',
+                'cancelled' => 'Annulé',
+                'accepted' => 'Accepté',
+                'refused' => 'Refusé'
+            ]
+        ]);
+    }
+
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e
     #[Route('/new', name: 'app_traitement_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SessionInterface $session): Response
     {
@@ -77,7 +109,10 @@ class TraitementController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e
             $this->addFlash('success', 'Traitement modifié avec succès.');
             return $this->redirectToRoute('app_traitement_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -105,7 +140,10 @@ class TraitementController extends AbstractController
     #[Route('/{id}/update-statut', name: 'app_traitement_update_statut', methods: ['POST'])]
     public function updateStatut(Request $request, Traitement $traitement, EntityManagerInterface $entityManager): Response
     {
+<<<<<<< HEAD
         // Pas de vérification d'authentification - accessible au client
+=======
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e
         $nouveauStatut = $request->request->get('statut');
 
         if (in_array($nouveauStatut, ['pending', 'in_progress', 'completed', 'cancelled', 'accepted', 'refused'])) {
@@ -126,5 +164,9 @@ class TraitementController extends AbstractController
             'traitements' => $traitementRepository->findAll(),
         ]);
     }
+<<<<<<< HEAD
     
 }
+=======
+}
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e

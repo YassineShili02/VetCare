@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'backoffice/base.html.twig' %}
 
 {% block title %}Gestion des Médicaments{% endblock %}
@@ -19,6 +20,547 @@
 
         <table class="table">
             <thead>
+=======
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Médicaments - VetCare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+                {% block title %}Gestion des Traitements{% endblock %}
+
+        {% block body %}
+        <div class="filters-section" style="margin-bottom: 2rem; background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
+        <h3 style="margin-bottom: 1rem; color: #2c3e50;">🔍 Filtres et Tri</h3>
+
+        <form method="get" action="{{ path('app_traitement_index') }}" class="filter-form">
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+
+        <div class="form-group" style="flex: 1; min-width: 250px;">
+        <label for="search" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Recherche :</label>
+        <input type="text"
+        id="search"
+        name="search"
+        value="{{ currentSearch }}"
+        class="form-control"
+        placeholder="Nom ou description...">
+        </div>
+
+        <!-- FILTRE PAR STATUT -->
+        <div class="form-group" style="min-width: 200px;">
+        <label for="statut" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Statut :</label>
+        <select id="statut" name="statut" class="form-control">
+                                                              {% for key, label in statuts %}
+        <option value="{{ key }}" {{ currentStatut == key ? 'selected' : '' }}>
+                                  {{ label }}
+        </option>
+          {% endfor %}
+        </select>
+        </div>
+
+        <!-- BOUTONS D'ACTION -->
+        <div class="form-group" style="display: flex; gap: 0.5rem;">
+        <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                                                                                  🔍 Appliquer les filtres
+        </button>
+        <a href="{{ path('app_traitement_index') }}" class="btn btn-secondary">
+                                                                              🗑️ Réinitialiser
+        </a>
+        </div>
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Filters */
+        .filters-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #2196F3;
+        }
+
+        .filters-title {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control, select.form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, select.form-control:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #FF9800;
+            color: white;
+        }
+
+        .btn-info {
+            background: #00BCD4;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #757575;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Table */
+        .data-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: #2196F3;
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .card-body {
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Stock Badges */
+        .stock-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .stock-high { background: #4CAF50; color: white; }
+        .stock-medium { background: #FF9800; color: white; }
+        .stock-low { background: #F44336; color: white; }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            min-height: 36px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="header-container">
+        <a href="{{ path('app_home') }}" class="logo">
+            🏥 VetCare Pro
+        </a>
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="{{ path('app_medicament_index') }}">💊 Médicaments</a></li>
+                <li><a href="{{ path('app_traitement_index') }}">📋 Traitements</a></li>
+                <li><a href="{{ path('app_client_interface') }}">👁️ Client</a></li>
+                <li><a href="{{ path('app_logout') }}">🚪 Déconnexion</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="main-container">
+    <!-- Flash Messages -->
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">{{ message }}</div>
+    {% endfor %}
+
+    <!-- Filters -->
+    <div class="filters-card">
+        <h2 class="filters-title">
+            <span>🔍</span> Filtres et Recherche
+        </h2>
+        <form method="get" action="{{ path('app_medicament_index') }}" class="filter-form">
+            <div class="form-group">
+                <label class="form-label">Recherche :</label>
+                <input type="text"
+                       name="search"
+                       value="{{ currentSearch }}"
+                       class="form-control"
+                       placeholder="Nom, description...">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Stock :</label>
+                <select name="stock" class="form-control">
+                    <option value="">Tous les stocks</option>
+                    <option value="low" {{ currentStock == 'low' ? 'selected' : '' }}>📉 Stock faible (&lt; 5)</option>
+                    <option value="medium" {{ currentStock == 'medium' ? 'selected' : '' }}>📊 Stock moyen (5-20)</option>
+                    <option value="high" {{ currentStock == 'high' ? 'selected' : '' }}>📈 Stock élevé (&gt; 20)</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                <button type="submit" class="btn btn-primary">
+                    🔍 Appliquer
+                </button>
+                <a href="{{ path('app_medicament_index') }}" class="btn btn-secondary">
+                    🗑️ Réinitialiser
+                </a>
+            </div>
+        </form>
+    </div>
+    </form>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Description</th>
+            <th>Statut</th>
+            <th>Médicaments</th>
+            <th>Date création</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for traitement in traitements %}
+            <tr>
+                <td><strong>#{{ traitement.id }}</strong></td>
+                <td>
+                    <div style="font-weight: 600; color: #2c3e50;">{{ traitement.nom }}</div>
+                </td>
+                <td>
+                    <div style="max-width: 200px;">
+                        {{ traitement.description|default('Aucune description')|slice(0, 60) }}
+                        {% if traitement.description and traitement.description|length > 60 %}...{% endif %}
+                    </div>
+                </td>
+                <td>
+                        <span class="statut-badge statut-{{ traitement.statut }}">
+                            {% if traitement.statut == 'pending' %}⏳ En attente
+                            {% elseif traitement.statut == 'in_progress' %}🔄 En cours
+                            {% elseif traitement.statut == 'completed' %}✅ Terminé
+                            {% elseif traitement.statut == 'cancelled' %}❌ Annulé
+                            {% elseif traitement.statut == 'accepted' %}👍 Accepté
+                            {% elseif traitement.statut == 'refused' %}👎 Refusé
+                            {% endif %}
+                        </span>
+                </td>
+                <td>
+                    {% if traitement.medicaments|length > 0 %}
+                        <span style="color: #27ae60; font-weight: 600;">{{ traitement.medicaments|length }}</span> médicament(s)
+                    {% else %}
+                        <span style="color: #6c757d;">Aucun</span>
+                    {% endif %}
+                </td>
+                <td>{{ traitement.dateCreation|date('d/m/Y H:i') }}</td>
+                <td>
+                    <div class="actions">
+                        <a href="{{ path('app_traitement_show', {'id': traitement.id}) }}" class="btn btn-info" title="Voir détails">
+                            👁️
+                        </a>
+                        <a href="{{ path('app_traitement_edit', {'id': traitement.id}) }}" class="btn btn-warning" title="Modifier">
+                            ✏️
+                        </a>
+                        <form method="post" action="{{ path('app_traitement_delete', {'id': traitement.id}) }}"
+                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce traitement ?');"
+                              style="display: inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ traitement.id) }}">
+                            <button class="btn btn-secondary" title="Supprimer">🗑️</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 2rem; color: #6c757d;">
+                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">📭</div>
+                    Aucun traitement trouvé
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    </div>
+    {% endblock %}
+    =======
+    <!-- Data Table -->
+    <div class="data-card">
+        <div class="card-header">
+            <h2 style="margin: 0; color: white;">Gestion des Médicaments</h2>
+            <a href="{{ path('app_medicament_new') }}" class="btn btn-success">
+                ＋ Créer un médicament
+            </a>
+        </div>
+
+        <div class="card-body">
+            <table class="table">
+                <thead>
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e
                 <tr>
                     <th>ID</th>
                     <th>Nom</th>
@@ -27,6 +569,7 @@
                     <th>Date création</th>
                     <th>Actions</th>
                 </tr>
+<<<<<<< HEAD
             </thead>
             <tbody>
             {% for medicament in medicaments %}
@@ -77,3 +620,89 @@
     </div>
 </div>
 {% endblock %}
+=======
+                </thead>
+                <tbody>
+                {% for medicament in medicaments %}
+                    <tr>
+                        <td><strong>#{{ medicament.id }}</strong></td>
+                        <td>
+                            <div style="font-weight: 600; color: #2c3e50;">{{ medicament.nom }}</div>
+                        </td>
+                        <td>
+                            <div style="max-width: 200px; color: #5a6c7d;">
+                                {{ medicament.description|default('Aucune description')|slice(0, 60) }}
+                                {% if medicament.description and medicament.description|length > 60 %}...{% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            {% if medicament.stock > 20 %}
+                                <span class="stock-badge stock-high">📈 Élevé ({{ medicament.stock }})</span>
+                            {% elseif medicament.stock > 5 %}
+                                <span class="stock-badge stock-medium">📊 Moyen ({{ medicament.stock }})</span>
+                            {% else %}
+                                <span class="stock-badge stock-low">📉 Faible ({{ medicament.stock }})</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ medicament.dateCreation|date('d/m/Y H:i') }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ path('app_medicament_show', {'id': medicament.id}) }}"
+                                   class="action-btn"
+                                   style="background: #00BCD4; color: white;"
+                                   title="Voir détails">
+                                    👁️
+                                </a>
+                                <a href="{{ path('app_medicament_edit', {'id': medicament.id}) }}"
+                                   class="action-btn"
+                                   style="background: #FF9800; color: white;"
+                                   title="Modifier">
+                                    ✏️
+                                </a>
+                                <form method="post"
+                                      action="{{ path('app_medicament_delete', {'id': medicament.id}) }}"
+                                      onsubmit="return confirm('Supprimer ce médicament ?');"
+                                      style="display: inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ medicament.id) }}">
+                                    <button type="submit"
+                                            class="action-btn"
+                                            style="background: #757575; color: white;"
+                                            title="Supprimer">
+                                        🗑️
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📭</div>
+                                <h3>Aucun médicament trouvé</h3>
+                                <p>Créez votre premier médicament en cliquant sur le bouton ci-dessus</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-container">
+        <div class="footer-links">
+            <a href="{{ path('app_home') }}">Accueil</a>
+            <a href="{{ path('app_client_interface') }}">Interface Client</a>
+            <a href="#">Contact</a>
+            <a href="#">Mentions légales</a>
+        </div>
+        <p>© 2024 VetCare Pro - Système de gestion vétérinaire. Tous droits réservés.</p>
+    </div>
+</footer>
+</body>
+</html>
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e

@@ -1,0 +1,47 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Ajouter un Dossier Médical{% endblock %}
+
+{% block content %}
+    <section class="main-content section-padding">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h3>
+                                <i class="fas fa-notes-medical me-2"></i>
+                                Ajouter un Dossier Médical
+                                {% if animal is defined %}
+                                    pour {{ animal.nom }}
+                                {% endif %}
+                            </h3>
+                        </div>
+                        <div class="card-body">
+
+                            {{ form_start(formDossier, {'attr': {'class': 'needs-validation', 'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
+
+                            <div class="row g-3">
+                                {% for field in formDossier %}
+                                    {% if field.vars.name != '_token' %}
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(field, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                        {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(field) }}
+                                    {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-success btn-lg">Ajouter le Dossier</button>
+                            </div>
+
+                            {{ form_end(formDossier) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
