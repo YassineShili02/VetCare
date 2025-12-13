@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - VetCare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dashboard-cards {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            min-width: 300px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .card-description {
+            color: #7f8c8d;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-client {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-veterinary {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .description {
+            margin-top: 4rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .description h3 {
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .description p {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .dashboard-card {
+                min-width: 250px;
+                width: 100%;
+                max-width: 400px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .logo {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🏥</div>
+        <h1>Tableau de Bord VetCare</h1>
+        <p class="subtitle">
+            Système de gestion vétérinaire - Accès rapide aux interfaces
+        </p>
+
+        <div class="dashboard-cards">
+            <div class="dashboard-card">
+                <div class="card-icon">👁️</div>
+                <h2 class="card-title">Interface Client</h2>
+                <p class="card-description">
+                    Consultation des médicaments disponibles et des traitements en cours.
+                    Interface en lecture seule pour les propriétaires d'animaux.
+                </p>
+                <a href="{{ path('app_client_interface') }}" class="btn btn-client">
+                    Accéder à l'interface client
+                </a>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-icon">🔧</div>
+                <h2 class="card-title">Backoffice Vétérinaire</h2>
+                <p class="card-description">
+                    Gestion complète des médicaments et traitements.
+                    Système de CRUD avec recherche, filtres et outils d'administration.
+                </p>
+                <a href="{{ path('app_medicament_index') }}" class="btn btn-veterinary">
+                    Accéder au backoffice
+                </a>
+            </div>
+        </div>
+
+        <div class="description">
+            <h3>À propos du Tableau de Bord</h3>
+            <p>
+                Ce tableau de bord centralise l'accès à toutes les fonctionnalités de VetCare.
+                L'<strong>Interface Client</strong> permet la consultation publique des données,
+                tandis que le <strong>Backoffice Vétérinaire</strong> offre une gestion complète
+                avec système de recherche, filtres et outils d'administration.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

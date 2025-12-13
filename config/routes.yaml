@@ -1,5 +1,8 @@
+# config/routes.yaml
+
+# Active l'auto-découverte des routes depuis les contrôleurs
 controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+    resource: ../src/Controller/
     type: attribute
+
+# Pas besoin de routes supplémentaires car tout est défini dans les contrôleurs

@@ -1,0 +1,48 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Détails du Médicament{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h1 style="margin: 0; color: white;">Détails du médicament</h1>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>ID</th>
+                    <td>{{ medicament.id }}</td>
+                </tr>
+                <tr>
+                    <th>Nom</th>
+                    <td>{{ medicament.nom }}</td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td>{{ medicament.description|default('Aucune description') }}</td>
+                </tr>
+                <tr>
+                    <th>Stock</th>
+                    <td>
+                        <span style="font-weight: bold; color: {{ medicament.stock > 10 ? '#28a745' : (medicament.stock > 0 ? '#ffc107' : '#dc3545') }}">
+                            {{ medicament.stock }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Date création</th>
+                    <td>{{ medicament.dateCreation|date('d/m/Y H:i') }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="actions">
+            <a href="{{ path('app_medicament_edit', {'id': medicament.id}) }}" class="btn btn-warning">Modifier</a>
+            <a href="{{ path('app_medicament_index') }}" class="btn btn-primary">Retour à la liste</a>
+
+            {{ include('backoffice/medicament/_delete_form.html.twig') }}
+        </div>
+    </div>
+</div>
+{% endblock %}

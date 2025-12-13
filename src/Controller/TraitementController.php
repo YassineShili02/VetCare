@@ -1,4 +1,5 @@
 <?php
+// src/Controller/TraitementController.php
 
 namespace App\Controller;
 
@@ -11,18 +12,35 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/traitement')]
+#[Route('/backoffice/traitement')]
 class TraitementController extends AbstractController
 {
-    #[Route('/', name: 'traitement_index', methods: ['GET'])]
-    public function index(TraitementRepository $traitementRepository): Response
+    #[Route('/', name: 'app_traitement_index', methods: ['GET'])]
+    public function index(Request $request, TraitementRepository $traitementRepository): Response
     {
-        return $this->render('traitement/index.html.twig', [
-            'traitements' => $traitementRepository->findAll(),
+        // Récupérer les paramètres
+        $search = $request->query->get('search');
+        $sortBy = $request->query->get('sortBy', 'dateCreation');
+        $order = $request->query->get('order', 'DESC');
+        $statut = $request->query->get('statut');
+
+        // Récupérer les traitements filtrés
+        $traitements = $traitementRepository->findAllWithSearch($search, $sortBy, $order, $statut);
+
+        // Statistiques par statut
+        $statutStats = $traitementRepository->countByStatut();
+
+        return $this->render('backoffice/traitement/index.html.twig', [
+            'traitements' => $traitements,
+            'search' => $search,
+            'sortBy' => $sortBy,
+            'order' => $order,
+            'statut' => $statut,
+            'statutStats' => $statutStats,
         ]);
     }
 
-    #[Route('/new', name: 'traitement_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_traitement_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $traitement = new Traitement();
@@ -33,16 +51,25 @@ class TraitementController extends AbstractController
             $entityManager->persist($traitement);
             $entityManager->flush();
 
-            return $this->redirectToRoute('traitement_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Traitement créé avec succès.');
+            return $this->redirectToRoute('app_traitement_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('traitement/new.html.twig', [
+        return $this->render('backoffice/traitement/new.html.twig', [
             'traitement' => $traitement,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'traitement_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}', name: 'app_traitement_show', methods: ['GET'])]
+    public function show(Traitement $traitement): Response
+    {
+        return $this->render('backoffice/traitement/show.html.twig', [
+            'traitement' => $traitement,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_traitement_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Traitement $traitement, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(TraitementType::class, $traitement);
@@ -51,23 +78,25 @@ class TraitementController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('traitement_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Traitement modifié avec succès.');
+            return $this->redirectToRoute('app_traitement_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('traitement/edit.html.twig', [
+        return $this->render('backoffice/traitement/edit.html.twig', [
             'traitement' => $traitement,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}', name: 'traitement_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'app_traitement_delete', methods: ['POST'])]
     public function delete(Request $request, Traitement $traitement, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$traitement->getId(), $request->request->get('_token'))) {
             $entityManager->remove($traitement);
             $entityManager->flush();
+            $this->addFlash('success', 'Traitement supprimé avec succès.');
         }
 
-        return $this->redirectToRoute('traitement_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_traitement_index', [], Response::HTTP_SEE_OTHER);
     }
 }

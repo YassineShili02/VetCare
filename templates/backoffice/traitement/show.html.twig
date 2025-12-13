@@ -1,0 +1,96 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Détails du Traitement{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h1 style="margin: 0; color: white;">Détails du traitement</h1>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>ID</th>
+                    <td>{{ traitement.id }}</td>
+                </tr>
+                <tr>
+                    <th>Nom</th>
+                    <td>{{ traitement.nom }}</td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td>{{ traitement.description|default('Aucune description') }}</td>
+                </tr>
+                <tr>
+                    <th>Statut</th>
+                    <td>
+                        <span class="statut-badge statut-{{ traitement.statut }}">
+                            {% if traitement.statut == 'pending' %}En attente
+                            {% elseif traitement.statut == 'in_progress' %}En cours
+                            {% elseif traitement.statut == 'completed' %}Terminé
+                            {% elseif traitement.statut == 'cancelled' %}Annulé
+                            {% endif %}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Date création</th>
+                    <td>{{ traitement.dateCreation|date('d/m/Y H:i') }}</td>
+                </tr>
+                <tr>
+                    <th>Médicaments</th>
+                    <td>
+                        {% if traitement.medicaments|length > 0 %}
+                            <ul style="list-style-type: none; padding: 0;">
+                                {% for medicament in traitement.medicaments %}
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                                    <strong>{{ medicament.nom }}</strong>
+                                    - Stock:
+                                    <span style="color: {{ medicament.stock > 10 ? '#28a745' : (medicament.stock > 0 ? '#ffc107' : '#dc3545') }}; font-weight: bold;">
+                                        {{ medicament.stock }}
+                                    </span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            Aucun médicament associé
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="actions">
+            <a href="{{ path('app_traitement_edit', {'id': traitement.id}) }}" class="btn btn-warning">Modifier</a>
+            <a href="{{ path('app_traitement_index') }}" class="btn btn-primary">Retour à la liste</a>
+
+            <form method="post" action="{{ path('app_traitement_delete', {'id': traitement.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce traitement ?');" style="display: inline;">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ traitement.id) }}">
+                <button class="btn btn-danger">Supprimer</button>
+            </form>
+        </div>
+
+        {# Formulaire pour changer le statut #}
+        <div class="card" style="margin-top: 2rem;">
+            <div class="card-header">
+                <h3 style="margin: 0; color: white;">Changer le statut</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ path('app_traitement_update_statut', {'id': traitement.id}) }}">
+                    <div class="form-group">
+                        <label class="form-label">Nouveau statut</label>
+                        <select name="statut" class="form-control" required>
+                            <option value="pending" {{ traitement.statut == 'pending' ? 'selected' : '' }}>En attente</option>
+                            <option value="in_progress" {{ traitement.statut == 'in_progress' ? 'selected' : '' }}>En cours</option>
+                            <option value="completed" {{ traitement.statut == 'completed' ? 'selected' : '' }}>Terminé</option>
+                            <option value="cancelled" {{ traitement.statut == 'cancelled' ? 'selected' : '' }}>Annulé</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Mettre à jour le statut</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
