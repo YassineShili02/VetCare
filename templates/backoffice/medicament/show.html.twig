@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
 {% extends 'backoffice/base.html.twig' %}
 
 {% block title %}Détails du Médicament{% endblock %}
@@ -45,4 +49,425 @@
         </div>
     </div>
 </div>
+<<<<<<< HEAD
 {% endblock %}
+=======
+{% endblock %}
+=======
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Médicament - VetCare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            background: #2196F3;
+            color: white;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Table */
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        .detail-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #e0e0e0;
+            width: 200px;
+        }
+
+        .detail-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            color: #5a6c7d;
+        }
+
+        .detail-table tr:last-child th,
+        .detail-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .detail-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Stock Indicator */
+        .stock-indicator {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .stock-high {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .stock-medium {
+            background: #FF9800;
+            color: white;
+        }
+
+        .stock-low {
+            background: #F44336;
+            color: white;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .btn-warning {
+            background: #FF9800;
+            color: white;
+        }
+
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #F44336;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* Delete Form */
+        .delete-form {
+            display: inline;
+        }
+
+        .delete-form button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #F44336;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .delete-form button:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .detail-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn, .delete-form button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="{{ path('app_home') }}" class="logo">
+                🏥 VetCare Pro
+            </a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="{{ path('app_medicament_index') }}">💊 Médicaments</a></li>
+                    <li><a href="{{ path('app_traitement_index') }}">📋 Traitements</a></li>
+                    <li><a href="{{ path('app_client_interface') }}">👁️ Client</a></li>
+                    <li><a href="{{ path('app_logout') }}">🚪 Déconnexion</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Flash Messages -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-error">{{ message }}</div>
+        {% endfor %}
+
+        <!-- Details Card -->
+        <div class="card">
+            <div class="card-header">
+                <h1 style="margin: 0;">Détails du médicament</h1>
+            </div>
+            <div class="card-body">
+                <table class="detail-table">
+                    <tbody>
+                        <tr>
+                            <th>ID</th>
+                            <td>#{{ medicament.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nom</th>
+                            <td style="font-weight: 600; color: #2c3e50;">{{ medicament.nom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Description</th>
+                            <td>
+                                {% if medicament.description %}
+                                    {{ medicament.description }}
+                                {% else %}
+                                    <span style="color: #6c757d; font-style: italic;">Aucune description</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Stock</th>
+                            <td>
+                                {% set stockClass = medicament.stock > 10 ? 'stock-high' : (medicament.stock > 0 ? 'stock-medium' : 'stock-low') %}
+                                <span class="stock-indicator {{ stockClass }}">
+                                    {{ medicament.stock }} unités
+                                </span>
+                                {% if medicament.stock == 0 %}
+                                    <span style="color: #F44336; margin-left: 1rem;">⚠️ Rupture de stock</span>
+                                {% elseif medicament.stock <= 5 %}
+                                    <span style="color: #FF9800; margin-left: 1rem;">⚠️ Stock faible</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Date de création</th>
+                            <td>{{ medicament.dateCreation|date('d/m/Y à H:i') }}</td>
+                        </tr>
+                        <!-- Suppression de la ligne "Dernière modification" car elle n'existe pas dans l'entité -->
+                    </tbody>
+                </table>
+
+                <div class="action-buttons">
+                    <a href="{{ path('app_medicament_edit', {'id': medicament.id}) }}" 
+                       class="btn btn-warning">
+                        ✏️ Modifier
+                    </a>
+                    <a href="{{ path('app_medicament_index') }}" 
+                       class="btn btn-primary">
+                        ↩️ Retour à la liste
+                    </a>
+                    
+                    <form method="post" 
+                          action="{{ path('app_medicament_delete', {'id': medicament.id}) }}" 
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce médicament ?');"
+                          class="delete-form">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ medicament.id) }}">
+                        <button type="submit" class="btn-danger">
+                            🗑️ Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="{{ path('app_home') }}">Accueil</a>
+                <a href="{{ path('app_client_interface') }}">Interface Client</a>
+                <a href="#">Contact</a>
+                <a href="#">Mentions légales</a>
+            </div>
+            <p>© 2024 VetCare Pro - Système de gestion vétérinaire. Tous droits réservés.</p>
+        </div>
+    </footer>
+</body>
+</html>
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e
+>>>>>>> 343012190ba309c39188b230b31908e912145e26

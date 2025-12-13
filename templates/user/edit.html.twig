@@ -1,0 +1,350 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier - {{ user.firstName }} {{ user.lastName }}{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-warning text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">
+                        <i class="fas fa-edit"></i> Modifier le profil
+                    </h2>
+                    <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-light btn-sm">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.email, {'attr': {
+                                'class': 'form-control' ~ (form.email.vars.errors|length ? ' is-invalid' : ''),
+                                'placeholder': 'exemple@email.com'
+                            }}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.email) }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form_label(form.firstName, 'Prénom', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.firstName, {'attr': {
+                                'class': 'form-control' ~ (form.firstName.vars.errors|length ? ' is-invalid' : ''),
+                                'placeholder': 'Entrez le prénom'
+                            }}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.firstName) }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form_label(form.lastName, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.lastName, {'attr': {
+                                'class': 'form-control' ~ (form.lastName.vars.errors|length ? ' is-invalid' : ''),
+                                'placeholder': 'Entrez le nom'
+                            }}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.lastName) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form_label(form.phone, 'Téléphone', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.phone, {'attr': {
+                                'class': 'form-control' ~ (form.phone.vars.errors|length ? ' is-invalid' : ''),
+                                'placeholder': '06 12 34 56 78'
+                            }}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.phone) }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form_label(form.address, 'Adresse', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.address, {'attr': {
+                                'class': 'form-control' ~ (form.address.vars.errors|length ? ' is-invalid' : ''),
+                                'placeholder': 'Adresse complète',
+                                'rows': 3
+                            }}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.address) }}
+                            </div>
+                        </div>
+                        
+                        <!-- Section des rôles (seulement pour les administrateurs) -->
+                        {% if form.role is defined and is_granted('ROLE_ADMIN') %}
+                        <div class="mb-3">
+                            <label class="form-label">Type de compte</label>
+                            <div class="role-selection p-3 bg-light rounded">
+                                <div class="row">
+                                    {% for child in form.role.children %}
+                                    <div class="col-md-12 mb-2">
+                                        <div class="card role-card h-100" 
+                                            data-role="{{ child.vars.value|replace({'ROLE_': ''})|lower }}">
+                                            <div class="card-body">
+                                                <div class="form-check">
+                                                    {{ form_widget(child, {'attr': {'class': 'form-check-input role-radio'}}) }}
+                                                    {{ form_label(child, null, {'label_attr': {'class': 'form-check-label role-label'}}) }}
+                                                </div>
+                                                
+                                                {% if child.vars.value == 'ROLE_USER' %}
+                                                    <p class="text-muted small mb-0 mt-2">
+                                                        <i class="fas fa-paw"></i> Propriétaire d'animal - Gérer vos animaux et rendez-vous
+                                                    </p>
+                                                {% elseif child.vars.value == 'ROLE_VET' %}
+                                                    <p class="text-muted small mb-0 mt-2">
+                                                        <i class="fas fa-stethoscope"></i> Vétérinaire - Gérer les consultations et patients
+                                                    </p>
+                                                {% elseif child.vars.value == 'ROLE_ADMIN' %}
+                                                    <p class="text-muted small mb-0 mt-2">
+                                                        <i class="fas fa-cogs"></i> Administrateur - Gérer tout le système
+                                                    </p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="invalid-feedback d-block">
+                                {{ form_errors(form.role) }}
+                            </div>
+                            <div class="form-text mt-2">
+                                <i class="fas fa-info-circle"></i> Modification du type de compte. Cette action peut affecter les permissions de l'utilisateur.
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Photo de profil (si visible) -->
+                {% if form.profilePhoto is defined %}
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-camera"></i> Photo de profil
+                        </h5>
+                        <div class="mb-3">
+                            {{ form_label(form.profilePhoto, 'Photo de profil', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.profilePhoto, {'attr': {
+                                'class': 'form-control' ~ (form.profilePhoto.vars.errors|length ? ' is-invalid' : '')
+                            }}) }}
+                            <div class="form-text">
+                                Laissez vide pour conserver la photo actuelle. Formats acceptés : JPG, PNG, GIF, WebP (max 5MB)
+                            </div>
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.profilePhoto) }}
+                            </div>
+                            
+                            <!-- Afficher la photo actuelle -->
+                            {% if user.profilePhoto %}
+                            <div class="mt-3">
+                                <p class="small text-muted">Photo actuelle :</p>
+                                <img src="{{ asset(user.profilePhoto) }}" 
+                                     alt="Photo de profil actuelle" 
+                                     class="avatar-medium rounded">
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour au profil
+                            </a>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Mettre à jour
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.role-selection {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.role-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.role-card:hover {
+    background-color: #f8f9ff;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.role-radio {
+    margin-right: 10px;
+}
+
+.role-label {
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: block;
+    margin-left: 30px;
+}
+
+.role-label:hover {
+    background-color: #e9ecef;
+}
+
+.role-radio:checked + .role-label {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    font-weight: bold;
+}
+
+.role-radio:checked ~ .role-card {
+    border-color: #0d6efd;
+    background-color: #f8f9ff;
+}
+
+/* Icônes pour les rôles */
+.role-label[for*="user_role_0"]::before {
+    content: "👤 ";
+    margin-right: 8px;
+}
+
+.role-label[for*="user_role_1"]::before {
+    content: "🐾 ";
+    margin-right: 8px;
+}
+
+.role-label[for*="user_role_2"]::before {
+    content: "⚙️ ";
+    margin-right: 8px;
+}
+
+.role-card[data-role="user"] {
+    border-left: 4px solid #3498db;
+}
+
+.role-card[data-role="vet"] {
+    border-left: 4px solid #2ecc71;
+}
+
+.role-card[data-role="admin"] {
+    border-left: 4px solid #e74c3c;
+}
+
+.avatar-medium {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #dee2e6;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 8px;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 8px 8px 0 0 !important;
+}
+</style>
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Style interactif pour les boutons radio des rôles
+    const roleCards = document.querySelectorAll('.role-card');
+    const roleRadios = document.querySelectorAll('.role-radio');
+    
+    roleCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Trouver le radio button correspondant
+            const radio = this.querySelector('.role-radio');
+            if (radio && !radio.disabled) {
+                radio.checked = true;
+                updateRoleSelection();
+            }
+        });
+    });
+    
+    roleRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            updateRoleSelection();
+        });
+        
+        // Initialiser les sélections
+        if (radio.checked) {
+            updateRoleSelection();
+        }
+    });
+    
+    function updateRoleSelection() {
+        // Retirer la classe active de toutes les cartes
+        roleCards.forEach(card => {
+            card.classList.remove('active-role');
+        });
+        
+        // Ajouter la classe active à la carte sélectionnée
+        const selectedRadio = document.querySelector('.role-radio:checked');
+        if (selectedRadio) {
+            const selectedCard = selectedRadio.closest('.role-card');
+            if (selectedCard) {
+                selectedCard.classList.add('active-role');
+            }
+        }
+    }
+    
+    // Validation Bootstrap
+    (function () {
+        'use strict'
+        
+        // Récupérer tous les formulaires auxquels nous voulons appliquer les styles de validation Bootstrap
+        var forms = document.querySelectorAll('.needs-validation')
+        
+        // Boucle sur eux et empêcher la soumission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+});
+</script>
+{% endblock %}
+{% endblock %}

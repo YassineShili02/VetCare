@@ -1,0 +1,501 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un nouvel utilisateur{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-user-plus"></i> Créer un compte
+                    </h1>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                    
+                    <div class="row">
+                        <!-- Colonne gauche : Informations personnelles -->
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="fas fa-user"></i> Informations personnelles
+                            </h5>
+                            
+                            <!-- Prénom -->
+                            <div class="mb-3">
+                                {{ form_label(form.firstName, 'Prénom', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.firstName, {'attr': {
+                                    'class': 'form-control' ~ (form.firstName.vars.errors|length ? ' is-invalid' : ''),
+                                    'placeholder': 'Entrez le prénom'
+                                }}) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.firstName) }}
+                                </div>
+                            </div>
+                            
+                            <!-- Nom -->
+                            <div class="mb-3">
+                                {{ form_label(form.lastName, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.lastName, {'attr': {
+                                    'class': 'form-control' ~ (form.lastName.vars.errors|length ? ' is-invalid' : ''),
+                                    'placeholder': 'Entrez le nom'
+                                }}) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.lastName) }}
+                                </div>
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="mb-3">
+                                {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.email, {'attr': {
+                                    'class': 'form-control' ~ (form.email.vars.errors|length ? ' is-invalid' : ''),
+                                    'placeholder': 'exemple@email.com'
+                                }}) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.email) }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Colonne droite : Informations supplémentaires -->
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="fas fa-cog"></i> Informations système
+                            </h5>
+                            
+                            <!-- Mot de passe -->
+                            <div class="mb-3">
+                                {{ form_label(form.password, 'Mot de passe', {'label_attr': {'class': 'form-label'}}) }}
+                                <div class="input-group">
+                                    {{ form_widget(form.password, {'attr': {
+                                        'class': 'form-control' ~ (form.password.vars.errors|length ? ' is-invalid' : ''),
+                                        'placeholder': 'Mot de passe sécurisé',
+                                        'id': 'password-input'
+                                    }}) }}
+                                    <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    Minimum 6 caractères
+                                </div>
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.password) }}
+                                </div>
+                                <!-- Barre de force du mot de passe -->
+                                <div id="password-strength-bar" class="password-strength mt-2" style="display: none;"></div>
+                            </div>
+                            
+                            <!-- Téléphone -->
+                            <div class="mb-3">
+                                {{ form_label(form.phone, 'Téléphone', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.phone, {'attr': {
+                                    'class': 'form-control' ~ (form.phone.vars.errors|length ? ' is-invalid' : ''),
+                                    'placeholder': '06 12 34 56 78'
+                                }}) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.phone) }}
+                                </div>
+                            </div>
+                            
+                            <!-- Adresse -->
+                            <div class="mb-3">
+                                {{ form_label(form.address, 'Adresse', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.address, {'attr': {
+                                    'class': 'form-control' ~ (form.address.vars.errors|length ? ' is-invalid' : ''),
+                                    'placeholder': 'Adresse complète',
+                                    'rows': 3
+                                }}) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.address) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- SECTION TYPE DE COMPTE -->
+<div class="row mt-4">
+    <div class="col-12">
+        <h5 class="border-bottom pb-2 mb-3">
+            <i class="fas fa-id-card"></i> Type de compte
+        </h5>
+        
+        {% if is_admin_creating is defined and is_admin_creating %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> En tant qu'administrateur, vous pouvez créer tous les types de comptes.
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> 
+                {% if app.user %}
+                    Choisissez le type de compte que vous souhaitez créer.
+                {% else %}
+                    Choisissez le type de compte qui correspond à votre profil. Vous ne pourrez pas changer de type ultérieurement sans contacter un administrateur.
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <div class="role-selection p-4 bg-light rounded">
+            <div class="row">
+                {% for child in form.role.children %}
+                <div class="col-md-4 mb-3">
+                    <div class="card role-card h-100"
+                        data-role="{{ child.vars.value|replace({'ROLE_': ''})|lower }}">
+                        <div class="card-body text-center">
+                            <div class="form-check mb-2">
+                                {{ form_widget(child, {'attr': {'class': 'form-check-input role-radio'}}) }}
+                                {{ form_label(child, null, {'label_attr': {'class': 'form-check-label role-label'}}) }}
+                            </div>
+                            
+                            {% if child.vars.value == 'ROLE_USER' %}
+                                <p class="text-muted small mb-0">
+                                    <i class="fas fa-paw"></i> Client<br>
+                                    <small>Gérer vos animaux et rendez-vous</small>
+                                </p>
+                            {% elseif child.vars.value == 'ROLE_VET' %}
+                                <p class="text-muted small mb-0">
+                                    <i class="fas fa-stethoscope"></i> Vétérinaire<br>
+                                    <small>Gérer les consultations et patients</small>
+                                </p>
+                            {% elseif child.vars.value == 'ROLE_ADMIN' %}
+                                <p class="text-muted small mb-0">
+                                    <i class="fas fa-cogs"></i> Administrateur<br>
+                                    <small>Gérer tout le système</small>
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="invalid-feedback d-block mt-2">
+                {{ form_errors(form.role) }}
+            </div>
+            
+            <div class="form-text mt-3">
+                <i class="fas fa-info-circle"></i> Choisissez le type de compte qui correspond à votre profil. Vous ne pourrez pas changer de type ultérieurement sans contacter un administrateur.
+            </div>
+        </div>
+    </div>
+</div>
+                    
+                    <!-- Photo de profil (optionnelle) -->
+                    {% if form.profilePhoto is defined %}
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="fas fa-camera"></i> Photo de profil
+                            </h5>
+                            <div class="mb-3">
+                                {{ form_label(form.profilePhoto, 'Photo de profil', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.profilePhoto, {'attr': {
+                                    'class': 'form-control' ~ (form.profilePhoto.vars.errors|length ? ' is-invalid' : '')
+                                }}) }}
+                                <div class="form-text">
+                                    Formats acceptés : JPG, PNG, GIF, WebP (max 5MB)
+                                </div>
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.profilePhoto) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ path('app_user_index') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-user-plus"></i> Créer mon compte
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.password-strength {
+    height: 5px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.strength-weak { background-color: #dc3545; width: 25%; }
+.strength-medium { background-color: #ffc107; width: 50%; }
+.strength-strong { background-color: #28a745; width: 75%; }
+.strength-very-strong { background-color: #20c997; width: 100%; }
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 8px;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.role-selection {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #dee2e6;
+}
+
+.role-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    height: 100%;
+    border-radius: 8px;
+}
+
+.role-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.role-radio {
+    margin-right: 10px;
+    transform: scale(1.3);
+}
+
+.role-label {
+    font-weight: 600;
+    color: #495057;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: block;
+    font-size: 1.1rem;
+    margin-left: 35px;
+}
+
+.role-label:hover {
+    background-color: #e9ecef;
+}
+
+.role-radio:checked + .role-label {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    font-weight: bold;
+}
+
+.role-radio:checked ~ .role-card {
+    border-color: #0d6efd;
+    background-color: #f8f9ff;
+}
+
+/* Icônes pour les rôles */
+.role-label[for*="user_role_0"]::before {
+    content: "👤 ";
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+.role-label[for*="user_role_1"]::before {
+    content: "🐾 ";
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+.role-label[for*="user_role_2"]::before {
+    content: "⚙️ ";
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+.active-role {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    font-weight: bold;
+}
+
+/* Style pour les cartes de rôle spécifiques */
+.role-card[data-role="user"] {
+    border-left: 4px solid #3498db;
+}
+
+.role-card[data-role="vet"] {
+    border-left: 4px solid #2ecc71;
+}
+
+.role-card[data-role="admin"] {
+    border-left: 4px solid #e74c3c;
+}
+
+/* Style responsive */
+@media (max-width: 768px) {
+    .role-card {
+        margin-bottom: 15px;
+    }
+    
+    .role-label {
+        margin-left: 30px;
+        font-size: 1rem;
+    }
+    
+    .btn-responsive {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+</style>
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Affichage/masquage du mot de passe
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password-input');
+    
+    if (togglePasswordBtn && passwordInput) {
+        togglePasswordBtn.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    }
+    
+    // Validation de la force du mot de passe
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+        });
+    }
+    
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        
+        if (password.length >= 6) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+        
+        const strengthBar = document.getElementById('password-strength-bar');
+        if (!strengthBar) return;
+        
+        strengthBar.className = 'password-strength';
+        if (password.length === 0) {
+            strengthBar.style.display = 'none';
+        } else {
+            strengthBar.style.display = 'block';
+            if (strength <= 2) {
+                strengthBar.className += ' strength-weak';
+            } else if (strength === 3) {
+                strengthBar.className += ' strength-medium';
+            } else if (strength === 4) {
+                strengthBar.className += ' strength-strong';
+            } else {
+                strengthBar.className += ' strength-very-strong';
+            }
+        }
+    }
+    
+    // Gestion des cartes de rôle
+    const roleCards = document.querySelectorAll('.role-card');
+    const roleRadios = document.querySelectorAll('.role-radio');
+    
+    roleCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Trouver le radio button correspondant
+            const radio = this.querySelector('.role-radio');
+            if (radio && !radio.disabled) {
+                radio.checked = true;
+                updateRoleSelection();
+            }
+        });
+    });
+    
+    roleRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            updateRoleSelection();
+        });
+        
+        // Initialiser les sélections
+        if (radio.checked) {
+            updateRoleSelection();
+        }
+    });
+    
+    function updateRoleSelection() {
+        // Retirer la classe active de toutes les cartes
+        roleCards.forEach(card => {
+            card.classList.remove('active-role');
+        });
+        
+        // Ajouter la classe active à la carte sélectionnée
+        const selectedRadio = document.querySelector('.role-radio:checked');
+        if (selectedRadio) {
+            const selectedCard = selectedRadio.closest('.role-card');
+            if (selectedCard) {
+                selectedCard.classList.add('active-role');
+            }
+        }
+    }
+    
+    function showAlert(type, message) {
+        // Créer une alerte temporaire
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        alertDiv.innerHTML = `
+            <i class="fas fa-exclamation-triangle"></i> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(alertDiv);
+        
+        // Supprimer après 3 secondes
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.parentNode.removeChild(alertDiv);
+            }
+        }, 3000);
+    }
+    
+    // Validation Bootstrap
+    (function () {
+        'use strict'
+        
+        // Récupérer tous les formulaires auxquels nous voulons appliquer les styles de validation Bootstrap
+        var forms = document.querySelectorAll('.needs-validation')
+        
+        // Boucle sur eux et empêcher la soumission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+});
+</script>
+{% endblock %}
+{% endblock %}

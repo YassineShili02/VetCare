@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmation du rendez-vous{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-check-circle"></i>
+                        Rendez-vous confirmé
+                    </h4>
+                </div>
+
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        Votre demande de rendez-vous a été enregistrée avec succès ✅
+                    </div>
+
+                    <h5 class="mt-4">📋 Détails du rendez-vous</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Date :</strong>
+                            {{ rendezvous.dateHeure|date('d/m/Y H:i') }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Clinique :</strong>
+                            {{ rendezvous.clinique.nom }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Client :</strong>
+                            {{ rendezvous.nomClient }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Téléphone :</strong>
+                            {{ rendezvous.telephoneClient }}
+                        </li>
+                        {% if rendezvous.animal %}
+                        <li class="list-group-item">
+                            <strong>Animal :</strong>
+                            {{ rendezvous.animal.nom }}
+                        </li>
+                        {% endif %}
+                    </ul>
+
+                    <div class="mt-4 text-center">
+                        <a href="{{ path('rendezvous_new') }}" class="btn btn-primary">
+                            Prendre un autre rendez-vous
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

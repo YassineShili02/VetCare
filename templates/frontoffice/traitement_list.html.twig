@@ -23,7 +23,10 @@
                             {% elseif traitement.statut == 'in_progress' %}En cours
                             {% elseif traitement.statut == 'completed' %}Terminé
                             {% elseif traitement.statut == 'cancelled' %}Annulé
+<<<<<<< HEAD
                             {% else %}{{ traitement.statut }}
+=======
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
                             {% endif %}
                         </span>
                     </span>
@@ -51,6 +54,14 @@
                 {% endfor %}
             </div>
             {% endif %}
+<<<<<<< HEAD
+=======
+
+            <div class="actions">
+                <button class="btn btn-accept" onclick="acceptTraitement({{ traitement.id }})">Accepter</button>
+                <button class="btn btn-refuse" onclick="refuseTraitement({{ traitement.id }})">Refuser</button>
+            </div>
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
         </div>
     </div>
     {% else %}
@@ -60,5 +71,25 @@
     {% endfor %}
 </div>
 
+<<<<<<< HEAD
 <a href="{{ path('app_home') }}" class="btn-back">🏠 Retour à l'accueil</a>
+=======
+<a href="{{ path('app_traitement_index') }}" class="btn-back">Retour au Backoffice</a>
+
+<script>
+function acceptTraitement(id) {
+    if (confirm('Êtes-vous sûr de vouloir accepter ce traitement ?')) {
+        alert('Traitement ' + id + ' accepté avec succès !');
+        // Ici vous pouvez ajouter un appel AJAX pour mettre à jour le statut
+    }
+}
+
+function refuseTraitement(id) {
+    if (confirm('Êtes-vous sûr de vouloir refuser ce traitement ?')) {
+        alert('Traitement ' + id + ' refusé !');
+        // Ici vous pouvez ajouter un appel AJAX pour mettre à jour le statut
+    }
+}
+</script>
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
 {% endblock %}

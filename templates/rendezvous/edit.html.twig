@@ -1,0 +1,270 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Éditer le rendez-vous #{{ rendezvous.id }}{% endblock %}
+{% block breadcrumb %}Rendez-vous{% endblock %}
+{% block page_title %}Éditer le rendez-vous #{{ rendezvous.id }}{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header pb-0 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">
+                        <i class="material-icons text-sm">edit</i>
+                        Éditer le rendez-vous #{{ rendezvous.id }}
+                    </h6>
+                    <a href="{{ path('rendezvous_admin_list') }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="material-icons text-sm">arrow_back</i> Retour
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card-body p-3">
+                {# Informations actuelles #}
+                <div class="alert alert-info alert-dismissible fade show mb-4">
+                    <span class="alert-icon"><i class="material-icons">info</i></span>
+                    <div class="alert-text">
+                        <h6 class="text-white mb-2">Informations actuelles</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-1 text-white text-sm">
+                                    <strong>Créé le :</strong> {{ rendezvous.dateCreation|date('d/m/Y H:i') }}
+                                </p>
+                                {% if rendezvous.dateModification %}
+                                <p class="mb-1 text-white text-sm">
+                                    <strong>Modifié le :</strong> {{ rendezvous.dateModification|date('d/m/Y H:i') }}
+                                </p>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1 text-white text-sm">
+                                    <strong>Statut :</strong> 
+                                    <span class="badge badge-sm bg-{{ rendezvous.statutBadgeClass }}">
+                                        {{ rendezvous.statutLabel }}
+                                    </span>
+                                </p>
+                                <p class="mb-0 text-white text-sm">
+                                    <strong>Paiement :</strong> 
+                                    <span class="badge badge-sm bg-{{ rendezvous.statutPaiementBadgeClass }}">
+                                        {{ rendezvous.statutPaiement|replace({'_': ' '})|title }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{ form_start(form) }}
+                    
+                    {# Informations Client #}
+                    <h6 class="text-uppercase text-xs font-weight-bolder opacity-6 mb-3">
+                        <i class="material-icons text-sm">person</i> Informations Client
+                    </h6>
+                    <div class="row">
+                        {% if form.client is defined %}
+                        <div class="col-md-12 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.client, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.client, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.client) }}
+                        </div>
+                        {% endif %}
+                        <div class="col-md-4 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.nomClient, 'Nom complet', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.nomClient, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.nomClient) }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.emailClient, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.emailClient, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.emailClient) }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.telephoneClient, 'Téléphone', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.telephoneClient, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.telephoneClient) }}
+                        </div>
+                    </div>
+
+                    <hr class="horizontal dark mt-4 mb-4">
+
+                    {# Informations Animal #}
+                    <h6 class="text-uppercase text-xs font-weight-bolder opacity-6 mb-3">
+                        <i class="material-icons text-sm">pets</i> Informations Animal
+                    </h6>
+                    <div class="row">
+                        {% if form.animal is defined %}
+                        <div class="col-md-12 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.animal, 'Animal (si lié à un compte)', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.animal, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.animal) }}
+                        </div>
+                        {% endif %}
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.nomAnimal, 'Nom de l\'animal', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.nomAnimal, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.nomAnimal) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.especeAnimal, 'Espèce', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.especeAnimal, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.especeAnimal) }}
+                        </div>
+                    </div>
+
+                    <hr class="horizontal dark mt-4 mb-4">
+
+                    {# Détails du rendez-vous #}
+                    <h6 class="text-uppercase text-xs font-weight-bolder opacity-6 mb-3">
+                        <i class="material-icons text-sm">event</i> Détails du rendez-vous
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.clinique, 'Clinique', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.clinique, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.clinique) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.type, 'Type de consultation', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.type) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.dateHeure, 'Date et heure', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.dateHeure, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.dateHeure) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.statut, 'Statut', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.statut, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.statut) }}
+                        </div>
+                    </div>
+
+                    <hr class="horizontal dark mt-4 mb-4">
+
+                    {# Notes #}
+                    <h6 class="text-uppercase text-xs font-weight-bolder opacity-6 mb-3">
+                        <i class="material-icons text-sm">comment</i> Notes
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.notesClient, 'Notes du client', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.notesClient, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                            </div>
+                            {{ form_errors(form.notesClient) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.notesVeterinaire, 'Notes vétérinaire (privées)', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.notesVeterinaire, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                            </div>
+                            {{ form_errors(form.notesVeterinaire) }}
+                        </div>
+                    </div>
+
+                    <hr class="horizontal dark mt-4 mb-4">
+
+                    {# Informations de paiement #}
+                    <h6 class="text-uppercase text-xs font-weight-bolder opacity-6 mb-3">
+                        <i class="material-icons text-sm">payments</i> Informations de paiement
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.statutPaiement, 'Statut de paiement', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.statutPaiement, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.statutPaiement) }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.montantPaiement, 'Montant (TND)', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.montantPaiement, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.montantPaiement) }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.methodePaiement, 'Méthode de paiement', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.methodePaiement, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.methodePaiement) }}
+                        </div>
+                        {% if form.datePaiement is defined %}
+                        <div class="col-md-12 mb-3">
+                            <div class="input-group input-group-outline">
+                                {{ form_label(form.datePaiement, 'Date de paiement', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.datePaiement, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            {{ form_errors(form.datePaiement) }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {{ form_rest(form) }}
+
+                    <hr class="horizontal dark my-4">
+
+                    <div class="d-flex gap-2 justify-content-between">
+                        <div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="material-icons text-sm">save</i> Enregistrer
+                            </button>
+                            <a href="{{ path('rendezvous_admin_list') }}" class="btn btn-outline-secondary">
+                                <i class="material-icons text-sm">arrow_back</i> Retour
+                            </a>
+                        </div>
+                        <div>
+                            {% if rendezvous.statut == 'en_attente' %}
+                                <form method="post" action="{{ path('rendezvous_admin_confirm', {id: rendezvous.id}) }}" style="display: inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('confirm' ~ rendezvous.id) }}">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="material-icons text-sm">check</i> Confirmer
+                                    </button>
+                                </form>
+                                <form method="post" action="{{ path('rendezvous_admin_reject', {id: rendezvous.id}) }}" style="display: inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('reject' ~ rendezvous.id) }}">
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="material-icons text-sm">close</i> Refuser
+                                    </button>
+                                </form>
+                            {% endif %}
+                            
+                            <form method="post" action="{{ path('rendezvous_admin_delete', {id: rendezvous.id}) }}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ rendezvous.id) }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="material-icons text-sm">delete</i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

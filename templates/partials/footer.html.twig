@@ -1,0 +1,179 @@
+{# templates/partials/footer.html.twig #}
+
+<style>
+    /* ============ FOOTER STYLES ============ */
+    footer {
+        background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+        color: #ecf0f1;
+        margin-top: 60px;
+    }
+
+    .footer-area {
+        padding: 60px 0 30px;
+    }
+
+    .single-footer-caption h4 {
+        color: var(--secondary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+    }
+
+    .footer-pera p {
+        color: #bdc3c7;
+        line-height: 1.8;
+    }
+
+    .footer-social {
+        margin-top: 25px;
+        display: flex;
+        gap: 15px;
+    }
+
+    .footer-social a {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ecf0f1;
+        border-radius: 50%;
+        transition: var(--transition);
+        font-size: 1.2rem;
+    }
+
+    .footer-social a:hover {
+        background: var(--secondary-color);
+        color: var(--dark-text);
+        transform: translateY(-5px);
+    }
+
+    .footer-tittle ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .footer-tittle ul li {
+        margin-bottom: 12px;
+    }
+
+    .footer-tittle ul li a {
+        color: #bdc3c7;
+        text-decoration: none;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+    }
+
+    .footer-tittle ul li a:hover {
+        color: var(--secondary-color);
+        padding-left: 5px;
+    }
+
+    .footer-tittle ul li a::before {
+        content: '▸';
+        margin-right: 8px;
+        color: var(--secondary-color);
+    }
+
+    .footer-bottom-area {
+        background-color: rgba(0, 0, 0, 0.2);
+        padding: 20px 0;
+        text-align: center;
+    }
+
+    .footer-bottom-area p {
+        margin: 0;
+        color: #95a5a6;
+    }
+</style>
+
+<footer>
+    <div class="footer-area footer-padding">
+        <div class="container">
+            <div class="row d-flex justify-content-between">
+
+                <!-- Section À propos -->
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                    <div class="single-footer-caption mb-50">
+                        <div class="footer-logo mb-25">
+                            <a href="{{ path('home') }}">
+                                <img src="{{ asset('front/img/logo/logo2_footer.png') }}" alt="VetCare Logo">
+                            </a>
+                        </div>
+                        <div class="footer-pera">
+                            <p>Votre clinique vétérinaire de confiance. Nous prenons soin de vos compagnons avec professionnalisme et dévouement.</p>
+                        </div>
+                        <div class="footer-social">
+                            <a href="#" title="Facebook"><i class="fab fa-facebook-square"></i></a>
+                            <a href="#" title="Twitter"><i class="fab fa-twitter-square"></i></a>
+                            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation rapide -->
+                <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6">
+                    <div class="footer-tittle">
+                        <h4>Navigation</h4>
+                        <ul>
+                            <li><a href="{{ path('home') }}">Accueil</a></li>
+                            <li><a href="{{ path('lists_animaux') }}">Animaux</a></li>
+                            <li><a href="{{ path('lists_dossiers') }}">Dossiers</a></li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li><a href="{{ path('app_user_index') }}">Utilisateurs</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                    <div class="footer-tittle">
+                        <h4>Nos Services</h4>
+                        <ul>
+                            <li><a href="#">Consultations</a></li>
+                            <li><a href="#">Vaccinations</a></li>
+                            <li><a href="#">Chirurgie</a></li>
+                            <li><a href="#">Analyses</a></li>
+                            <li><a href="#">Urgences 24/7</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                    <div class="footer-tittle">
+                        <h4>Contactez-nous</h4>
+                        <ul>
+                            <li><a href="tel:+21612345678"><i class="fas fa-phone"></i> +216 12 345 678</a></li>
+                            <li><a href="mailto:contact@vetcare.tn"><i class="fas fa-envelope"></i> contact@vetcare.tn</a></li>
+                            <li><a href="#"><i class="fas fa-map-marker-alt"></i> Tunis, Tunisie</a></li>
+                            <li><a href="#"><i class="fas fa-clock"></i> Lun-Sam: 8h-20h</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom-area">
+        <div class="container">
+            <div class="footer-border">
+                <div class="row d-flex align-items-center">
+                    <div class="col-xl-12 text-center">
+                        <p>
+                            &copy; {{ "now"|date("Y") }} <strong>VetCare</strong> - Système de Gestion Vétérinaire 
+                            | Tous droits réservés | 
+                            <a href="#" style="color: var(--secondary-color);">Politique de confidentialité</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

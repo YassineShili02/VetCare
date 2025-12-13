@@ -227,6 +227,7 @@
         </div>
 
         <div class="nav-tabs">
+<<<<<<< HEAD
             {% set current_route = app.request.get('_route') %}
 
             <a href="{{ path('app_frontoffice_medicaments_list') }}"
@@ -238,6 +239,11 @@
                class="nav-tab {% if 'traitement' in current_route|lower %}active{% endif %}">
                 Traitements
             </a>
+=======
+            <a href="{{ path('app_frontoffice_medicaments') }}" class="nav-tab {{ app.request.get('_route') == 'app_frontoffice_medicaments' ? 'active' : '' }}">Médicaments</a>
+            <a href="{{ path('app_frontoffice_traitements') }}" class="nav-tab {{ app.request.get('_route') == 'app_frontoffice_traitements' ? 'active' : '' }}">Traitements</a>
+            <a href="{{ path('app_medicament_index') }}" class="nav-tab">Backoffice</a>
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
         </div>
 
         {% block body %}{% endblock %}

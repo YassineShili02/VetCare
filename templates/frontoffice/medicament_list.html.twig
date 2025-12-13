@@ -28,6 +28,14 @@
                     <span class="detail-value">{{ medicament.dateCreation|date('d/m/Y') }}</span>
                 </div>
             </div>
+<<<<<<< HEAD
+=======
+
+            <div class="actions">
+                <button class="btn btn-accept" onclick="acceptMedicament({{ medicament.id }})">Accepter</button>
+                <button class="btn btn-refuse" onclick="refuseMedicament({{ medicament.id }})">Refuser</button>
+            </div>
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
         </div>
     </div>
     {% else %}
@@ -37,5 +45,25 @@
     {% endfor %}
 </div>
 
+<<<<<<< HEAD
 <a href="{{ path('app_home') }}" class="btn-back">🏠 Retour à l'accueil</a>
+=======
+<a href="{{ path('app_medicament_index') }}" class="btn-back">Retour au Backoffice</a>
+
+<script>
+function acceptMedicament(id) {
+    if (confirm('Êtes-vous sûr de vouloir accepter ce médicament ?')) {
+        alert('Médicament ' + id + ' accepté avec succès !');
+        // Ici vous pouvez ajouter un appel AJAX pour mettre à jour le statut
+    }
+}
+
+function refuseMedicament(id) {
+    if (confirm('Êtes-vous sûr de vouloir refuser ce médicament ?')) {
+        alert('Médicament ' + id + ' refusé !');
+        // Ici vous pouvez ajouter un appel AJAX pour mettre à jour le statut
+    }
+}
+</script>
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
 {% endblock %}

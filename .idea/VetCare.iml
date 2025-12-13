@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="WEB_MODULE" version="4">
+<<<<<<< HEAD
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+=======
+<<<<<<< HEAD
+  <component name="NewModuleRootManager">
+=======
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+>>>>>>> manel-dev
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="App\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="App\Tests\" />

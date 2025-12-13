@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un Animal{% endblock %}
+
+{% block body %}
+    <section class="main-content section-padding">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-warning text-dark text-center">
+                            <h3><i class="fas fa-edit me-2"></i>Modifier l’Animal</h3>
+                        </div>
+
+                        <div class="card-body">
+
+                            {{ form_start(formAnimal, {
+                                'attr': {
+                                    'class': 'needs-validation',
+                                    'novalidate': 'novalidate'
+                                }
+                            }) }}
+
+                            <div class="row g-3">
+                                {# Champs de l'animal sauf submit #}
+                                {% for field in formAnimal %}
+                                    {% if field.vars.name not in ['submit', 'dossier_animal'] %}
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                {{ form_label(field, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                                {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                                                {{ form_errors(field) }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            {# Section dossier médical s’il existe #}
+                            {% if formAnimal.dossier_animal is defined %}
+                                <div class="mt-4">
+                                    <h5 class="text-primary mb-3">
+                                        <i class="fas fa-notes-medical me-2"></i>Dossier Médical
+                                    </h5>
+                                    <div id="dossiers">
+                                        {{ form_widget(formAnimal.dossier_animal) }}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-warning btn-lg px-4">
+                                    <i class="fas fa-save me-2"></i>Modifier Animal
+                                </button>
+                            </div>
+
+
+                            {{ form_end(formAnimal) }}
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

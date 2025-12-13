@@ -10,11 +10,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/backoffice/traitement')]
 class TraitementController extends AbstractController
 {
+<<<<<<< HEAD
     #[Route('/', name: 'app_traitement_index', methods: ['GET'])]
     public function index(Request $request, TraitementRepository $traitementRepository): Response
     {
@@ -42,7 +44,64 @@ class TraitementController extends AbstractController
 
     #[Route('/new', name: 'app_traitement_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
+=======
+    private function checkVeterinaryAccess(SessionInterface $session): void
     {
+        if (!$session->get('veterinary_logged_in')) {
+            $this->addFlash('error', 'Accès réservé aux vétérinaires. Veuillez vous connecter.');
+            throw $this->createAccessDeniedException('Accès non autorisé');
+        }
+    }
+
+    #[Route('/', name: 'app_traitement_index', methods: ['GET'])]
+<<<<<<< HEAD
+    public function index(TraitementRepository $traitementRepository, SessionInterface $session): Response
+    {
+        $this->checkVeterinaryAccess($session);
+
+        return $this->render('backoffice/traitement/index.html.twig', [
+            'traitements' => $traitementRepository->findAll(),
+        ]);
+    }
+
+    // AJOUTER CES ROUTES MANQUANTES
+=======
+    public function index(TraitementRepository $traitementRepository, SessionInterface $session, Request $request): Response
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
+    {
+        $this->checkVeterinaryAccess($session);
+
+        $sortBy = $request->query->get('sort', 'id');
+        $order = $request->query->get('order', 'ASC');
+        $statutFilter = $request->query->get('statut', 'all');
+        $searchTerm = $request->query->get('search', '');
+
+        $traitements = $traitementRepository->findWithFilters($sortBy, $order, $statutFilter, $searchTerm);
+
+        return $this->render('backoffice/traitement/index.html.twig', [
+            'traitements' => $traitements,
+            'currentSort' => $sortBy,
+            'currentOrder' => $order,
+            'currentStatut' => $statutFilter,
+            'currentSearch' => $searchTerm,
+            'statuts' => [
+                'all' => 'Tous les statuts',
+                'pending' => 'En attente',
+                'in_progress' => 'En cours',
+                'completed' => 'Terminé',
+                'cancelled' => 'Annulé',
+                'accepted' => 'Accepté',
+                'refused' => 'Refusé'
+            ]
+        ]);
+    }
+
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e
+    #[Route('/new', name: 'app_traitement_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, SessionInterface $session): Response
+    {
+        $this->checkVeterinaryAccess($session);
+
         $traitement = new Traitement();
         $form = $this->createForm(TraitementType::class, $traitement);
         $form->handleRequest($request);
@@ -57,11 +116,12 @@ class TraitementController extends AbstractController
 
         return $this->render('backoffice/traitement/new.html.twig', [
             'traitement' => $traitement,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
     #[Route('/{id}', name: 'app_traitement_show', methods: ['GET'])]
+<<<<<<< HEAD
     public function show(Traitement $traitement): Response
     {
         return $this->render('backoffice/traitement/show.html.twig', [
@@ -71,26 +131,53 @@ class TraitementController extends AbstractController
 
     #[Route('/{id}/edit', name: 'app_traitement_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Traitement $traitement, EntityManagerInterface $entityManager): Response
+=======
+    public function show(Traitement $traitement, SessionInterface $session): Response
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
     {
+        $this->checkVeterinaryAccess($session);
+
+        return $this->render('backoffice/traitement/show.html.twig', [
+            'traitement' => $traitement,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_traitement_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Traitement $traitement, EntityManagerInterface $entityManager, SessionInterface $session): Response
+    {
+        $this->checkVeterinaryAccess($session);
+
         $form = $this->createForm(TraitementType::class, $traitement);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+<<<<<<< HEAD
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
             $this->addFlash('success', 'Traitement modifié avec succès.');
             return $this->redirectToRoute('app_traitement_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('backoffice/traitement/edit.html.twig', [
             'traitement' => $traitement,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
     #[Route('/{id}', name: 'app_traitement_delete', methods: ['POST'])]
+<<<<<<< HEAD
     public function delete(Request $request, Traitement $traitement, EntityManagerInterface $entityManager): Response
+=======
+    public function delete(Request $request, Traitement $traitement, EntityManagerInterface $entityManager, SessionInterface $session): Response
+>>>>>>> 343012190ba309c39188b230b31908e912145e26
     {
+        $this->checkVeterinaryAccess($session);
+
         if ($this->isCsrfTokenValid('delete'.$traitement->getId(), $request->request->get('_token'))) {
             $entityManager->remove($traitement);
             $entityManager->flush();
@@ -99,4 +186,37 @@ class TraitementController extends AbstractController
 
         return $this->redirectToRoute('app_traitement_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/{id}/update-statut', name: 'app_traitement_update_statut', methods: ['POST'])]
+    public function updateStatut(Request $request, Traitement $traitement, EntityManagerInterface $entityManager): Response
+    {
+<<<<<<< HEAD
+        // Pas de vérification d'authentification - accessible au client
+=======
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e
+        $nouveauStatut = $request->request->get('statut');
+
+        if (in_array($nouveauStatut, ['pending', 'in_progress', 'completed', 'cancelled', 'accepted', 'refused'])) {
+            $traitement->setStatut($nouveauStatut);
+            $entityManager->flush();
+            $this->addFlash('success', 'Statut du traitement mis à jour.');
+        } else {
+            $this->addFlash('error', 'Statut invalide.');
+        }
+
+        return $this->redirectToRoute('app_client_interface');
+    }
+
+    #[Route('/frontoffice/traitements', name: 'app_frontoffice_traitements')]
+    public function frontofficeTraitements(TraitementRepository $traitementRepository): Response
+    {
+        return $this->render('frontoffice/traitement_list.html.twig', [
+            'traitements' => $traitementRepository->findAll(),
+        ]);
+    }
+<<<<<<< HEAD
+    
 }
+=======
+}
+>>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e

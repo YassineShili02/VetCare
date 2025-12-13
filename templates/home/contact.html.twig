@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact - VetCare{% endblock %}
+
+{% block body %}
+<section class="container py-5">
+    <h1 class="text-center mb-5" style="color:#2c3e50;">
+        📞 Contactez-nous
+    </h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="bg-white p-4 shadow rounded h-100">
+                <h2 class="h4 mb-4">Informations de contact</h2>
+                
+                <div class="mb-3">
+                    <h5><i class="fas fa-map-marker-alt" style="color:#e74c3c;"></i> Adresse</h5>
+                    <p class="ms-4">
+                        123 Avenue des Vétérinaires<br>
+                        75000 Paris, France
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    <h5><i class="fas fa-phone" style="color:#27ae60;"></i> Téléphone</h5>
+                    <p class="ms-4">
+                        <a href="tel:+33123456789">+33 1 23 45 67 89</a>
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    <h5><i class="fas fa-envelope" style="color:#3498db;"></i> Email</h5>
+                    <p class="ms-4">
+                        <a href="mailto:contact@vetcare.com">contact@vetcare.com</a>
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    <h5><i class="fas fa-clock" style="color:#f39c12;"></i> Horaires</h5>
+                    <p class="ms-4 mb-1">
+                        Lundi - Vendredi : 8h00 - 19h00<br>
+                        Samedi : 9h00 - 17h00<br>
+                        Dimanche : Fermé
+                    </p>
+                    <p class="ms-4 text-danger">
+                        <strong>Urgences 24h/24 :</strong> +33 6 00 00 00 00
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="bg-white p-4 shadow rounded">
+                <h2 class="h4 mb-4">Envoyez-nous un message</h2>
+                
+                {{ form_start(form) }}
+                    {{ form_row(form.nom) }}
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.telephone) }}
+                    {{ form_row(form.sujet) }}
+                    {{ form_row(form.message) }}
+                    {{ form_row(form.envoyer) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
