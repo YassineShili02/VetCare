@@ -28,7 +28,6 @@
                     <span class="detail-value">{{ medicament.dateCreation|date('d/m/Y') }}</span>
                 </div>
             </div>
-
             <div class="actions">
                 <button class="btn btn-accept" onclick="acceptMedicament({{ medicament.id }})">Accepter</button>
                 <button class="btn btn-refuse" onclick="refuseMedicament({{ medicament.id }})">Refuser</button>
@@ -41,6 +40,8 @@
     </div>
     {% endfor %}
 </div>
+
+<a href="{{ path('app_home') }}" class="btn-back">🏠 Retour à l'accueil</a>
 
 <a href="{{ path('app_medicament_index') }}" class="btn-back">Retour au Backoffice</a>
 
@@ -59,4 +60,5 @@ function refuseMedicament(id) {
     }
 }
 </script>
+
 {% endblock %}

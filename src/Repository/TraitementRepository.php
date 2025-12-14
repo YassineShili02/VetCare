@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repository;
 
 use App\Entity\Traitement;
@@ -12,44 +13,51 @@ class TraitementRepository extends ServiceEntityRepository
         parent::__construct($registry, Traitement::class);
     }
 
-    // AJOUTER CETTE MÉTHODE
-    public function findWithFilters(
-        string $sortBy = 'id',
-        string $order = 'ASC',
-        string $statutFilter = 'all',
-        string $search = ''
-    ): array
-    {
-        // Création du QueryBuilder
+    /**
+     * Récupérer tous les traitements avec recherche, tri et filtre
+     */
+    public function findAllWithSearch(
+        ?string $search,
+        string $sortBy = 'dateCreation',
+        string $order = 'DESC',
+        ?string $statut = null
+    ): array {
         $qb = $this->createQueryBuilder('t');
 
-        // 1. FILTRE PAR STATUT
-        if ($statutFilter !== 'all') {
-            $qb->andWhere('t.statut = :statut')
-                ->setParameter('statut', $statutFilter);
-        }
-
-        // 2. FILTRE PAR RECHERCHE (nom ou description)
-        if (!empty($search)) {
-            $qb->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->like('t.nom', ':search'),
-                    $qb->expr()->like('t.description', ':search')
-                )
-            )
+        // 🔍 Recherche
+        if ($search) {
+            $qb->andWhere('t.nom LIKE :search OR t.description LIKE :search')
                 ->setParameter('search', '%' . $search . '%');
         }
 
-        // 3. TRI
-        // Vérification pour éviter les injections SQL
-        $allowedSortFields = ['id', 'nom', 'statut', 'dateCreation'];
-        if (!in_array($sortBy, $allowedSortFields)) {
-            $sortBy = 'id';
+        // 📌 Filtre par statut
+        if ($statut) {
+            $qb->andWhere('t.statut = :statut')
+                ->setParameter('statut', $statut);
         }
+
+        // 🔃 Sécuriser le tri (important)
+        $allowedSortFields = ['dateCreation', 'nom', 'statut', 'id'];
+        if (!in_array($sortBy, $allowedSortFields)) {
+            $sortBy = 'dateCreation';
+        }
+
+        $order = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
 
         $qb->orderBy('t.' . $sortBy, $order);
 
-        // Exécution de la requête
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Statistiques par statut
+     */
+    public function countByStatut(): array
+    {
+        return $this->createQueryBuilder('t')
+            ->select('t.statut, COUNT(t.id) as total')
+            ->groupBy('t.statut')
+            ->getQuery()
+            ->getResult();
     }
 }

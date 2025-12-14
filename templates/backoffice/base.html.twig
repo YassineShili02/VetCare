@@ -4,295 +4,333 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Backoffice Vétérinaire{% endblock %}</title>
-   <style>
-
-       /* Styles pour les filtres */
-       .filter-form {
-           background: white;
-           padding: 1rem;
-           border-radius: 8px;
-           border: 1px solid #dee2e6;
-       }
-
-       .filter-form .form-group {
-           margin-bottom: 0;
-       }
-
-       .sort-link {
-           color: #3498db;
-           text-decoration: none;
-           display: flex;
-           align-items: center;
-           gap: 5px;
-       }
-
-       .sort-link:hover {
-           color: #2980b9;
-           text-decoration: underline;
-       }
-
-       .active-filters {
-           background: #e3f2fd;
-           padding: 1rem;
-           border-radius: 8px;
-           margin-bottom: 1rem;
-           border-left: 4px solid #2196f3;
-       }
-
-       .active-filters span {
-           background: #bbdefb;
-           padding: 0.2rem 0.5rem;
-           border-radius: 4px;
-           margin-right: 0.5rem;
-           font-size: 0.9rem;
-       }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            min-height: 100vh;
-            color: #333;
-        }
-
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f9f0; min-height: 100vh; color: #333; }
         .navbar {
-            background: #ffffff;
+            background: linear-gradient(135deg, #2c5f2d 0%, #1e4620 100%);
             padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 15px rgba(44, 95, 45, 0.3);
+            border-bottom: 1px solid #1a3e1c;
         }
-
         .navbar-brand {
-            color: #2c3e50;
+            color: white;
             font-size: 1.5rem;
             font-weight: bold;
             text-decoration: none;
-        }
-
-        .navbar-nav {
             display: flex;
-            list-style: none;
-            gap: 2rem;
-            margin-left: 2rem;
+            align-items: center;
+            gap: 10px;
         }
-
+        .navbar-nav { display: flex; list-style: none; gap: 1.5rem; margin-left: 2rem; }
         .navbar-nav a {
-            color: #5a6c7d;
+            color: white;
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
             transition: all 0.3s;
             font-weight: 500;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-
         .navbar-nav a:hover {
-            background-color: #e9ecef;
-            color: #2c3e50;
+            background: rgba(151, 188, 98, 0.3);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
         .card {
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(44, 95, 45, 0.1);
             margin-bottom: 2rem;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #d4edda;
+            overflow: hidden;
         }
-
         .card-header {
-            background: #0000FF;
+            background: linear-gradient(135deg, #2c5f2d 0%, #1e4620 100%);
             color: white;
             padding: 1.5rem;
-            border-bottom: 1px solid #6ab7d8;
+            border-bottom: 1px solid #1a3e1c;
         }
-
-        .card-body {
-            padding: 1.5rem;
-            color: #5a6c7d;
-        }
-
+        .card-body { padding: 2rem; color: #2c3e50; }
         .table {
             width: 100%;
             border-collapse: collapse;
-            background: #ffffff;
+            background: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
-        .table th,
-        .table td {
+        .table th, .table td {
             padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-            color: #333;
-        }
-
-        .table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
+            border-bottom: 1px solid #d4edda;
             color: #2c3e50;
-            border-bottom: 2px solid #e0e0e0;
         }
-
-        .table tr:hover {
-            background-color: #f8f9fa;
+        .table th {
+            background-color: #e9f7ef;
+            font-weight: 600;
+            color: #2c5f2d;
+            border-bottom: 2px solid #c3e6cb;
         }
-
+        .table tr:hover { background-color: #f8fff9; }
         .btn {
-            display: inline-block;
-            padding: 0.5rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.6rem 1.2rem;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             text-decoration: none;
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
             color: white;
             font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
-        .btn-primary {
-            background: #3498db;
-        }
-
-        .btn-success {
-            background: #27ae60;
-        }
-
-        .btn-warning {
-            background: #f39c12;
-        }
-
-        .btn-danger {
-            background: #e74c3c;
-        }
-
-        .btn-info {
-            background: #17a2b8;
-        }
-
-        .btn-secondary {
-            background:#0000FF;
-        }
-
         .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            opacity: 0.95;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5f2d 0%, #1e4620 100%);
+            border: 1px solid #1a3e1c;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            border: 1px solid #155724;
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            border: 1px solid #d39e00;
+            color: #212529;
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border: 1px solid #bd2130;
+        }
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%);
+            border: 1px solid #10707f;
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+            border: 1px solid #4e555b;
+        }
         .form-control {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #c3e6cb;
+            border-radius: 6px;
             font-size: 1rem;
-            background: #fff;
-            color: #333;
-            transition: border-color 0.3s;
+            background: #f8fff9;
+            color: #2c3e50;
+            transition: all 0.3s;
         }
-
         .form-control:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+            border-color: #2c5f2d;
+            box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.15);
+            background: white;
         }
-
         .alert {
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
             border: 1px solid transparent;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
-        }
-
-        .alert-error {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
-        }
-
-        .actions {
             display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
         }
-
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #b1dfbb;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        .alert-error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-color: #f1b0b7;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .statut-badge {
-            padding: 0.4rem 0.8rem;
+            padding: 0.5rem 1rem;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
             text-align: center;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 110px;
+        }
+        .statut-pending {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .statut-in_progress {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            color: #0c5460;
+            border: 1px solid #abdde5;
+        }
+        .statut-completed {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border: 1px solid #b1dfbb;
+        }
+        .statut-cancelled {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border: 1px solid #f1b0b7;
+        }
+        .statut-accepted {
+            background: linear-gradient(135deg, #cce5ff 0%, #b8daff 100%);
+            color: #004085;
+            border: 1px solid #9fcdff;
+        }
+        .statut-refused {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border: 1px solid #f1b0b7;
+        }
+        .stock-indicator {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
             min-width: 100px;
         }
-
-        .statut-pending { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
-        .statut-in_progress { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
-        .statut-completed { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
-        .statut-cancelled { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
-        .statut-accepted { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
-        .statut-refused { background: #87CEEB; color: white; border: 1px solid #6ab7d8; }
-
-        .stock-indicator {
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-align: center;
-            display: inline-block;
-            min-width: 80px;
+        .stock-high {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border: 1px solid #b1dfbb;
         }
-
-        .stock-high { background: #0000FF; color: white; border: 1px solid #6ab7d8; }
-        .stock-medium { background: #0000FF; color: white; border: 1px solid #6ab7d8; }
-        .stock-low { background: #0000FF; color: white; border: 1px solid #6ab7d8; }
-
+        .stock-medium {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .stock-low {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border: 1px solid #f1b0b7;
+        }
         .page-title {
-            color: #2c3e50;
+            color: #2c5f2d;
             margin-bottom: 1.5rem;
             font-size: 2rem;
-            font-weight: 600;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
+        .form-group { margin-bottom: 1.5rem; }
         .form-label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: #2c5f2d;
+        }
+        .search-info {
+            margin-top: 0.5rem;
+            padding: 0.8rem;
+            background: #e9f7ef;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            border-left: 4px solid #2c5f2d;
+        }
+        mark {
+            background-color: #97bc62;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            font-weight: bold;
+            color: white;
+        }
+        .filter-form .row { display: flex; flex-wrap: wrap; margin: -0.5rem; }
+        .filter-form .col-md-1, .filter-form .col-md-2, .filter-form .col-md-3, .filter-form .col-md-4 { padding: 0.5rem; }
+        @media (max-width: 768px) {
+            .filter-form .col-md-1, .filter-form .col-md-2, .filter-form .col-md-3, .filter-form .col-md-4 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            .navbar-nav {
+                flex-direction: column;
+                gap: 0.5rem;
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0.3rem 0.7rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 20px;
+            margin-right: 0.5rem;
+        }
+        .badge-info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            color: #0c5460;
+            border: 1px solid #abdde5;
+        }
+        tr { transition: all 0.3s ease; }
+
+        /* Animation pour le hover sur les cartes */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(44, 95, 45, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        /* Style pour les icônes dans les boutons */
+        .btn i {
+            font-size: 1.1rem;
+        }
+
+        /* Couleurs spécifiques pour VetCare */
+        :root {
+            --primary-color: #2c5f2d;
+            --primary-dark: #1e4620;
+            --primary-light: #97bc62;
+            --light-bg: #f0f9f0;
+            --accent-color: #97bc62;
         }
     </style>
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     {% if app.request.attributes.get('_route') != 'app_login' %}
     <nav class="navbar">
         <div style="display: flex; align-items: center; justify-content: space-between;">
-            <a href="{{ path('app_home') }}" class="navbar-brand">🏥 VetCare Pro</a>
+            <a href="{{ path('app_dashboard') }}" class="navbar-brand">
+                <i class="fas fa-paw"></i> VetCare Dashboard
+            </a>
             <ul class="navbar-nav">
-                <li><a href="{{ path('app_medicament_index') }}">💊 Médicaments</a></li>
-                <li><a href="{{ path('app_traitement_index') }}">📋 Traitements</a></li>
-                <li><a href="{{ path('app_client_interface') }}">👁️ Interface Client</a></li>
-                <li><a href="{{ path('app_logout') }}">🚪 Déconnexion</a></li>
+                <li><a href="{{ path('app_medicament_index') }}"><i class="fas fa-pills"></i> Médicaments</a></li>
+                <li><a href="{{ path('app_traitement_index') }}"><i class="fas fa-prescription"></i> Traitements</a></li>
+                <li><a href="{{ path('app_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
             </ul>
         </div>
     </nav>
@@ -300,11 +338,15 @@
 
     <div class="container">
         {% for message in app.flashes('success') %}
-            <div class="alert alert-success">{{ message }}</div>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> {{ message }}
+            </div>
         {% endfor %}
 
         {% for message in app.flashes('error') %}
-            <div class="alert alert-error">{{ message }}</div>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i> {{ message }}
+            </div>
         {% endfor %}
 
         {% block body %}{% endblock %}
