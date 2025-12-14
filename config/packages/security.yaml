@@ -1,5 +1,3 @@
-# config/packages/security.yaml
-
 security:
   enable_authenticator_manager: true
 
@@ -20,10 +18,7 @@ security:
     main:
       lazy: true
       provider: app_user_provider
-      form_login:
-        login_path: app_login
-        check_path: app_login
-        enable_csrf: true
+      custom_authenticator: App\Security\AppAuthenticator
       logout:
         path: app_logout
         target: home
