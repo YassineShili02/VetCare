@@ -1,7 +1,7 @@
 /AnimalType.php
 /DossierMedicalType.php
-/UserType.php
 /TraitementType.php
 /MedicamentType.php
-/ChangePasswordType.php
 /ContactType.php
+/RendezvousType.php
+/TraitementType.php

@@ -1,0 +1,36 @@
+﻿# config/services.yaml
+
+parameters:
+    dossier_medical_images_dir: "%kernel.project_dir%/public/uploads/dossier_medical"
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # Auto-register controllers
+    App\Controller\:
+        resource: "../src/Controller/"
+        tags: ["controller.service_arguments"]
+        public: true
+
+    # Inject parameter into DossierMedicalController
+    App\Controller\DossierMedicalController:
+        arguments:
+            $dossierMedicalImagesDir: "%dossier_medical_images_dir%"
+        public: true
+
+    # Auto-register all repositories as services
+    App\Repository\:
+        resource: "../src/Repository/"
+        tags: ["doctrine.repository_service"]
+        autoconfigure: false
+
+    # Everything else (services only)
+    App\:
+        resource: "../src/"
+        exclude:
+            - "../src/Controller/"
+            - "../src/Entity/"
+            - "../src/Kernel.php"

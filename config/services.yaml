@@ -1,39 +1,71 @@
 # config/services.yaml
-
-# Les paramètres doivent être dans un fichier séparé ou ici
 parameters:
-  dossier_medical_images_dir: '%kernel.project_dir%/public/uploads/dossier_medical'
+    # Dossiers d'upload
+    dossier_medical_images_dir: '%kernel.project_dir%/public/uploads/dossier_medical'
+    profile_photos_dir: '%kernel.project_dir%/public/uploads/profiles'
+    
+    # Configuration email
+    app.mailer_from: 'noreply@vetcare.com'
+    app.mailer_from_name: 'VetCare'
+    
+    # Configuration application
+    app.debug: '%kernel.debug%'
+    app.env: '%kernel.environment%'
+    app.name: 'VetCare'
+    app.version: '1.0.0'
+    
+    # Configuration sécurité
+    app.password_reset_expiry: 900
+    app.max_password_reset_attempts: 3
+    app.code_length: 6
 
 services:
-  # Les services par défaut
-  _defaults:
-
-    autowire: true      # Active l'autowiring pour tous les services
-    autoconfigure: true # Active l'autoconfiguration
-    public: false       # Les services sont privés par défaut
-
-  # Tous les services dans le namespace App\ sont chargés automatiquement
-
-  App\:
-    resource: '../src/'
-    exclude:
-      - '../src/DependencyInjection/'
-      - '../src/Entity/'
-      - '../src/Kernel.php'
-      - '../src/Service/EmailJsService.php'
-
-  # ✅ Configuration EXPLICITE de EmailJsService (après App\:)
-  App\Service\EmailJsService:
-    autowire: false
-    arguments:
-      - '@Symfony\Contracts\HttpClient\HttpClientInterface'
-      - '%env(EMAILJS_SERVICE_ID)%'
-      - '%env(EMAILJS_TEMPLATE_ID)%'
-      - '%env(EMAILJS_USER_ID)%'
-
-  # Configuration spécifique pour les contrôleurs
-  App\Controller\:
-    resource: '../src/Controller/'
-    tags: ['controller.service_arguments']
-    bind:
-      $dossierMedicalImagesDir: '%dossier_medical_images_dir%'
+    # Configuration par défaut pour tous les services
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+    
+    # Configuration automatique pour tous les services de src/
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+    
+    # Configuration spécifique pour les contrôleurs
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+        public: true
+    
+    # Service MailtrapEmailService
+    App\Service\MailtrapEmailService:
+        arguments:
+            $appEnv: '%kernel.environment%'
+    
+    # Service PasswordResetService - ⭐⭐ CORRECTION : UN SEUL $appEnv ⭐⭐
+    App\Service\PasswordResetService:
+        arguments:
+            # ⭐⭐ SUPPRIMEZ UN DES DEUX $appEnv ⭐⭐
+            $appEnv: '%kernel.environment%'
+            $params: '@parameter_bag'
+            $mailtrapEmailService: '@App\Service\MailtrapEmailService'
+    
+    # Configuration EXPLICITE pour DossierMedicalController
+    App\Controller\DossierMedicalController:
+        arguments:
+            $dossierMedicalImagesDir: '%dossier_medical_images_dir%'
+        tags: ['controller.service_arguments']
+        public: true
+    
+    # Configuration pour SecurityController
+    App\Controller\SecurityController:
+        arguments:
+            $logger: '@logger'
+        tags: ['controller.service_arguments']
+        public: true
+    
+    # Logger
+    Psr\Log\LoggerInterface: '@logger'

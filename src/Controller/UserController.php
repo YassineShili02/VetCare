@@ -128,76 +128,79 @@ class UserController extends AbstractController
         $user = new User();
         $isAdminCreating = $this->isGranted('ROLE_ADMIN') && $this->getUser();
         
-        // MODIFICATION : Toujours afficher les rôles lors de la création
         $form = $this->createForm(UserType::class, $user, [
             'is_creation' => true,
             'show_roles' => true,
             'show_profile_photo' => $isAdminCreating,
-            'allow_admin_role' => true // MODIFICATION : TRUE pour permettre à tous de créer un admin
+            'allow_admin_role' => true
         ]);
         
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                // Gestion du mot de passe
-                if ($form->has('password')) {
-                    $plainPassword = $form->get('password')->getData();
-                    if ($plainPassword) {
-                        $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
-                        $user->setPassword($hashedPassword);
+        // CORRECTION: Vérifier d'abord isSubmitted()
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                try {
+                    // Gestion du mot de passe
+                    if ($form->has('password')) {
+                        $plainPassword = $form->get('password')->getData();
+                        if ($plainPassword) {
+                            $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+                            $user->setPassword($hashedPassword);
+                        }
                     }
-                }
 
-                // Gestion des rôles - MODIFICATION : Autoriser tout le monde à créer un compte admin
-                if ($form->has('role')) {
-                    $selectedRole = $form->get('role')->getData();
-                    
-                    // Validation du rôle
-                    $availableRoles = ['ROLE_USER', 'ROLE_VET', 'ROLE_ADMIN'];
-                    
-                    // SUPPRIMÉ : Pas de restriction pour les non-admins
-                    // Tout le monde peut créer un compte admin maintenant
-                    
-                    if ($selectedRole && in_array($selectedRole, $availableRoles)) {
-                        $user->setRoles([$selectedRole]);
+                    // Gestion des rôles
+                    if ($form->has('role')) {
+                        $selectedRole = $form->get('role')->getData();
+                        
+                        // Validation du rôle
+                        $availableRoles = ['ROLE_USER', 'ROLE_VET', 'ROLE_ADMIN'];
+                        
+                        if ($selectedRole && in_array($selectedRole, $availableRoles)) {
+                            $user->setRoles([$selectedRole]);
+                        } else {
+                            $user->setRoles(['ROLE_USER']);
+                        }
                     } else {
-                        $user->setRoles(['ROLE_USER']); // Rôle par défaut
+                        $user->setRoles(['ROLE_USER']);
                     }
-                } else {
-                    // Si pas de champ role, mettre rôle USER par défaut
-                    $user->setRoles(['ROLE_USER']);
+
+                    $user->setCreatedAt(new \DateTimeImmutable());
+                    $user->setUpdatedAt(new \DateTimeImmutable());
+
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+
+                    $this->addFlash('success', 'Utilisateur créé avec succès.');
+                    
+                    // Message spécifique selon le rôle
+                    $roleMessage = [
+                        'ROLE_USER' => 'Bienvenue en tant que client!',
+                        'ROLE_VET' => 'Bienvenue en tant que vétérinaire!',
+                        'ROLE_ADMIN' => 'Bienvenue en tant qu\'administrateur!'
+                    ];
+                    
+                    $mainRole = $user->getMainRole();
+                    if (isset($roleMessage[$mainRole])) {
+                        $this->addFlash('info', $roleMessage[$mainRole]);
+                    }
+
+                    if (!$this->getUser()) {
+                        $this->addFlash('info', 'Vous pouvez maintenant vous connecter.');
+                        return $this->redirectToRoute('app_login');
+                    }
+
+                    return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+                    
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Erreur: ' . $e->getMessage());
                 }
-
-                $user->setCreatedAt(new \DateTimeImmutable());
-                $user->setUpdatedAt(new \DateTimeImmutable());
-
-                $entityManager->persist($user);
-                $entityManager->flush();
-
-                $this->addFlash('success', 'Utilisateur créé avec succès.');
-                
-                // Message spécifique selon le rôle
-                $roleMessage = [
-                    'ROLE_USER' => 'Bienvenue en tant que client! Vous pouvez maintenant gérer vos animaux.',
-                    'ROLE_VET' => 'Bienvenue en tant que vétérinaire! Votre compte doit être validé par un administrateur.',
-                    'ROLE_ADMIN' => 'Bienvenue en tant qu\'administrateur!'
-                ];
-                
-                $mainRole = $user->getMainRole();
-                if (isset($roleMessage[$mainRole])) {
-                    $this->addFlash('info', $roleMessage[$mainRole]);
+            } else {
+                // Afficher les erreurs de validation
+                foreach ($form->getErrors(true) as $error) {
+                    $this->addFlash('error', $error->getMessage());
                 }
-
-                if (!$this->getUser()) {
-                    $this->addFlash('info', 'Vous pouvez maintenant vous connecter avec vos identifiants.');
-                    return $this->redirectToRoute('app_login');
-                }
-
-                return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
-                
-            } catch (\Exception $e) {
-                $this->addFlash('error', 'Une erreur est survenue lors de la création de l\'utilisateur: ' . $e->getMessage());
             }
         }
 
@@ -231,13 +234,13 @@ class UserController extends AbstractController
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         if (!$this->getUser()) {
-            $this->addFlash('error', 'Vous devez être connecté pour accéder à cette page.');
+            $this->addFlash('error', 'Vous devez être connecté.');
             return $this->redirectToRoute('app_login');
         }
 
         // Seuls les ADMIN peuvent modifier tous les profils
         if ($this->getUser() !== $user && !$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('error', 'Accès refusé. Vous ne pouvez modifier que votre propre profil.');
+            $this->addFlash('error', 'Accès refusé.');
             return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()]);
         }
 
@@ -250,39 +253,46 @@ class UserController extends AbstractController
             'allow_admin_role' => $isAdminEditing
         ]);
 
-        // Pré-remplir le champ role avec le rôle principal de l'utilisateur
         if ($form->has('role')) {
             $form->get('role')->setData($user->getMainRole());
         }
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                // Gestion du mot de passe (si l'admin change le mot de passe)
-                if ($form->has('password') && $form->get('password')->getData()) {
-                    $plainPassword = $form->get('password')->getData();
-                    $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
-                    $user->setPassword($hashedPassword);
-                }
-
-                // Gestion des rôles - CORRECTION : récupérer depuis le champ 'role' (non mappé)
-                if ($form->has('role')) {
-                    $selectedRole = $form->get('role')->getData();
-                    if ($selectedRole) {
-                        $user->setRoles([$selectedRole]); // Transforme string en array
+        // CORRECTION: Vérifier d'abord isSubmitted()
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                try {
+                    // Gestion du mot de passe
+                    if ($form->has('password') && $form->get('password')->getData()) {
+                        $plainPassword = $form->get('password')->getData();
+                        $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+                        $user->setPassword($hashedPassword);
                     }
+
+                    // Gestion des rôles
+                    if ($form->has('role')) {
+                        $selectedRole = $form->get('role')->getData();
+                        if ($selectedRole) {
+                            $user->setRoles([$selectedRole]);
+                        }
+                    }
+
+                    $user->setUpdatedAt(new \DateTimeImmutable());
+
+                    $entityManager->flush();
+
+                    $this->addFlash('success', 'Utilisateur mis à jour avec succès.');
+                    return $this->redirectToRoute('app_user_show', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
+                    
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Erreur: ' . $e->getMessage());
                 }
-
-                $user->setUpdatedAt(new \DateTimeImmutable());
-
-                $entityManager->flush();
-
-                $this->addFlash('success', 'Utilisateur mis à jour avec succès.');
-                return $this->redirectToRoute('app_user_show', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
-                
-            } catch (\Exception $e) {
-                $this->addFlash('error', 'Une erreur est survenue lors de la mise à jour de l\'utilisateur: ' . $e->getMessage());
+            } else {
+                // Afficher les erreurs de validation
+                foreach ($form->getErrors(true) as $error) {
+                    $this->addFlash('error', $error->getMessage());
+                }
             }
         }
 
@@ -405,13 +415,26 @@ class UserController extends AbstractController
 
             $entityManager->flush();
 
+            // VÉRIFICATION AJOUTÉE : Valider immédiatement que le nouveau mot de passe fonctionne
+            $isValid = $passwordHasher->isPasswordValid($user, $data['new_password']);
+            
+            if (!$isValid) {
+                error_log("ERREUR CRITIQUE: Le nouveau mot de passe n'est pas valide après hachage pour l'utilisateur " . $user->getId());
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Une erreur critique est survenue. Le nouveau mot de passe n\'est pas valide.'
+                ], 500);
+            }
+
             return $this->json([
                 'success' => true,
                 'message' => 'Mot de passe changé avec succès',
+                'validated' => $isValid,
                 'redirect_url' => $this->generateUrl('app_user_show', ['id' => $user->getId()])
             ]);
 
         } catch (\Exception $e) {
+            error_log("ERREUR changePasswordAjax: " . $e->getMessage());
             return $this->json([
                 'success' => false,
                 'message' => 'Une erreur est survenue lors de la mise à jour du mot de passe: ' . $e->getMessage()
@@ -424,7 +447,8 @@ class UserController extends AbstractController
         Request $request, 
         User $user, 
         EntityManagerInterface $entityManager, 
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        ValidatorInterface $validator
     ): Response {
         if (!$this->getUser()) {
             $this->addFlash('error', 'Vous devez être connecté pour accéder à cette page.');
@@ -444,15 +468,26 @@ class UserController extends AbstractController
 
             try {
                 // Pour les ADMIN qui changent le mot de passe d'autres utilisateurs
-                if ($this->isGranted('ROLE_ADMIN') && $this->getUser() !== $user) {
-                    // Dans la version formulaire traditionnel, l'admin peut directement changer le mot de passe
-                    // sans vérification supplémentaire pour simplifier
+                $isAdminChanging = $this->isGranted('ROLE_ADMIN') && $this->getUser() !== $user;
+                
+                if ($isAdminChanging) {
+                    // Vérifier le mot de passe admin
+                    if (!$passwordHasher->isPasswordValid($this->getUser(), $data['currentPassword'])) {
+                        $this->addFlash('error', 'Votre mot de passe administrateur est incorrect.');
+                        return $this->redirectToRoute('app_user_change_password', ['id' => $user->getId()]);
+                    }
                 } else {
                     // Vérifier le mot de passe actuel pour l'utilisateur lui-même
                     if (!$passwordHasher->isPasswordValid($user, $data['currentPassword'])) {
                         $this->addFlash('error', 'Le mot de passe actuel est incorrect.');
                         return $this->redirectToRoute('app_user_change_password', ['id' => $user->getId()]);
                     }
+                }
+
+                // VÉRIFICATION AJOUTÉE : Vérifier que le nouveau mot de passe est différent
+                if ($passwordHasher->isPasswordValid($user, $data['newPassword'])) {
+                    $this->addFlash('error', 'Le nouveau mot de passe doit être différent de l\'ancien.');
+                    return $this->redirectToRoute('app_user_change_password', ['id' => $user->getId()]);
                 }
 
                 // Hasher et sauvegarder le nouveau mot de passe
@@ -462,8 +497,18 @@ class UserController extends AbstractController
 
                 $entityManager->flush();
 
+                // VÉRIFICATION AJOUTÉE : Valider immédiatement que le nouveau mot de passe fonctionne
+                $isValid = $passwordHasher->isPasswordValid($user, $data['newPassword']);
+                
+                if (!$isValid) {
+                    error_log("ERREUR CRITIQUE: Mot de passe invalide après changement pour l'utilisateur " . $user->getId());
+                    $this->addFlash('error', 'Une erreur critique est survenue. Le nouveau mot de passe n\'est pas valide.');
+                    return $this->redirectToRoute('app_user_change_password', ['id' => $user->getId()]);
+                }
+
                 if ($this->getUser() === $user) {
-                    $this->addFlash('success', 'Votre mot de passe a été modifié avec succès.');
+                    $this->addFlash('success', 'Votre mot de passe a été modifié avec succès. Veuillez vous reconnecter.');
+                    return $this->redirectToRoute('app_logout');
                 } else {
                     $this->addFlash('success', 'Le mot de passe de l\'utilisateur a été modifié avec succès.');
                 }
@@ -471,6 +516,7 @@ class UserController extends AbstractController
                 return $this->redirectToRoute('app_user_show', ['id' => $user->getId()]);
                 
             } catch (\Exception $e) {
+                error_log("ERREUR changePassword: " . $e->getMessage());
                 $this->addFlash('error', 'Une erreur est survenue lors du changement de mot de passe: ' . $e->getMessage());
             }
         }
@@ -479,6 +525,69 @@ class UserController extends AbstractController
             'user' => $user,
             'form' => $form,
         ]);
+    }
+
+    #[Route('/{id}/debug-password', name: 'app_user_debug_password', methods: ['GET'])]
+    public function debugPassword(
+        User $user, 
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return new Response('Accès refusé', 403);
+        }
+
+        $currentHash = $user->getPassword();
+        $hashInfo = password_get_info($currentHash);
+        
+        return new Response("
+            <h2>Débogage mot de passe - User #{$user->getId()}</h2>
+            <p>Email: {$user->getEmail()}</p>
+            <p>Hash stocké: " . substr($currentHash, 0, 50) . "...</p>
+            <p>Algorithme: {$hashInfo['algoName']}</p>
+            <p>Longueur hash: " . strlen($currentHash) . " caractères</p>
+            <p>Dernière modification: " . ($user->getUpdatedAt() ? $user->getUpdatedAt()->format('Y-m-d H:i:s') : 'Jamais') . "</p>
+        ");
+    }
+
+    #[Route('/{id}/force-reset-password', name: 'app_user_force_reset_password', methods: ['POST'])]
+    public function forceResetPassword(
+        Request $request,
+        User $user,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé.');
+            return $this->redirectToRoute('app_user_index');
+        }
+
+        if (!$this->isCsrfTokenValid('force_reset_' . $user->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+            return $this->redirectToRoute('app_user_show', ['id' => $user->getId()]);
+        }
+
+        $newPassword = 'Password123!';
+        $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
+        
+        $oldHash = $user->getPassword();
+        
+        $user->setPassword($hashedPassword);
+        $user->setUpdatedAt(new \DateTimeImmutable());
+        
+        $entityManager->flush();
+        
+        $isValid = $passwordHasher->isPasswordValid($user, $newPassword);
+        
+        if ($isValid) {
+            $this->addFlash('success', "Mot de passe réinitialisé avec succès. Nouveau mot de passe: <strong>$newPassword</strong>");
+            $this->addFlash('info', "L'utilisateur doit se reconnecter avec ce nouveau mot de passe.");
+        } else {
+            $this->addFlash('error', "Erreur: Le nouveau mot de passe n'est pas valide après réinitialisation.");
+            $user->setPassword($oldHash);
+            $entityManager->flush();
+        }
+        
+        return $this->redirectToRoute('app_user_show', ['id' => $user->getId()]);
     }
 
     #[Route('/{id}/upload-photo', name: 'app_user_upload_photo', methods: ['POST'])]
@@ -912,8 +1021,10 @@ class UserController extends AbstractController
         return $response;
     }
 
-    #[Route('/stats', name: 'app_user_stats', methods: ['GET'])]
-    public function stats(UserRepository $userRepository): Response
+// src/Controller/UserController.php
+
+#[Route('/user/stats', name: 'app_user_stats')]  // Note: pas de {id}
+public function stats(UserRepository $userRepository): Response
     {
         if (!$this->getUser() || !$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Accès refusé.');
@@ -930,6 +1041,7 @@ class UserController extends AbstractController
             'total_users' => $totalUsers,
         ]);
     }
+
 
     #[Route('/export/csv', name: 'app_user_export_csv', methods: ['GET'])]
     public function exportCsv(UserRepository $userRepository): Response

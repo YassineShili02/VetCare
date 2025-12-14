@@ -7,8 +7,6 @@
         <div class="login-header">
             <div class="login-icon">🔐</div>
             <h1 class="login-title">Connexion</h1>
-            {# Removed subtitle as per your recent changes #}
-            {# <p class="login-subtitle">Accès Vétérinaire - VetCare Pro</p> #}
         </div>
 
         <div class="login-body">
@@ -77,27 +75,212 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        .login-container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            background-color: #fff;
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 2rem 0;
         }
+
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.2);
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+            margin: 0 1rem;
+            border: 2px solid #bbdefb;
+            position: relative;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #2196F3 0%, #1976D2 100%);
+        }
+
         .login-header {
             text-align: center;
-            margin-bottom: 20px;
+            padding: 3rem 2.5rem 2rem;
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.05) 0%, rgba(25, 118, 210, 0.05) 100%);
         }
+
         .login-icon {
-            font-size: 40px;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #2196F3;
+            animation: pulse 2s infinite;
         }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
         .login-title {
-            margin-top: 10px;
-            font-weight: bold;
+            font-size: 2rem;
+            color: #1976D2;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
         }
-        .login-body form {
-            margin-top: 15px;
+
+        .login-body {
+            padding: 2.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #37474F;
+            font-size: 1rem;
+        }
+
+        .form-label i {
+            margin-right: 0.5rem;
+            color: #2196F3;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #bbdefb;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f8fdff;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15);
+            background: white;
+        }
+
+        .form-control::placeholder {
+            color: #90A4AE;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background-color: #ffebee;
+            border-color: #ef5350;
+            color: #c62828;
+        }
+
+        .alert-info {
+            background-color: #e3f2fd;
+            border-color: #2196F3;
+            color: #1565C0;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-check-input {
+            width: 1.2rem;
+            height: 1.2rem;
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: #2196F3;
+            border-color: #2196F3;
+        }
+
+        .form-check-label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #f57c00 0%, #e65100 100%);
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+
+        @media (max-width: 576px) {
+            .login-header,
+            .login-body {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+
+            .login-title {
+                font-size: 1.75rem;
+            }
+
+            .login-icon {
+                font-size: 3rem;
+            }
         }
     </style>
 {% endblock %}

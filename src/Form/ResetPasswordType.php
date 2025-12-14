@@ -1,4 +1,5 @@
 <?php
+// src/Form/ResetPasswordType.php
 
 namespace App\Form;
 
@@ -10,27 +11,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class ChangePasswordType extends AbstractType
+class ResetPasswordType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('currentPassword', PasswordType::class, [
-                'label' => 'Mot de passe actuel',
-                'attr' => ['autocomplete' => 'current-password'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez entrer votre mot de passe actuel',
-                    ]),
-                ],
-            ])
             ->add('newPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'Les mots de passe doivent correspondre.',
-                'options' => ['attr' => ['class' => 'password-field', 'autocomplete' => 'new-password']],
+                'options' => ['attr' => ['class' => 'password-field']],
                 'required' => true,
                 'first_options'  => [
                     'label' => 'Nouveau mot de passe',
+                    'attr' => [
+                        'placeholder' => 'Minimum 6 caractères',
+                        'minlength' => 6
+                    ],
                     'constraints' => [
                         new NotBlank([
                             'message' => 'Veuillez entrer un nouveau mot de passe',
@@ -43,17 +39,17 @@ class ChangePasswordType extends AbstractType
                     ],
                 ],
                 'second_options' => [
-                    'label' => 'Répéter le nouveau mot de passe',
+                    'label' => 'Répétez le mot de passe',
+                    'attr' => [
+                        'placeholder' => 'Confirmez le mot de passe',
+                        'minlength' => 6
+                    ],
                 ],
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'csrf_protection' => true,
-            'csrf_field_name' => '_token',
-            'csrf_token_id'   => 'change_password',
-        ]);
+        $resolver->setDefaults([]);
     }
 }

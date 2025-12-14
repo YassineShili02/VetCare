@@ -1,0 +1,12 @@
+[33ma5bae70[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: reset: moving to origin/main
+[33m3e2030c[m HEAD@{1}: reset: moving to HEAD~1
+[33m799b6ef[m HEAD@{2}: commit: add users
+[33m3e2030c[m HEAD@{3}: reset: moving to ORIG_HEAD
+[33m7e5f5fd[m HEAD@{4}: pull origin main: Fast-forward
+[33m3e2030c[m HEAD@{5}: reset: moving to HEAD
+[33m3e2030c[m HEAD@{6}: pull origin main: Fast-forward
+[33m10c6984[m HEAD@{7}: reset: moving to HEAD
+[33m10c6984[m HEAD@{8}: commit (merge): add user
+[33mc9acb05[m HEAD@{9}: commit: user
+[33m67da0f0[m HEAD@{10}: checkout: moving from main to main
+[33m67da0f0[m HEAD@{11}: clone: from https://github.com/YassineShili02/VetCare.git

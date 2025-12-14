@@ -1,186 +1,112 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Statistiques des Utilisateurs{% endblock %}
+{% block title %}Statistiques des utilisateurs{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
+<div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><i class="fas fa-chart-bar"></i> Statistiques des Utilisateurs</h1>
-        <div class="btn-group">
-            <a href="{{ path('app_user_index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Retour à la liste
-            </a>
-            <a href="{{ path('app_user_export_csv') }}" class="btn btn-success">
-                <i class="fas fa-file-export"></i> Exporter CSV
-            </a>
-        </div>
+        <h1><i class="fas fa-chart-bar"></i> Statistiques des utilisateurs</h1>
+        <a href="{{ path('app_user_index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
     </div>
 
     <!-- Cartes de statistiques -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card text-white bg-primary">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Total Utilisateurs</h6>
-                            <h2 class="mb-0">{{ stats.total }}</h2>
-                        </div>
-                        <i class="fas fa-users fa-2x"></i>
-                    </div>
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <h2 class="display-4 text-primary">{{ total_users }}</h2>
+                    <p class="text-muted mb-0">Utilisateurs total</p>
                 </div>
             </div>
         </div>
+        
         <div class="col-md-3">
-            <div class="card text-white bg-success">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Clients</h6>
-                            <h2 class="mb-0">{{ stats.Client }}</h2>
-                            <small class="opacity-75">{{ (stats.Client / stats.total * 100)|round(1) }}%</small>
-                        </div>
-                        <i class="fas fa-user fa-2x"></i>
-                    </div>
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <h2 class="display-4 text-success">{{ stats['Client'] ?? 0 }}</h2>
+                    <p class="text-muted mb-0">Clients</p>
                 </div>
             </div>
         </div>
+        
         <div class="col-md-3">
-            <div class="card text-white bg-warning">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Vétérinaires</h6>
-                            <h2 class="mb-0">{{ stats.Vétérinaire }}</h2>
-                            <small class="opacity-75">{{ (stats.Vétérinaire / stats.total * 100)|round(1) }}%</small>
-                        </div>
-                        <i class="fas fa-stethoscope fa-2x"></i>
-                    </div>
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <h2 class="display-4 text-warning">{{ stats['Vétérinaire'] ?? 0 }}</h2>
+                    <p class="text-muted mb-0">Vétérinaires</p>
                 </div>
             </div>
         </div>
+        
         <div class="col-md-3">
-            <div class="card text-white bg-danger">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Administrateurs</h6>
-                            <h2 class="mb-0">{{ stats.Administrateur }}</h2>
-                            <small class="opacity-75">{{ (stats.Administrateur / stats.total * 100)|round(1) }}%</small>
-                        </div>
-                        <i class="fas fa-cogs fa-2x"></i>
-                    </div>
+            <div class="card border-danger">
+                <div class="card-body text-center">
+                    <h2 class="display-4 text-danger">{{ stats['Administrateur'] ?? 0 }}</h2>
+                    <p class="text-muted mb-0">Administrateurs</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Graphique de répartition -->
+    <!-- Répartition par rôle -->
     <div class="row mb-4">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Répartition par rôle</h5>
                 </div>
                 <div class="card-body">
-                    <div class="chart-container" style="position: relative; height: 300px;">
+                    <div style="height: 300px;">
                         <canvas id="roleChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        
+        <div class="col-md-6">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Légende</h5>
-                </div>
-                <div class="card-body">
-                    <div class="list-group">
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><span class="badge bg-success me-2">●</span> Clients</span>
-                            <span class="badge bg-success rounded-pill">{{ stats.Client }}</span>
-                        </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><span class="badge bg-warning me-2">●</span> Vétérinaires</span>
-                            <span class="badge bg-warning rounded-pill">{{ stats.Vétérinaire }}</span>
-                        </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><span class="badge bg-danger me-2">●</span> Administrateurs</span>
-                            <span class="badge bg-danger rounded-pill">{{ stats.Administrateur }}</span>
-                        </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><strong>Total</strong></span>
-                            <span class="badge bg-primary rounded-pill">{{ stats.total }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Derniers utilisateurs inscrits -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-history"></i> Derniers utilisateurs inscrits</h5>
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Derniers inscrits</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Utilisateur</th>
+                                    <th>Nom</th>
                                     <th>Email</th>
                                     <th>Rôle</th>
-                                    <th>Actions</th>
+                                    <th>Inscrit le</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            {% for user in recent_users %}
+                                {% for user in recent_users %}
                                 <tr>
                                     <td>
-                                        <small class="text-muted">{{ user.createdAt|date('d/m/Y H:i') }}</small>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            {% if user.profilePhoto %}
-                                                <img src="{{ asset(user.profilePhoto) }}" alt="{{ user.fullName }}" 
-                                                     class="avatar-small rounded-circle me-2">
-                                            {% else %}
-                                                <div class="avatar-small rounded-circle bg-light me-2 d-flex align-items-center justify-content-center">
-                                                    <span class="text-muted small">{{ user.initials }}</span>
-                                                </div>
-                                            {% endif %}
-                                            <div>
-                                                <strong>{{ user.firstName }} {{ user.lastName }}</strong>
-                                            </div>
-                                        </div>
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}">
+                                            {{ user.firstName }} {{ user.lastName }}
+                                        </a>
                                     </td>
                                     <td>{{ user.email }}</td>
                                     <td>
-                                        {% if user.isAdmin() %}
-                                            <span class="badge bg-danger">Admin</span>
-                                        {% elseif user.isVeterinarian() %}
-                                            <span class="badge bg-warning">Vétérinaire</span>
-                                        {% else %}
-                                            <span class="badge bg-success">Client</span>
-                                        {% endif %}
+                                        <span class="badge bg-{{ 
+                                            user.isAdmin() ? 'danger' : 
+                                            user.isVeterinarian() ? 'warning' : 'success' 
+                                        }}">
+                                            {{ user.roleLabel }}
+                                        </span>
                                     </td>
-                                    <td>
-                                        <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-sm btn-info">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    </td>
+                                    <td>{{ user.createdAt|date('d/m/Y') }}</td>
                                 </tr>
-                            {% else %}
+                                {% else %}
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted py-3">
+                                    <td colspan="4" class="text-center text-muted">
                                         Aucun utilisateur récent
                                     </td>
                                 </tr>
-                            {% endfor %}
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -188,34 +114,26 @@
             </div>
         </div>
     </div>
+
+    <!-- Export des données -->
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="fas fa-download"></i> Export des données</h5>
+        </div>
+        <div class="card-body">
+            <div class="btn-group">
+                <a href="{{ path('app_user_export_csv') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-file-csv"></i> Exporter en CSV
+                </a>
+                <a href="{{ path('app_user_export_filtered') }}" class="btn btn-outline-success">
+                    <i class="fas fa-file-excel"></i> Exporter les filtres
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<style>
-.avatar-small {
-    width: 32px;
-    height: 32px;
-    object-fit: cover;
-}
-
-.card {
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-}
-
-.list-group-item {
-    border-left: none;
-    border-right: none;
-    border-radius: 0;
-}
-
-.list-group-item:first-child {
-    border-top: none;
-}
-
-.list-group-item:last-child {
-    border-bottom: none;
-}
-</style>
-
+<!-- JavaScript pour les graphiques -->
 {% block javascripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -224,25 +142,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const roleData = {
         labels: ['Clients', 'Vétérinaires', 'Administrateurs'],
         datasets: [{
-            data: [{{ stats.Client }}, {{ stats.Vétérinaire }}, {{ stats.Administrateur }}],
+            data: [
+                {{ stats['Client'] ?? 0 }},
+                {{ stats['Vétérinaire'] ?? 0 }},
+                {{ stats['Administrateur'] ?? 0 }}
+            ],
             backgroundColor: [
-                'rgba(40, 167, 69, 0.8)',
-                'rgba(255, 193, 7, 0.8)',
-                'rgba(220, 53, 69, 0.8)'
+                '#28a745', // Vert pour clients
+                '#ffc107', // Jaune pour vétérinaires
+                '#dc3545'  // Rouge pour administrateurs
             ],
-            borderColor: [
-                'rgb(40, 167, 69)',
-                'rgb(255, 193, 7)',
-                'rgb(220, 53, 69)'
-            ],
-            borderWidth: 1,
-            hoverOffset: 15
+            borderWidth: 2,
+            borderColor: '#fff'
         }]
     };
-    
+
     // Configuration du graphique
     const config = {
-        type: 'doughnut',
+        type: 'pie',
         data: roleData,
         options: {
             responsive: true,
@@ -254,29 +171,63 @@ document.addEventListener('DOMContentLoaded', function() {
                         padding: 20,
                         usePointStyle: true,
                         font: {
-                            size: 12
+                            size: 14
                         }
                     }
                 },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            const label = context.label || '';
-                            const value = context.raw || 0;
-                            const total = {{ stats.total }};
-                            const percentage = Math.round((value / total) * 100);
-                            return `${label}: ${value} (${percentage}%)`;
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += context.parsed + ' utilisateur(s)';
+                            return label;
                         }
                     }
                 }
             }
         }
     };
-    
-    // Création du graphique
+
+    // Rendu du graphique
     const ctx = document.getElementById('roleChart').getContext('2d');
     new Chart(ctx, config);
 });
 </script>
 {% endblock %}
+
+<style>
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.display-4 {
+    font-weight: 300;
+    line-height: 1.2;
+}
+
+.badge {
+    font-size: 0.85em;
+    padding: 0.35em 0.65em;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+</style>
 {% endblock %}
