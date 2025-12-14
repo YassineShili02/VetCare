@@ -157,6 +157,78 @@
         .fade-in {
             animation: fadeIn 0.5s ease;
         }
+
+        /* ============ LIENS RAPIDES POUR LES VISITEURS ============ */
+        .visitor-quick-links {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-top: 2px solid var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding: 15px 0;
+            margin: 30px 0;
+        }
+
+        .visitor-quick-links .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .visitor-quick-links .btn {
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .visitor-quick-links .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .visitor-quick-links .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .visitor-quick-links .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .visitor-quick-links .btn-outline-success {
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        .visitor-quick-links .btn-outline-success:hover {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .visitor-quick-links .btn-outline-warning {
+            border-color: var(--warning-color);
+            color: #856404;
+        }
+
+        .visitor-quick-links .btn-outline-warning:hover {
+            background-color: var(--warning-color);
+            color: #212529;
+        }
+
+        @media (max-width: 768px) {
+            .visitor-quick-links .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .visitor-quick-links .btn {
+                width: 100%;
+                max-width: 300px;
+                margin-bottom: 8px;
+            }
+        }
     </style>
 
     {% block stylesheets %}{% endblock %}
@@ -194,6 +266,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
+
+
                 
                 {% for message in app.flashes('info') %}
                     <div class="alert alert-info alert-dismissible fade show" role="alert">
@@ -207,6 +281,18 @@
             <!-- Contenu des pages -->
             {% block body %}{% endblock %}
         </div>
+
+        {# ================== LIENS RAPIDES POUR VISITEURS NON CONNECTÉS ================== #}
+        {% if not app.user %}
+        <div class="visitor-quick-links">
+            <div class="container">
+
+                <a href="{{ path('app_forgot_password') }}" class="btn btn-outline-warning">
+                    <i class="fas fa-key me-2"></i>Mot de passe oublié
+                </a>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     {# ================== FOOTER (PARTIAL) ================== #}
@@ -242,6 +328,15 @@
                     bsAlert.close();
                 });
             }, 5000);
+        });
+
+        // Animation pour les boutons des liens rapides
+        document.addEventListener('DOMContentLoaded', function() {
+            const quickLinks = document.querySelectorAll('.visitor-quick-links .btn');
+            quickLinks.forEach((link, index) => {
+                link.style.animationDelay = (index * 0.1) + 's';
+                link.classList.add('animate__animated', 'animate__fadeInUp');
+            });
         });
     </script>
 

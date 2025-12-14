@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mot de passe oublié - VetCare{% endblock %}
+
+{% block body %}
+<div class="container">
+    {# ⭐ LOGO VETCARE EN HAUT #}
+    <div class="logo-header">
+        <h1>🐾 VetCare</h1>
+    </div>
+
+    <div class="forgot-section">
+        <h2>Mot de passe oublié</h2>
+        
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-error">
+                {{ message }}
+            </div>
+        {% endfor %}
+        
+        <p>Entrez votre adresse email pour recevoir un code de réinitialisation :</p>
+        
+        {{ form_start(form) }}
+            <div class="form-field">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email, {
+                    'attr': {
+                        'placeholder': 'votre@email.com'
+                    }
+                }) }}
+                {{ form_errors(form.email) }}
+            </div>
+
+            <button type="submit" class="btn-primary">Envoyer le code</button>
+        {{ form_end(form) }}
+
+        <div class="back-link">
+            <a href="{{ path('app_login') }}">← Retour à la connexion</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 15px;
+    font-family: Arial, sans-serif;
+}
+
+/* ⭐ STYLE DU LOGO */
+.logo-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #007bff;
+}
+
+.logo-header h1 {
+    color: #333;
+    font-size: 2.5em;
+    margin: 0;
+    font-weight: bold;
+}
+
+.forgot-section {
+    padding-top: 10px;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.form-field {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+input[type="email"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.back-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.back-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}
+
+.alert {
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.alert-error {
+    background-color: #ffebee;
+    border: 1px solid #f44336;
+    color: #c62828;
+}
+</style>
+{% endblock %}

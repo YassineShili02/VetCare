@@ -1,0 +1,50 @@
+{# templates/email/debug.html.twig #}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Email</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        .code { 
+            font-size: 48px; 
+            font-weight: bold; 
+            color: #2c5f2d;
+            text-align: center;
+            margin: 20px;
+            padding: 20px;
+            background: #f0f8f0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Debug Email</h1>
+    
+    <div class="{{ success ? 'success' : 'error' }}">
+        <h2>{{ message }}</h2>
+    </div>
+    
+    <div class="code">{{ code }}</div>
+    
+    <p><strong>Email:</strong> {{ email }}</p>
+    <p><strong>Code stocké en session:</strong> Oui</p>
+    
+    <div style="margin-top: 30px;">
+        <a href="{{ path('app_verify_code') }}">
+            <button style="padding: 15px 30px; font-size: 18px; background: #2c5f2d; color: white;">
+                ⏩ Aller à la vérification du code
+            </button>
+        </a>
+    </div>
+    
+    <div style="margin-top: 20px;">
+        <a href="{{ path('app_go_to_verify', {'email': email, 'code': code}) }}">
+            <button style="padding: 10px 20px;">
+                🔄 Recharger avec ce code
+            </button>
+        </a>
+    </div>
+</body>
+</html>

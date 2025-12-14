@@ -440,7 +440,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * Méthode ajoutée : Formate les rôles pour l'affichage
+     * Méthode ajoutée : F1ormate les rôles pour l'affichage
      */
     public function getFormattedRoles(): string
     {

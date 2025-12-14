@@ -16,6 +16,8 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Email as EmailConstraint;
+use Symfony\Component\Validator\Constraints\File;
 
 class UserType extends AbstractType
 {
@@ -24,25 +26,71 @@ class UserType extends AbstractType
         $builder
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
-                'attr' => ['placeholder' => 'Entrez le prénom']
+                'attr' => ['placeholder' => 'Entrez le prénom'],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Le prénom est obligatoire',
+                    ]),
+                    new Length([
+                        'min' => 2,
+                        'minMessage' => 'Le prénom doit contenir au moins {{ limit }} caractères',
+                        'max' => 50,
+                        'maxMessage' => 'Le prénom ne peut pas dépasser {{ limit }} caractères',
+                    ]),
+                ],
             ])
             ->add('lastName', TextType::class, [
                 'label' => 'Nom',
-                'attr' => ['placeholder' => 'Entrez le nom']
+                'attr' => ['placeholder' => 'Entrez le nom'],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Le nom est obligatoire',
+                    ]),
+                    new Length([
+                        'min' => 2,
+                        'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères',
+                        'max' => 50,
+                        'maxMessage' => 'Le nom ne peut pas dépasser {{ limit }} caractères',
+                    ]),
+                ],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
-                'attr' => ['placeholder' => 'exemple@email.com']
+                'attr' => ['placeholder' => 'exemple@email.com'],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'L\'email est obligatoire',
+                    ]),
+                    new EmailConstraint([
+                        'message' => 'Veuillez entrer un email valide',
+                    ]),
+                    new Length([
+                        'max' => 180,
+                        'maxMessage' => 'L\'email ne peut pas dépasser {{ limit }} caractères',
+                    ]),
+                ],
             ])
             ->add('phone', TelType::class, [
                 'label' => 'Téléphone',
                 'required' => false,
-                'attr' => ['placeholder' => '06 12 34 56 78']
+                'attr' => ['placeholder' => '06 12 34 56 78'],
+                'constraints' => [
+                    new Length([
+                        'max' => 20,
+                        'maxMessage' => 'Le téléphone ne peut pas dépasser {{ limit }} caractères',
+                    ]),
+                ],
             ])
             ->add('address', TextareaType::class, [
                 'label' => 'Adresse',
                 'required' => false,
-                'attr' => ['rows' => 3, 'placeholder' => 'Adresse complète']
+                'attr' => ['rows' => 3, 'placeholder' => 'Adresse complète'],
+                'constraints' => [
+                    new Length([
+                        'max' => 255,
+                        'maxMessage' => 'L\'adresse ne peut pas dépasser {{ limit }} caractères',
+                    ]),
+                ],
             ]);
 
         // Pour la création d'utilisateur, afficher le champ mot de passe
@@ -72,7 +120,7 @@ class UserType extends AbstractType
             $roleChoices = [
                 '👤 Client (Propriétaire d\'animal)' => 'ROLE_USER',
                 '🐾 Vétérinaire' => 'ROLE_VET',
-                '⚙️ Administrateur' => 'ROLE_ADMIN', // Toujours visible et activé
+                '⚙️ Administrateur' => 'ROLE_ADMIN',
             ];
             
             $builder->add('role', ChoiceType::class, [
@@ -100,6 +148,18 @@ class UserType extends AbstractType
                 'label' => 'Photo de profil',
                 'required' => false,
                 'mapped' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '5M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez uploader une image valide (JPEG, PNG, GIF, WebP)',
+                    ])
+                ],
             ]);
         }
     }
@@ -111,7 +171,8 @@ class UserType extends AbstractType
             'is_creation' => false,
             'show_roles' => false,
             'show_profile_photo' => false,
-            'allow_admin_role' => true, // MODIFICATION : TRUE pour permettre à tous
+            'allow_admin_role' => true,
+            'validation_groups' => ['Default'],
         ]);
     }
 }
