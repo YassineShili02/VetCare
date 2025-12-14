@@ -1,99 +1,3 @@
-<<<<<<< HEAD
-{% extends 'backoffice/base.html.twig' %}
-
-{% block title %}Gestion des Traitements{% endblock %}
-{% block breadcrumb %}Traitements{% endblock %}
-
-{% block content %}
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="card my-4">
-                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                    <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                        <h6 class="text-white text-capitalize ps-3">📋 Gestion des Traitements</h6>
-                    </div>
-                </div>
-                <div class="card-body px-0 pb-2">
-                    <div class="text-end pe-3 mb-3">
-                        <a href="{{ path('app_traitement_new') }}" class="btn btn-dark btn-sm">
-                            ➕ Nouveau traitement
-                        </a>
-                    </div>
-
-                    <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nom</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Description</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Statut</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Médicaments</th>
-                                    <th class="text-secondary opacity-7">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% if traitements is not empty %}
-                                    {% for traitement in traitements %}
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-1">
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">{{ traitement.nom }}</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <p class="text-xs font-weight-bold mb-0">
-                                                    {{ traitement.description|default('Aucune description')|slice(0, 50) }}{% if traitement.description and traitement.description|length > 50 %}...{% endif %}
-                                                </p>
-                                            </td>
-                                            <td class="align-middle text-center text-sm">
-                                                <span class="badge badge-sm 
-                                                    {% if traitement.statut == 'pending' %}bg-warning
-                                                    {% elseif traitement.statut == 'in_progress' %}bg-info
-                                                    {% elseif traitement.statut == 'completed' %}bg-success
-                                                    {% elseif traitement.statut == 'cancelled' %}bg-danger
-                                                    {% else %}bg-secondary{% endif %}">
-                                                    {{ traitement.statut }}
-                                                </span>
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <span class="text-secondary text-xs font-weight-bold">
-                                                    {{ traitement.medicaments|length }}
-                                                </span>
-                                            </td>
-                                            <td class="align-middle">
-                                                <a href="{{ path('app_traitement_show', {'id': traitement.id}) }}" class="btn btn-info btn-sm">
-                                                    👁️
-                                                </a>
-                                                <a href="{{ path('app_traitement_edit', {'id': traitement.id}) }}" class="btn btn-warning btn-sm">
-                                                    ✏️
-                                                </a>
-                                                <form method="post" action="{{ path('app_traitement_delete', {'id': traitement.id}) }}" style="display: inline;">
-                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ traitement.id) }}">
-                                                    <button class="btn btn-danger btn-sm">🗑️</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="5" class="text-center py-4">
-                                            Aucun traitement trouvé
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-=======
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -105,14 +9,14 @@
 
     {# Favicon #}
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('front/img/favicon.ico') }}">
-    
+
     {# Bootstrap 5 depuis CDN - IMPORTANT POUR LES FORMULAIRES #}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     {# CSS personnalisés #}
     <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('front/css/responsive.css') }}">
-    
+
     {# Font Awesome pour les icônes #}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -274,7 +178,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
-                
+
                 {% for message in app.flashes('error') %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-triangle"></i>
@@ -282,7 +186,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
-                
+
                 {% for message in app.flashes('warning') %}
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-circle"></i>
@@ -290,7 +194,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
-                
+
                 {% for message in app.flashes('info') %}
                     <div class="alert alert-info alert-dismissible fade show" role="alert">
                         <i class="fas fa-info-circle"></i>
@@ -311,10 +215,10 @@
     {# ================== SCRIPTS ================== #}
     {# jQuery - Nécessaire pour certains plugins #}
     <script src="{{ asset('front/js/vendor/jquery-1.12.4.min.js') }}"></script>
-    
+
     {# Bootstrap 5 Bundle (includes Popper) #}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     {# Autres scripts personnalisés #}
     <script src="{{ asset('front/js/vendor/modernizr-3.5.0.min.js') }}"></script>
     <script src="{{ asset('front/js/jquery.slicknav.min.js') }}"></script>
@@ -344,4 +248,3 @@
     {% block javascripts %}{% endblock %}
 </body>
 </html>
->>>>>>> 3e2030c75b9f4a89f35ca6db7ad15e627d1d3c9e

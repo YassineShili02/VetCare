@@ -1,0 +1,301 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Gestion des Médicaments{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h1 class="page-title">💊 Gestion des Médicaments</h1>
+    </div>
+    <div class="card-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <a href="{{ path('app_medicament_new') }}" class="btn btn-primary">
+                ➕ Ajouter un médicament
+            </a>
+            <div style="color: #6c757d; font-size: 0.9rem;">
+                Total: {{ medicaments|length }} médicament(s)
+            </div>
+        </div>
+
+        <!-- Filtres avancés -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h3 style="margin: 0; color: white;">🔍 Recherche & Filtres</h3>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{{ path('app_medicament_index') }}" class="filter-form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="search">Recherche</label>
+                                <input type="text" class="form-control" id="search" name="search"
+                                       value="{{ search }}" placeholder="Nom ou description...">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="minStock">Stock min</label>
+                                <input type="number" class="form-control" id="minStock" name="minStock"
+                                       value="{{ minStock }}" placeholder="Min">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="maxStock">Stock max</label>
+                                <input type="number" class="form-control" id="maxStock" name="maxStock"
+                                       value="{{ maxStock }}" placeholder="Max">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="sortBy">Trier par</label>
+                                <select class="form-control" id="sortBy" name="sortBy">
+                                    <option value="nom" {{ sortBy == 'nom' ? 'selected' : '' }}>Nom</option>
+                                    <option value="stock" {{ sortBy == 'stock' ? 'selected' : '' }}>Stock</option>
+                                    <option value="dateCreation" {{ sortBy == 'dateCreation' ? 'selected' : '' }}>Date création</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="order">Ordre</label>
+                                <select class="form-control" id="order" name="order">
+                                    <option value="ASC" {{ order == 'ASC' ? 'selected' : '' }}>↑</option>
+                                    <option value="DESC" {{ order == 'DESC' ? 'selected' : '' }}>↓</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="actions" style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary">Filtrer</button>
+                        <a href="{{ path('app_medicament_index') }}" class="btn btn-secondary">Réinitialiser</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Fenêtre de recherche rapide dans le tableau -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h3 style="margin: 0; color: white;">🔎 Recherche Rapide dans le Tableau</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <input type="text" id="tableSearch" class="form-control"
+                           placeholder="Rechercher dans le tableau (nom, description, stock...)">
+                </div>
+                <div class="search-info">
+                    <small id="searchResults">Tapez pour filtrer les résultats...</small>
+                </div>
+            </div>
+        </div>
+
+        <table class="table" id="medicamentsTable">
+            <thead>
+                <tr>
+                    <th>
+                        <a href="?sortBy=nom&order={{ sortBy == 'nom' and order == 'ASC' ? 'DESC' : 'ASC' }}{% if search %}&search={{ search }}{% endif %}{% if minStock %}&minStock={{ minStock }}{% endif %}{% if maxStock %}&maxStock={{ maxStock }}{% endif %}">
+                            ID {% if sortBy == 'nom' %}{{ order == 'ASC' ? '↑' : '↓' }}{% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="?sortBy=nom&order={{ sortBy == 'nom' and order == 'ASC' ? 'DESC' : 'ASC' }}{% if search %}&search={{ search }}{% endif %}{% if minStock %}&minStock={{ minStock }}{% endif %}{% if maxStock %}&maxStock={{ maxStock }}{% endif %}">
+                            Nom {% if sortBy == 'nom' %}{{ order == 'ASC' ? '↑' : '↓' }}{% endif %}
+                        </a>
+                    </th>
+                    <th>Description</th>
+                    <th>
+                        <a href="?sortBy=stock&order={{ sortBy == 'stock' and order == 'ASC' ? 'DESC' : 'ASC' }}{% if search %}&search={{ search }}{% endif %}{% if minStock %}&minStock={{ minStock }}{% endif %}{% if maxStock %}&maxStock={{ maxStock }}{% endif %}">
+                            Stock {% if sortBy == 'stock' %}{{ order == 'ASC' ? '↑' : '↓' }}{% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="?sortBy=dateCreation&order={{ sortBy == 'dateCreation' and order == 'ASC' ? 'DESC' : 'ASC' }}{% if search %}&search={{ search }}{% endif %}{% if minStock %}&minStock={{ minStock }}{% endif %}{% if maxStock %}&maxStock={{ maxStock }}{% endif %}">
+                            Date création {% if sortBy == 'dateCreation' %}{{ order == 'ASC' ? '↑' : '↓' }}{% endif %}
+                        </a>
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for medicament in medicaments %}
+                <tr>
+                    <td><strong>#{{ medicament.id }}</strong></td>
+                    <td>
+                        <div style="font-weight: 600; color: #2c3e50;">{{ medicament.nom }}</div>
+                    </td>
+                    <td>
+                        <div style="max-width: 200px;">
+                            {{ medicament.description|default('Aucune description')|slice(0, 60) }}
+                            {% if medicament.description and medicament.description|length > 60 %}...{% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="stock-indicator {{ medicament.stock > 10 ? 'stock-high' : (medicament.stock > 0 ? 'stock-medium' : 'stock-low') }}">
+                            {{ medicament.stock }} unités
+                        </span>
+                    </td>
+                    <td>{{ medicament.dateCreation|date('d/m/Y H:i') }}</td>
+                    <td>
+                        <div class="actions">
+                            <a href="{{ path('app_medicament_show', {'id': medicament.id}) }}" class="btn btn-info" title="Voir détails">
+                                👁️
+                            </a>
+                            <a href="{{ path('app_medicament_edit', {'id': medicament.id}) }}" class="btn btn-warning" title="Modifier">
+                                ✏️
+                            </a>
+                            <form method="post" action="{{ path('app_medicament_delete', {'id': medicament.id}) }}"
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce médicament ?');"
+                                  style="display: inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ medicament.id) }}">
+                                <button class="btn btn-danger" title="Supprimer">🗑️</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #6c757d;">
+                        <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">📭</div>
+                        Aucun médicament trouvé
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+// Recherche en temps réel dans le tableau
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('tableSearch');
+    const searchResults = document.getElementById('searchResults');
+    const table = document.getElementById('medicamentsTable');
+
+    if (searchInput && table) {
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            const rows = table.querySelectorAll('tbody tr');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                // Vérifier si c'est la ligne "vide" (pas de médicaments)
+                if (row.querySelector('td[colspan]')) {
+                    // Si c'est la ligne vide, on la cache si on recherche
+                    row.style.display = searchTerm === '' ? '' : 'none';
+                    return;
+                }
+
+                const rowText = row.textContent.toLowerCase();
+                const isVisible = searchTerm === '' || rowText.includes(searchTerm);
+
+                if (isVisible) {
+                    row.style.display = '';
+                    visibleCount++;
+
+                    // Surligner le texte correspondant
+                    if (searchTerm.length > 0) {
+                        highlightText(row, searchTerm);
+                    } else {
+                        removeHighlight(row);
+                    }
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Mettre à jour le compteur
+            if (searchResults) {
+                if (searchTerm.length > 0) {
+                    searchResults.textContent = `${visibleCount} médicament(s) trouvé(s) sur ${medicaments|length}`;
+                    searchResults.style.color = visibleCount > 0 ? '#28a745' : '#dc3545';
+                } else {
+                    searchResults.textContent = `Tapez pour filtrer les ${medicaments|length} médicament(s)`;
+                    searchResults.style.color = '#6c757d';
+                }
+            }
+        });
+
+        // Mettre le focus sur la recherche
+        searchInput.focus();
+    }
+
+    // Fonction pour surligner le texte
+    function highlightText(row, searchTerm) {
+        const cells = row.querySelectorAll('td');
+        cells.forEach(cell => {
+            // Éviter les cellules avec des boutons
+            if (cell.querySelector('.actions')) return;
+
+            const originalText = cell.textContent;
+            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            const highlightedText = originalText.replace(regex, '<mark>$1</mark>');
+            cell.innerHTML = highlightedText;
+        });
+    }
+
+    // Fonction pour retirer le surlignage
+    function removeHighlight(row) {
+        const cells = row.querySelectorAll('td');
+        cells.forEach(cell => {
+            // Éviter les cellules avec des boutons
+            if (cell.querySelector('.actions')) return;
+
+            // Rétablir le texte original
+            const span = cell.querySelector('span.stock-indicator');
+            if (span) {
+                // Pour les cellules avec stock-indicator
+                cell.innerHTML = span.outerHTML;
+            } else {
+                cell.innerHTML = cell.textContent;
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.search-info {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+/* Surlignage des résultats */
+mark {
+    background-color: #ffeb3b;
+    padding: 0.1rem 0.2rem;
+    border-radius: 2px;
+    font-weight: bold;
+}
+
+/* Filtres responsives */
+.filter-form .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -0.5rem;
+}
+
+.filter-form .col-md-1, .filter-form .col-md-2,
+.filter-form .col-md-3, .filter-form .col-md-4 {
+    padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .filter-form .col-md-1, .filter-form .col-md-2,
+    .filter-form .col-md-3, .filter-form .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* Animation pour les résultats filtrés */
+tr {
+    transition: all 0.3s ease;
+}
+</style>
+{% endblock %}

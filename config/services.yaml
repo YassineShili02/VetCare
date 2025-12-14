@@ -1,12 +1,17 @@
+# config/services.yaml
+
+# Les paramètres doivent être dans un fichier séparé ou ici
 parameters:
   dossier_medical_images_dir: '%kernel.project_dir%/public/uploads/dossier_medical'
 
 services:
+  # Les services par défaut
   _defaults:
-    autowire: true
-    autoconfigure: true
-    public: false
+    autowire: true      # Active l'autowiring pour tous les services
+    autoconfigure: true # Active l'autoconfiguration
+    public: false       # Les services sont privés par défaut
 
+  # Tous les services dans le namespace App\ sont chargés automatiquement
   App\:
     resource: '../src/'
     exclude:
@@ -14,6 +19,7 @@ services:
       - '../src/Entity/'
       - '../src/Kernel.php'
 
+  # Configuration spécifique pour les contrôleurs
   App\Controller\:
     resource: '../src/Controller/'
     tags: ['controller.service_arguments']

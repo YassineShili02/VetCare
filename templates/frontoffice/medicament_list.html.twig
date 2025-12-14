@@ -1,0 +1,64 @@
+{% extends 'frontoffice/base.html.twig' %}
+
+{% block title %}Liste des Médicaments - Frontoffice{% endblock %}
+
+{% block body %}
+<div class="card-grid">
+    {% for medicament in medicaments %}
+    <div class="card">
+        <div class="card-header">
+            <h3 style="margin: 0; color: white;">{{ medicament.nom }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="card-text">
+                {{ medicament.description|default('Aucune description disponible') }}
+            </div>
+
+            <div class="card-details">
+                <div class="detail-item">
+                    <span class="detail-label">Stock:</span>
+                    <span class="detail-value">
+                        <span class="stock-indicator {{ medicament.stock > 10 ? 'stock-high' : (medicament.stock > 0 ? 'stock-medium' : 'stock-low') }}">
+                            {{ medicament.stock }} unités
+                        </span>
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Date création:</span>
+                    <span class="detail-value">{{ medicament.dateCreation|date('d/m/Y') }}</span>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn btn-accept" onclick="acceptMedicament({{ medicament.id }})">Accepter</button>
+                <button class="btn btn-refuse" onclick="refuseMedicament({{ medicament.id }})">Refuser</button>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div style="text-align: center; color: white; grid-column: 1 / -1;">
+        <h3>Aucun médicament disponible</h3>
+    </div>
+    {% endfor %}
+</div>
+
+<a href="{{ path('app_home') }}" class="btn-back">🏠 Retour à l'accueil</a>
+
+<a href="{{ path('app_medicament_index') }}" class="btn-back">Retour au Backoffice</a>
+
+<script>
+function acceptMedicament(id) {
+    if (confirm('Êtes-vous sûr de vouloir accepter ce médicament ?')) {
+        alert('Médicament ' + id + ' accepté avec succès !');
+        // Ici vous pouvez ajouter un appel AJAX pour mettre à jour le statut
+    }
+}
+
+function refuseMedicament(id) {
+    if (confirm('Êtes-vous sûr de vouloir refuser ce médicament ?')) {
+        alert('Médicament ' + id + ' refusé !');
+        // Ici vous pouvez ajouter un appel AJAX pour mettre à jour le statut
+    }
+}
+</script>
+
+{% endblock %}

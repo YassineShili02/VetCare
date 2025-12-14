@@ -11,18 +11,20 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractController
 {
-    #[Route('/', name: 'app_dashboard')]
+    #[Route('/dashboard', name: 'app_dashboard')]
     public function index(): Response
     {
-        return $this->render('dashboard/index.html.twig');
+        return $this->render('home/index.html.twig');
     }
 
+// src/Controller/DashboardController.php
     #[Route('/client', name: 'app_client_interface')]
     public function clientInterface(MedicamentRepository $medicamentRepository, TraitementRepository $traitementRepository): Response
     {
         return $this->render('client/interface.html.twig', [
             'medicaments' => $medicamentRepository->findAll(),
             'traitements' => $traitementRepository->findAll(),
+            'google_maps_api_key' => 'VOTRE_CLE_API_ICI', // Remplacez par votre vraie clé
         ]);
     }
 

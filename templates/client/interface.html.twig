@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interface Client - VetCare</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: #f4f6f9; min-height: 100vh; color: #333; }
+.container { max-width: 1400px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+
+.header { text-align: center; margin-bottom: 3rem; }
+.header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #2c3e50; }
+.header p { color: #6c757d; font-size: 1.1rem; }
+
+/* Recherche */
+.search-container { margin: 2rem 0; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+.search-container input, .search-container select { padding: 0.8rem 1rem; min-width: 250px; flex-grow: 1; border-radius: 5px; border: 1px solid #ced4da; font-size: 1rem; }
+.btn { padding: 0.8rem 1.5rem; background:#2c5f2d; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+.btn:hover { background: #0056b3; }
+.btn-secondary { background: #6c757d; }
+.btn-secondary:hover { background: #5a6268; }
+.btn-success { background: #28a745; }
+.btn-success:hover { background: #218838; }
+
+/* Carte */
+.map-section { margin: 3rem 0; display: none; }
+.map-section.active { display: block; animation: fadeIn 0.5s ease; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.map-header { background: #6c757d; padding: 1.5rem; border-radius: 10px 10px 0 0; color: white; display: flex; justify-content: space-between; align-items: center; }
+.map-header h2 { margin: 0; display: flex; align-items: center; gap: 10px; }
+.map-controls { display: flex; gap: 1rem; background: #e9ecef; padding: 1rem; border-radius: 0 0 10px 10px; flex-wrap: wrap; }
+.map-controls input, .map-controls select { flex: 1; min-width: 200px; padding: 0.8rem 1rem; border: 1px solid #ced4da; border-radius: 5px; font-size: 1rem; }
+.map-controls button { padding: 0.8rem 1.5rem; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+.map-controls button:hover { background: #5a6268; }
+#pharmacies-map { height: 500px; width: 100%; border-radius: 0 0 10px 10px; }
+
+/* Tables */
+.tables-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
+@media (max-width: 768px) { .tables-container { grid-template-columns: 1fr; } }
+.table-section { background: #fff; margin-bottom: 30px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); overflow: hidden; }
+.table-header { padding: 15px; background:#2c5f2d; color: white; }
+.table-body { padding: 15px; overflow-x: auto; max-height: 400px; overflow-y: auto; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th, .data-table td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+.data-table th { background: #f1f1f1; color: #333; }
+.stock-indicator { font-weight: bold; }
+.statut-badge { display: inline-block; padding: 5px 10px; border-radius: 12px; color: #fff; font-size: 0.85rem; }
+.horaire-badge { display: inline-block; padding: 5px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold; }
+.horaire-jour { background: #ffc107; color: #212529; }
+.horaire-nuit { background: #343a40; color: white; }
+.horaire-24h { background: #17a2b8; color: white; }
+.empty-message { text-align: center; color: #777; padding: 15px; }
+
+.actions { text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #dee2e6; }
+
+/* Statistiques */
+.stats-container { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 2rem 0; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+.stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); text-align: center; }
+.stat-card i { font-size: 2rem; margin-bottom: 0.5rem; color: #007bff; }
+.stat-card h4 { margin: 0.5rem 0; color: #495057; }
+.stat-card .stat-value { font-size: 2rem; font-weight: bold; color: #2c3e50; }
+.stat-card .stat-detail { color: #6c757d; font-size: 0.9rem; margin-top: 0.5rem; }
+
+/* Légende */
+.legend { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin: 1rem 0; }
+.legend-item { display: flex; align-items: center; gap: 0.5rem; }
+
+/* Erreur */
+.error-message { background: #dc3545; color: white; padding: 1rem; border-radius: 5px; margin: 1rem 0; text-align: center; display: none; }
+.error-message.active { display: block; }
+
+/* Tooltip */
+.tooltip { position: relative; display: inline-block; }
+.tooltip .tooltiptext { visibility: hidden; width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 6px; padding: 10px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -100px; opacity: 0; transition: opacity 0.3s; font-size: 0.9rem; }
+.tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-clinic-medical"></i> Interface Client - VetCare</h1>
+        <p>Consultation de toutes les pharmacies de Tunisie avec horaires</p>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div id="map-error" class="error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Erreur Google Maps :</strong> La carte ne peut pas se charger.
+    </div>
+
+    <!-- Recherche -->
+    <div class="search-container">
+        <select id="governorate-select">
+            <option value="">Tous les gouvernorats</option>
+            <!-- Options seront générées par JavaScript -->
+        </select>
+        <select id="horaire-select">
+            <option value="">Tous les horaires</option>
+            <option value="jour">De jour seulement</option>
+            <option value="nuit">De nuit seulement</option>
+            <option value="24h">24h/24</option>
+        </select>
+        <button id="search-btn" class="btn"><i class="fas fa-search"></i> Rechercher</button>
+        <button id="show-all-btn" class="btn btn-success"><i class="fas fa-eye"></i> Toutes les pharmacies</button>
+        <button id="locate-btn" class="btn btn-secondary"><i class="fas fa-location-arrow"></i> Ma position</button>
+    </div>
+
+    <!-- Légende -->
+    <div class="legend">
+        <div class="legend-item">
+            <div style="width: 15px; height: 15px; background: #ffc107; border-radius: 50%;"></div>
+            <span>Pharmacie de jour</span>
+        </div>
+        <div class="legend-item">
+            <div style="width: 15px; height: 15px; background: #343a40; border-radius: 50%;"></div>
+            <span>Pharmacie de nuit</span>
+        </div>
+        <div class="legend-item">
+            <div style="width: 15px; height: 15px; background: #17a2b8; border-radius: 50%;"></div>
+            <span>Pharmacie 24h/24</span>
+        </div>
+        <div class="legend-item">
+            <div style="width: 15px; height: 15px; background: #007bff; border-radius: 50%;"></div>
+            <span>Votre position</span>
+        </div>
+    </div>
+
+    <!-- Statistiques détaillées -->
+    <div class="stats-container">
+        <h3><i class="fas fa-chart-bar"></i> Statistiques des pharmacies</h3>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-clinic-medical"></i>
+                <h4>Total des pharmacies</h4>
+                <div class="stat-value" id="total-count">0</div>
+                <div class="stat-detail">en Tunisie</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-map-marked-alt"></i>
+                <h4>Gouvernorats couverts</h4>
+                <div class="stat-value" id="governorate-count">0</div>
+                <div class="stat-detail">sur 24 gouvernorats</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-sun"></i>
+                <h4>Pharmacies de jour</h4>
+                <div class="stat-value" id="jour-count">0</div>
+                <div class="stat-detail">ouvertes le jour</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-moon"></i>
+                <h4>Pharmacies de nuit</h4>
+                <div class="stat-value" id="nuit-count">0</div>
+                <div class="stat-detail">ouvertes la nuit</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <h4>Pharmacies 24h</h4>
+                <div class="stat-value" id="24h-count">0</div>
+                <div class="stat-detail">ouvertes 24h/24</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-eye"></i>
+                <h4>Affichées actuellement</h4>
+                <div class="stat-value" id="displayed-count">0</div>
+                <div class="stat-detail" id="displayed-detail">sur la carte</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carte -->
+    <div class="map-section" id="map-section">
+        <div class="map-header">
+            <h2 id="map-title"><i class="fas fa-map-marked-alt"></i> Pharmacies de Tunisie</h2>
+            <button id="close-map" class="btn" style="background: #dc3545;">
+                <i class="fas fa-times"></i> Fermer
+            </button>
+        </div>
+        <div class="map-controls">
+            <input type="text" id="search-pharmacy" placeholder="Rechercher par nom de pharmacie...">
+            <select id="filter-horaire-map">
+                <option value="">Tous les horaires</option>
+                <option value="jour">De jour seulement</option>
+                <option value="nuit">De nuit seulement</option>
+                <option value="24h">24h/24</option>
+            </select>
+            <button id="zoom-in-btn"><i class="fas fa-search-plus"></i> Zoom +</button>
+            <button id="zoom-out-btn"><i class="fas fa-search-minus"></i> Zoom -</button>
+            <button id="reset-btn"><i class="fas fa-sync-alt"></i> Réinitialiser</button>
+        </div>
+        <div id="pharmacies-map"></div>
+    </div>
+
+    <!-- Liste des pharmacies -->
+    <div class="table-section" id="pharmacies-list">
+        <div class="table-header">
+            <h2><i class="fas fa-list"></i> Liste des pharmacies (<span id="pharmacy-list-count">0</span>)</h2>
+        </div>
+        <div class="table-body">
+            <table class="data-table" id="pharmacies-table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Gouvernorat</th>
+                        <th>Adresse</th>
+                        <th>Téléphone</th>
+                        <th>Horaires</th>
+                    </tr>
+                </thead>
+                <tbody id="pharmacies-table-body">
+                    <!-- Rempli par JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tables existantes (gardées pour compatibilité) -->
+    <div class="tables-container">
+        <div class="table-section" id="medicaments">
+            <div class="table-header">
+                <h2><i class="fas fa-pills"></i> Médicaments Disponibles</h2>
+            </div>
+            <div class="table-body">
+                {% if medicaments is not empty %}
+                <table class="data-table">
+                    <thead><tr><th>Nom</th><th>Description</th><th>Stock</th></tr></thead>
+                    <tbody>
+                        {% for medicament in medicaments %}
+                        <tr>
+                            <td><strong>{{ medicament.nom }}</strong></td>
+                            <td>{{ medicament.description|default('Aucune description')|slice(0, 50) }}{% if medicament.description and medicament.description|length > 50 %}...{% endif %}</td>
+                            <td><span class="stock-indicator" style="color: {% if medicament.stock > 50 %}#28a745{% elseif medicament.stock > 20 %}#ffc107{% else %}#dc3545{% endif %};">{{ medicament.stock }} unités</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}<div class="empty-message">Aucun médicament disponible</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="table-section" id="traitements">
+            <div class="table-header">
+                <h2><i class="fas fa-stethoscope"></i> Traitements en Cours</h2>
+            </div>
+            <div class="table-body">
+                {% if traitements is not empty %}
+                <table class="data-table">
+                    <thead><tr><th>Nom</th><th>Description</th><th>Statut</th><th>Médicaments</th></tr></thead>
+                    <tbody>
+                        {% for traitement in traitements %}
+                        <tr>
+                            <td><strong>{{ traitement.nom }}</strong></td>
+                            <td>{{ traitement.description|default('Aucune description')|slice(0, 50) }}{% if traitement.description and traitement.description|length > 50 %}...{% endif %}</td>
+                            <td><span class="statut-badge" style="background: {% if traitement.statut == 'pending' %}#ffc107{% elseif traitement.statut == 'in_progress' %}#007bff{% elseif traitement.statut == 'completed' %}#28a745{% else %}#dc3545{% endif %};">{% if traitement.statut == 'pending' %}En attente{% elseif traitement.statut == 'in_progress' %}En cours{% elseif traitement.statut == 'completed' %}Terminé{% else %}Annulé{% endif %}</span></td>
+                            <td>{{ traitement.medicaments|length }} médicament(s)</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}<div class="empty-message">Aucun traitement disponible</div>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button id="toggle-pharmacies-btn" class="btn" style="background: #28a745;">
+            <i class="fas fa-map-marker-alt"></i> Afficher/Cacher la carte
+        </button>
+    </div>
+</div>
+
+<script>
+// Base de données complète des pharmacies de Tunisie
+const pharmaciesTunisie = {
+    "Tunis": [
+        {name: "Pharmacie Centrale de Tunis", lat: 36.8008, lng: 10.1800, adresse: "Avenue Habib Bourguiba, Tunis", phone: "71 340 100", horaire: "24h"},
+        {name: "Pharmacie de la Liberté", lat: 36.7988, lng: 10.1755, adresse: "Rue de la Liberté, Tunis", phone: "71 256 900", horaire: "jour"},
+        {name: "Pharmacie du Lac", lat: 36.8389, lng: 10.2433, adresse: "Centre Commercial Lac 1, Tunis", phone: "71 961 000", horaire: "nuit"},
+        {name: "Pharmacie El Menzah", lat: 36.8419, lng: 10.1739, adresse: "El Menzah 6, Tunis", phone: "71 234 567", horaire: "jour"},
+        {name: "Pharmacie El Omrane", lat: 36.8119, lng: 10.1594, adresse: "El Omrane, Tunis", phone: "71 345 678", horaire: "jour"},
+        {name: "Pharmacie Bab Souika", lat: 36.8069, lng: 10.1719, adresse: "Bab Souika, Tunis", phone: "71 560 100", horaire: "nuit"},
+        {name: "Pharmacie Montfleury", lat: 36.8125, lng: 10.1768, adresse: "Montfleury, Tunis", phone: "71 891 234", horaire: "jour"},
+        {name: "Pharmacie Lafayette", lat: 36.7988, lng: 10.1755, adresse: "Rue de Marseille, Tunis", phone: "71 258 963", horaire: "jour"},
+        {name: "Pharmacie de la Kasbah", lat: 36.7980, lng: 10.1654, adresse: "Place de la Kasbah, Tunis", phone: "71 567 890", horaire: "nuit"},
+        {name: "Pharmacie Carthage", lat: 36.8619, lng: 10.3294, adresse: "Carthage, Tunis", phone: "71 730 000", horaire: "24h"},
+        {name: "Pharmacie Ennasr", lat: 36.8380, lng: 10.1900, adresse: "Ennasr 1, Tunis", phone: "71 850 000", horaire: "jour"},
+        {name: "Pharmacie El Manar", lat: 36.8500, lng: 10.2000, adresse: "El Manar 1, Tunis", phone: "71 860 000", horaire: "jour"},
+        {name: "Pharmacie Bardo", lat: 36.8092, lng: 10.1347, adresse: "Le Bardo, Tunis", phone: "71 570 000", horaire: "nuit"},
+        {name: "Pharmacie Sidi Hassine", lat: 36.7500, lng: 10.1000, adresse: "Sidi Hassine, Tunis", phone: "71 470 000", horaire: "jour"},
+        {name: "Pharmacie Ezzouhour", lat: 36.8300, lng: 10.1100, adresse: "Ezzouhour, Tunis", phone: "71 580 000", horaire: "jour"}
+    ],
+    "Ariana": [
+        {name: "Pharmacie Ariana Ville", lat: 36.8625, lng: 10.1956, adresse: "Ariana Ville", phone: "71 456 789", horaire: "jour"},
+        {name: "Pharmacie Ennasr", lat: 36.8719, lng: 10.1844, adresse: "Ennasr 2", phone: "71 567 890", horaire: "nuit"},
+        {name: "Pharmacie Raoued", lat: 36.8850, lng: 10.1550, adresse: "Raoued", phone: "71 678 901", horaire: "jour"},
+        {name: "Pharmacie Sidi Thabet", lat: 36.8550, lng: 10.1050, adresse: "Sidi Thabet", phone: "71 789 012", horaire: "jour"},
+        {name: "Pharmacie La Soukra", lat: 36.8780, lng: 10.2450, adresse: "La Soukra", phone: "71 890 123", horaire: "24h"},
+        {name: "Pharmacie Borj Louzir", lat: 36.8480, lng: 10.1950, adresse: "Borj Louzir", phone: "71 901 234", horaire: "jour"},
+        {name: "Pharmacie Ettadhamen", lat: 36.8580, lng: 10.1050, adresse: "Ettadhamen", phone: "71 012 345", horaire: "nuit"},
+        {name: "Pharmacie Mnihla", lat: 36.8380, lng: 10.1550, adresse: "Mnihla", phone: "71 123 456", horaire: "jour"},
+        {name: "Pharmacie Kalâat el-Andalous", lat: 36.8680, lng: 10.1850, adresse: "Kalâat el-Andalous", phone: "71 234 567", horaire: "jour"},
+        {name: "Pharmacie El Ghazala", lat: 36.8580, lng: 10.2050, adresse: "El Ghazala", phone: "71 345 678", horaire: "24h"},
+        {name: "Pharmacie Ariana Supérieur", lat: 36.8700, lng: 10.1800, adresse: "Ariana Supérieur", phone: "71 555 555", horaire: "jour"},
+        {name: "Pharmacie Cité Ennour", lat: 36.8650, lng: 10.1750, adresse: "Cité Ennour, Ariana", phone: "71 666 666", horaire: "nuit"}
+    ],
+    "Ben Arous": [
+        {name: "Pharmacie Ben Arous Centre", lat: 36.7539, lng: 10.2181, adresse: "Ben Arous Centre", phone: "71 987 654", horaire: "jour"},
+        {name: "Pharmacie El Mourouj", lat: 36.7400, lng: 10.2200, adresse: "El Mourouj", phone: "71 876 543", horaire: "nuit"},
+        {name: "Pharmacie Hammam Lif", lat: 36.7300, lng: 10.3100, adresse: "Hammam Lif", phone: "71 765 432", horaire: "24h"},
+        {name: "Pharmacie Mégrine", lat: 36.7700, lng: 10.2300, adresse: "Mégrine", phone: "71 654 321", horaire: "jour"},
+        {name: "Pharmacie Radès", lat: 36.7680, lng: 10.2750, adresse: "Radès", phone: "71 543 210", horaire: "jour"},
+        {name: "Pharmacie Fouchana", lat: 36.7480, lng: 10.1950, adresse: "Fouchana", phone: "71 432 109", horaire: "nuit"},
+        {name: "Pharmacie Mornag", lat: 36.6800, lng: 10.2800, adresse: "Mornag", phone: "71 321 098", horaire: "jour"},
+        {name: "Pharmacie Boumhel", lat: 36.7380, lng: 10.2650, adresse: "Boumhel", phone: "71 210 987", horaire: "jour"},
+        {name: "Pharmacie Ezzahra", lat: 36.7580, lng: 10.3000, adresse: "Ezzahra", phone: "71 109 876", horaire: "24h"},
+        {name: "Pharmacie Mohamedia", lat: 36.6780, lng: 10.1550, adresse: "Mohamedia", phone: "71 098 765", horaire: "jour"}
+    ],
+    "Manouba": [
+        {name: "Pharmacie Manouba Centre", lat: 36.8076, lng: 10.1006, adresse: "Manouba Centre", phone: "71 555 555", horaire: "jour"},
+        {name: "Pharmacie Den Den", lat: 36.8300, lng: 10.0900, adresse: "Den Den", phone: "71 444 444", horaire: "nuit"},
+        {name: "Pharmacie Douar Hicher", lat: 36.8200, lng: 10.1100, adresse: "Douar Hicher", phone: "71 333 333", horaire: "jour"},
+        {name: "Pharmacie Oued Ellil", lat: 36.8500, lng: 10.0400, adresse: "Oued Ellil", phone: "71 222 222", horaire: "24h"},
+        {name: "Pharmacie Tebourba", lat: 36.8200, lng: 9.8500, adresse: "Tebourba", phone: "71 111 111", horaire: "jour"},
+        {name: "Pharmacie El Battan", lat: 36.8400, lng: 9.9000, adresse: "El Battan", phone: "71 999 999", horaire: "jour"},
+        {name: "Pharmacie Borj El Amri", lat: 36.7300, lng: 9.9500, adresse: "Borj El Amri", phone: "71 888 888", horaire: "nuit"},
+        {name: "Pharmacie Jedaïda", lat: 36.8500, lng: 10.0000, adresse: "Jedaïda", phone: "71 777 777", horaire: "jour"},
+        {name: "Pharmacie Mornaguia", lat: 36.6800, lng: 10.0300, adresse: "Mornaguia", phone: "71 666 666", horaire: "24h"},
+        {name: "Pharmacie El Fejja", lat: 36.7500, lng: 9.9200, adresse: "El Fejja", phone: "71 555 444", horaire: "jour"}
+    ],
+    "Nabeul": [
+        {name: "Pharmacie Nabeul Centre", lat: 36.4561, lng: 10.7376, adresse: "Avenue des Jardins, Nabeul", phone: "72 280 000", horaire: "jour"},
+        {name: "Pharmacie Hammamet", lat: 36.4000, lng: 10.6167, adresse: "Hammamet Centre", phone: "72 280 001", horaire: "nuit"},
+        {name: "Pharmacie Korba", lat: 36.5786, lng: 10.8586, adresse: "Korba Centre", phone: "72 280 002", horaire: "24h"},
+        {name: "Pharmacie Menzel Temime", lat: 36.7806, lng: 10.9953, adresse: "Menzel Temime", phone: "72 280 003", horaire: "jour"},
+        {name: "Pharmacie Béni Khalled", lat: 36.6500, lng: 10.6000, adresse: "Béni Khalled", phone: "72 280 004", horaire: "jour"},
+        {name: "Pharmacie Grombalia", lat: 36.6000, lng: 10.5000, adresse: "Grombalia", phone: "72 280 005", horaire: "nuit"},
+        {name: "Pharmacie Dar Chaabane", lat: 36.4700, lng: 10.7500, adresse: "Dar Chaabane", phone: "72 280 006", horaire: "jour"},
+        {name: "Pharmacie El Mida", lat: 36.4400, lng: 10.8300, adresse: "El Mida", phone: "72 280 007", horaire: "24h"},
+        {name: "Pharmacie Soliman", lat: 36.7000, lng: 10.5000, adresse: "Soliman", phone: "72 280 008", horaire: "jour"},
+        {name: "Pharmacie Takelsa", lat: 36.7800, lng: 10.6200, adresse: "Takelsa", phone: "72 280 009", horaire: "jour"},
+        {name: "Pharmacie Kélibia", lat: 36.8500, lng: 11.1000, adresse: "Kélibia Centre", phone: "72 280 010", horaire: "nuit"},
+        {name: "Pharmacie Menzel Bouzelfa", lat: 36.6500, lng: 10.5800, adresse: "Menzel Bouzelfa", phone: "72 280 011", horaire: "jour"}
+    ],
+    "Zaghouan": [
+        {name: "Pharmacie Zaghouan Centre", lat: 36.4000, lng: 10.1472, adresse: "Zaghouan Centre", phone: "72 300 000", horaire: "jour"},
+        {name: "Pharmacie El Fahs", lat: 36.3700, lng: 9.9100, adresse: "El Fahs", phone: "72 300 001", horaire: "nuit"},
+        {name: "Pharmacie Bir Mcherga", lat: 36.5200, lng: 10.0800, adresse: "Bir Mcherga", phone: "72 300 002", horaire: "jour"},
+        {name: "Pharmacie Nadhour", lat: 36.3200, lng: 10.0200, adresse: "Nadhour", phone: "72 300 003", horaire: "24h"},
+        {name: "Pharmacie Saouaf", lat: 36.3700, lng: 10.0000, adresse: "Saouaf", phone: "72 300 004", horaire: "jour"},
+        {name: "Pharmacie Zriba", lat: 36.3300, lng: 10.0900, adresse: "Zriba", phone: "72 300 005", horaire: "jour"},
+        {name: "Pharmacie Hammam Zriba", lat: 36.3500, lng: 10.1000, adresse: "Hammam Zriba", phone: "72 300 006", horaire: "nuit"},
+        {name: "Pharmacie Djebel Oust", lat: 36.5500, lng: 10.0700, adresse: "Djebel Oust", phone: "72 300 007", horaire: "jour"},
+        {name: "Pharmacie Sidi Media", lat: 36.4200, lng: 10.1800, adresse: "Sidi Media", phone: "72 300 008", horaire: "24h"},
+        {name: "Pharmacie Oued Ezzit", lat: 36.3800, lng: 10.1200, adresse: "Oued Ezzit", phone: "72 300 009", horaire: "jour"}
+    ],
+    "Bizerte": [
+        {name: "Pharmacie Bizerte Port", lat: 37.2744, lng: 9.8739, adresse: "Port de Bizerte", phone: "72 431 000", horaire: "jour"},
+        {name: "Pharmacie Bizerte Ville", lat: 37.2769, lng: 9.8731, adresse: "Centre Ville, Bizerte", phone: "72 431 001", horaire: "nuit"},
+        {name: "Pharmacie Menzel Bourguiba", lat: 37.1611, lng: 9.7919, adresse: "Menzel Bourguiba", phone: "72 431 002", horaire: "24h"},
+        {name: "Pharmacie Mateur", lat: 37.0400, lng: 9.6700, adresse: "Mateur", phone: "72 431 003", horaire: "jour"},
+        {name: "Pharmacie Menzel Jemil", lat: 37.2350, lng: 9.9150, adresse: "Menzel Jemil", phone: "72 431 004", horaire: "jour"},
+        {name: "Pharmacie Tinja", lat: 37.1650, lng: 9.7750, adresse: "Tinja", phone: "72 431 005", horaire: "nuit"},
+        {name: "Pharmacie Ghar El Melh", lat: 37.1700, lng: 10.1900, adresse: "Ghar El Melh", phone: "72 431 006", horaire: "jour"},
+        {name: "Pharmacie Ras Jebel", lat: 37.2300, lng: 10.1100, adresse: "Ras Jebel", phone: "72 431 007", horaire: "24h"},
+        {name: "Pharmacie Sejnane", lat: 37.0600, lng: 9.2400, adresse: "Sejnane", phone: "72 431 008", horaire: "jour"},
+        {name: "Pharmacie Utique", lat: 37.0550, lng: 10.0620, adresse: "Utique", phone: "72 431 009", horaire: "jour"}
+    ],
+    "Béja": [
+        {name: "Pharmacie Béja Centre", lat: 36.7256, lng: 9.1814, adresse: "Béja Centre", phone: "78 450 000", horaire: "jour"},
+        {name: "Pharmacie Testour", lat: 36.5500, lng: 9.4500, adresse: "Testour", phone: "78 450 001", horaire: "nuit"},
+        {name: "Pharmacie Amdoun", lat: 36.5000, lng: 9.1200, adresse: "Amdoun", phone: "78 450 002", horaire: "24h"},
+        {name: "Pharmacie Goubellat", lat: 36.5500, lng: 9.6600, adresse: "Goubellat", phone: "78 450 003", horaire: "jour"},
+        {name: "Pharmacie Medjez el-Bab", lat: 36.6500, lng: 9.6000, adresse: "Medjez el-Bab", phone: "78 450 004", horaire: "jour"},
+        {name: "Pharmacie Nefza", lat: 36.9300, lng: 9.0100, adresse: "Nefza", phone: "78 450 005", horaire: "nuit"},
+        {name: "Pharmacie Téboursouk", lat: 36.4500, lng: 9.2500, adresse: "Téboursouk", phone: "78 450 006", horaire: "jour"},
+        {name: "Pharmacie Thibar", lat: 36.5200, lng: 9.1200, adresse: "Thibar", phone: "78 450 007", horaire: "24h"},
+        {name: "Pharmacie Zahret Medien", lat: 36.6000, lng: 9.2000, adresse: "Zahret Medien", phone: "78 450 008", horaire: "jour"},
+        {name: "Pharmacie El Maâgoula", lat: 36.7000, lng: 9.3000, adresse: "El Maâgoula", phone: "78 450 009", horaire: "jour"}
+    ],
+    "Jendouba": [
+        {name: "Pharmacie Jendouba Centre", lat: 36.5011, lng: 8.7803, adresse: "Jendouba Centre", phone: "78 600 000", horaire: "jour"},
+        {name: "Pharmacie Tabarka", lat: 36.9544, lng: 8.7581, adresse: "Tabarka", phone: "78 600 001", horaire: "nuit"},
+        {name: "Pharmacie Ain Draham", lat: 36.7750, lng: 8.6900, adresse: "Aïn Draham", phone: "78 600 002", horaire: "24h"},
+        {name: "Pharmacie Fernana", lat: 36.6550, lng: 8.6950, adresse: "Fernana", phone: "78 600 003", horaire: "jour"},
+        {name: "Pharmacie Ghardimaou", lat: 36.4450, lng: 8.4350, adresse: "Ghardimaou", phone: "78 600 004", horaire: "jour"},
+        {name: "Pharmacie Bou Salem", lat: 36.6100, lng: 8.9700, adresse: "Bou Salem", phone: "78 600 005", horaire: "nuit"},
+        {name: "Pharmacie Oued Mliz", lat: 36.5200, lng: 8.7200, adresse: "Oued Mliz", phone: "78 600 006", horaire: "jour"},
+        {name: "Pharmacie Jendouba Nord", lat: 36.5150, lng: 8.7850, adresse: "Jendouba Nord", phone: "78 600 007", horaire: "24h"},
+        {name: "Pharmacie Jendouba Sud", lat: 36.4950, lng: 8.7750, adresse: "Jendouba Sud", phone: "78 600 008", horaire: "jour"},
+        {name: "Pharmacie Balta Bou Aouane", lat: 36.5300, lng: 8.8100, adresse: "Balta Bou Aouane", phone: "78 600 009", horaire: "jour"}
+    ],
+    "Le Kef": [
+        {name: "Pharmacie Le Kef Centre", lat: 36.1822, lng: 8.7147, adresse: "Le Kef Centre", phone: "78 200 000", horaire: "jour"},
+        {name: "Pharmacie Tajerouine", lat: 35.8900, lng: 8.5500, adresse: "Tajerouine", phone: "78 200 001", horaire: "nuit"},
+        {name: "Pharmacie Nebeur", lat: 36.3300, lng: 8.7500, adresse: "Nebeur", phone: "78 200 002", horaire: "24h"},
+        {name: "Pharmacie Kalâat Khasba", lat: 35.8200, lng: 8.9300, adresse: "Kalâat Khasba", phone: "78 200 003", horaire: "jour"},
+        {name: "Pharmacie Sakiet Sidi Youssef", lat: 36.2200, lng: 8.3500, adresse: "Sakiet Sidi Youssef", phone: "78 200 004", horaire: "jour"},
+        {name: "Pharmacie El Ksour", lat: 35.8900, lng: 8.8800, adresse: "El Ksour", phone: "78 200 005", horaire: "nuit"},
+        {name: "Pharmacie Jerissa", lat: 35.9100, lng: 8.4700, adresse: "Jerissa", phone: "78 200 006", horaire: "jour"},
+        {name: "Pharmacie Touiref", lat: 36.2500, lng: 8.7700, adresse: "Touiref", phone: "78 200 007", horaire: "24h"},
+        {name: "Pharmacie Dahmani", lat: 35.9400, lng: 8.8300, adresse: "Dahmani", phone: "78 200 008", horaire: "jour"},
+        {name: "Pharmacie Sers", lat: 36.0800, lng: 9.0200, adresse: "Sers", phone: "78 200 009", horaire: "jour"}
+    ],
+    "Siliana": [
+        {name: "Pharmacie Siliana Centre", lat: 36.0833, lng: 9.3667, adresse: "Siliana Centre", phone: "78 300 000", horaire: "jour"},
+        {name: "Pharmacie Bou Arada", lat: 36.3500, lng: 9.6200, adresse: "Bou Arada", phone: "78 300 001", horaire: "nuit"},
+        {name: "Pharmacie Gaâfour", lat: 36.2200, lng: 9.3300, adresse: "Gaâfour", phone: "78 300 002", horaire: "24h"},
+        {name: "Pharmacie El Krib", lat: 36.3300, lng: 9.1300, adresse: "El Krib", phone: "78 300 003", horaire: "jour"},
+        {name: "Pharmacie Makthar", lat: 35.8500, lng: 9.2000, adresse: "Makthar", phone: "78 300 004", horaire: "jour"},
+        {name: "Pharmacie Rouhia", lat: 35.6800, lng: 9.2800, adresse: "Rouhia", phone: "78 300 005", horaire: "nuit"},
+        {name: "Pharmacie Sidi Bou Rouis", lat: 35.8800, lng: 9.3500, adresse: "Sidi Bou Rouis", phone: "78 300 006", horaire: "jour"},
+        {name: "Pharmacie Bargou", lat: 36.0800, lng: 9.6100, adresse: "Bargou", phone: "78 300 007", horaire: "24h"},
+        {name: "Pharmacie Kesra", lat: 35.8200, lng: 9.3700, adresse: "Kesra", phone: "78 300 008", horaire: "jour"},
+        {name: "Pharmacie El Aroussa", lat: 36.1700, lng: 9.4500, adresse: "El Aroussa", phone: "78 300 009", horaire: "jour"}
+    ],
+    "Kairouan": [
+        {name: "Pharmacie Kairouan Médina", lat: 35.6781, lng: 10.0969, adresse: "Médina, Kairouan", phone: "77 231 000", horaire: "jour"},
+        {name: "Pharmacie Kairouan Centre", lat: 35.6825, lng: 10.1033, adresse: "Avenue de la République, Kairouan", phone: "77 231 001", horaire: "nuit"},
+        {name: "Pharmacie El Alaa", lat: 35.6700, lng: 10.0900, adresse: "Route de Sousse, Kairouan", phone: "77 231 002", horaire: "24h"},
+        {name: "Pharmacie Bou Hajla", lat: 35.6300, lng: 10.1300, adresse: "Bou Hajla", phone: "77 231 003", horaire: "jour"},
+        {name: "Pharmacie Chebika", lat: 35.6100, lng: 10.0900, adresse: "Chebika", phone: "77 231 004", horaire: "jour"},
+        {name: "Pharmacie Oueslatia", lat: 35.8700, lng: 9.5500, adresse: "Oueslatia", phone: "77 231 005", horaire: "nuit"},
+        {name: "Pharmacie Hajeb El Ayoun", lat: 35.6700, lng: 10.7800, adresse: "Hajeb El Ayoun", phone: "77 231 006", horaire: "jour"},
+        {name: "Pharmacie Nasrallah", lat: 35.3800, lng: 10.3500, adresse: "Nasrallah", phone: "77 231 007", horaire: "24h"},
+        {name: "Pharmacie Sbikha", lat: 35.9300, lng: 10.0200, adresse: "Sbikha", phone: "77 231 008", horaire: "jour"},
+        {name: "Pharmacie Ain Jeloula", lat: 35.8400, lng: 10.1900, adresse: "Ain Jeloula", phone: "77 231 009", horaire: "jour"}
+    ],
+    "Kasserine": [
+        {name: "Pharmacie Kasserine Centre", lat: 35.1678, lng: 8.8367, adresse: "Kasserine Centre", phone: "77 400 000", horaire: "jour"},
+        {name: "Pharmacie Sbeitla", lat: 35.2300, lng: 9.1300, adresse: "Sbeitla", phone: "77 400 001", horaire: "nuit"},
+        {name: "Pharmacie Fériana", lat: 34.9500, lng: 8.5700, adresse: "Fériana", phone: "77 400 002", horaire: "24h"},
+        {name: "Pharmacie Thala", lat: 35.5700, lng: 8.6700, adresse: "Thala", phone: "77 400 003", horaire: "jour"},
+        {name: "Pharmacie Haidra", lat: 35.5700, lng: 8.4500, adresse: "Haidra", phone: "77 400 004", horaire: "jour"},
+        {name: "Pharmacie Jedelienne", lat: 35.2200, lng: 8.7500, adresse: "Jedelienne", phone: "77 400 005", horaire: "nuit"},
+        {name: "Pharmacie El Ayoun", lat: 35.2000, lng: 8.9000, adresse: "El Ayoun", phone: "77 400 006", horaire: "jour"},
+        {name: "Pharmacie Foussana", lat: 35.3300, lng: 8.6500, adresse: "Foussana", phone: "77 400 007", horaire: "24h"},
+        {name: "Pharmacie Hassi El Frid", lat: 35.2500, lng: 8.8200, adresse: "Hassi El Frid", phone: "77 400 008", horaire: "jour"},
+        {name: "Pharmacie Sidi Ali Ben Aoun", lat: 35.2800, lng: 9.0100, adresse: "Sidi Ali Ben Aoun", phone: "77 400 009", horaire: "jour"}
+    ],
+    "Sidi Bouzid": [
+        {name: "Pharmacie Sidi Bouzid Centre", lat: 35.0381, lng: 9.4858, adresse: "Sidi Bouzid Centre", phone: "76 200 000", horaire: "jour"},
+        {name: "Pharmacie Meknassy", lat: 34.8500, lng: 9.6000, adresse: "Meknassy", phone: "76 200 001", horaire: "nuit"},
+        {name: "Pharmacie Regueb", lat: 34.8600, lng: 9.7800, adresse: "Regueb", phone: "76 200 002", horaire: "24h"},
+        {name: "Pharmacie Bir El Hafey", lat: 34.9300, lng: 9.1900, adresse: "Bir El Hafey", phone: "76 200 003", horaire: "jour"},
+        {name: "Pharmacie Cebbala", lat: 35.0800, lng: 9.2500, adresse: "Cebbala", phone: "76 200 004", horaire: "jour"},
+        {name: "Pharmacie Jilma", lat: 35.2700, lng: 9.4200, adresse: "Jilma", phone: "76 200 005", horaire: "nuit"},
+        {name: "Pharmacie Menzel Bouzaiane", lat: 34.8800, lng: 9.5900, adresse: "Menzel Bouzaiane", phone: "76 200 006", horaire: "jour"},
+        {name: "Pharmacie Souk Jedid", lat: 34.9200, lng: 9.3700, adresse: "Souk Jedid", phone: "76 200 007", horaire: "24h"},
+        {name: "Pharmacie Ouled Haffouz", lat: 35.1800, lng: 9.7300, adresse: "Ouled Haffouz", phone: "76 200 008", horaire: "jour"},
+        {name: "Pharmacie Sidi Ali Ben Salem", lat: 35.0100, lng: 9.5500, adresse: "Sidi Ali Ben Salem", phone: "76 200 009", horaire: "jour"}
+    ],
+    "Sousse": [
+        {name: "Pharmacie Sousse Médina", lat: 35.8256, lng: 10.6369, adresse: "Rue Habib Bourguiba, Sousse", phone: "73 227 000", horaire: "jour"},
+        {name: "Pharmacie Erriadh", lat: 35.8281, lng: 10.5911, adresse: "Zone Erriadh, Sousse", phone: "73 860 000", horaire: "nuit"},
+        {name: "Pharmacie Sahloul", lat: 35.8119, lng: 10.6094, adresse: "Sahloul, Sousse", phone: "73 123 456", horaire: "24h"},
+        {name: "Pharmacie Boujaafar", lat: 35.8283, lng: 10.6400, adresse: "Boulevard Boujaafar, Sousse", phone: "73 227 500", horaire: "jour"},
+        {name: "Pharmacie Ennour", lat: 35.8200, lng: 10.6250, adresse: "Rue Ennour, Sousse", phone: "73 227 600", horaire: "jour"},
+        {name: "Pharmacie El Kantaoui", lat: 35.8922, lng: 10.5936, adresse: "Port El Kantaoui, Sousse", phone: "73 243 000", horaire: "nuit"},
+        {name: "Pharmacie Akouda", lat: 35.8700, lng: 10.5800, adresse: "Akouda", phone: "73 243 001", horaire: "jour"},
+        {name: "Pharmacie Hammam Sousse", lat: 35.8600, lng: 10.5900, adresse: "Hammam Sousse", phone: "73 243 002", horaire: "24h"},
+        {name: "Pharmacie Msaken", lat: 35.7300, lng: 10.5800, adresse: "Msaken", phone: "73 243 003", horaire: "jour"},
+        {name: "Pharmacie Kalâa Kebira", lat: 35.8700, lng: 10.5500, adresse: "Kalâa Kebira", phone: "73 243 004", horaire: "jour"}
+    ],
+    "Monastir": [
+        {name: "Pharmacie Monastir Centre", lat: 35.7780, lng: 10.8262, adresse: "Avenue de la République, Monastir", phone: "73 521 000", horaire: "jour"},
+        {name: "Pharmacie Moknine", lat: 35.6300, lng: 10.9800, adresse: "Moknine", phone: "73 521 001", horaire: "nuit"},
+        {name: "Pharmacie Jemmal", lat: 35.6200, lng: 10.7600, adresse: "Jemmal", phone: "73 521 002", horaire: "24h"},
+        {name: "Pharmacie Bembla", lat: 35.6800, lng: 10.8000, adresse: "Bembla", phone: "73 521 003", horaire: "jour"},
+        {name: "Pharmacie Teboulba", lat: 35.6400, lng: 10.9600, adresse: "Teboulba", phone: "73 521 004", horaire: "jour"},
+        {name: "Pharmacie Ksar Hellal", lat: 35.6500, lng: 10.8900, adresse: "Ksar Hellal", phone: "73 521 005", horaire: "nuit"},
+        {name: "Pharmacie Sayada", lat: 35.6700, lng: 10.8900, adresse: "Sayada", phone: "73 521 006", horaire: "jour"},
+        {name: "Pharmacie Lamta", lat: 35.6700, lng: 10.8800, adresse: "Lamta", phone: "73 521 007", horaire: "24h"},
+        {name: "Pharmacie Bekalta", lat: 35.6200, lng: 10.9900, adresse: "Bekalta", phone: "73 521 008", horaire: "jour"},
+        {name: "Pharmacie Skanes", lat: 35.7800, lng: 10.8100, adresse: "Skanes", phone: "73 521 009", horaire: "jour"}
+    ],
+    "Mahdia": [
+        {name: "Pharmacie Mahdia Port", lat: 35.5047, lng: 11.0622, adresse: "Port de Mahdia", phone: "73 681 000", horaire: "jour"},
+        {name: "Pharmacie Ksour Essef", lat: 35.4200, lng: 10.9900, adresse: "Ksour Essef", phone: "73 681 001", horaire: "nuit"},
+        {name: "Pharmacie Chebba", lat: 35.2400, lng: 11.1100, adresse: "Chebba", phone: "73 681 002", horaire: "24h"},
+        {name: "Pharmacie Bou Merdes", lat: 35.3800, lng: 10.9300, adresse: "Bou Merdes", phone: "73 681 003", horaire: "jour"},
+        {name: "Pharmacie El Jem", lat: 35.3000, lng: 10.7200, adresse: "El Jem", phone: "73 681 004", horaire: "jour"},
+        {name: "Pharmacie Sidi Alouane", lat: 35.3800, lng: 10.9400, adresse: "Sidi Alouane", phone: "73 681 005", horaire: "nuit"},
+        {name: "Pharmacie Chorbane", lat: 35.2800, lng: 10.3800, adresse: "Chorbane", phone: "73 681 006", horaire: "jour"},
+        {name: "Pharmacie Ouled Chamekh", lat: 35.3400, lng: 10.8600, adresse: "Ouled Chamekh", phone: "73 681 007", horaire: "24h"},
+        {name: "Pharmacie Hiba", lat: 35.2700, lng: 10.8300, adresse: "Hiba", phone: "73 681 008", horaire: "jour"},
+        {name: "Pharmacie Souassi", lat: 35.3300, lng: 10.7800, adresse: "Souassi", phone: "73 681 009", horaire: "jour"}
+    ],
+    "Sfax": [
+        {name: "Pharmacie Sfax Centre", lat: 34.7406, lng: 10.7603, adresse: "Avenue Habib Bourguiba, Sfax", phone: "74 221 500", horaire: "jour"},
+        {name: "Pharmacie Ennour", lat: 34.7319, lng: 10.7617, adresse: "Route de Gabès, Sfax", phone: "74 492 000", horaire: "nuit"},
+        {name: "Pharmacie Sakiet Ezzit", lat: 34.7500, lng: 10.7800, adresse: "Sakiet Ezzit, Sfax", phone: "74 345 678", horaire: "24h"},
+        {name: "Pharmacie Sakiet Eddaïer", lat: 34.7600, lng: 10.7500, adresse: "Sakiet Eddaïer", phone: "74 222 200", horaire: "jour"},
+        {name: "Pharmacie Gremda", lat: 34.7100, lng: 10.7000, adresse: "Gremda", phone: "74 222 300", horaire: "jour"},
+        {name: "Pharmacie El Ain", lat: 34.7200, lng: 10.6800, adresse: "El Ain", phone: "74 222 400", horaire: "nuit"},
+        {name: "Pharmacie Sfax Médina", lat: 34.7358, lng: 10.7672, adresse: "Médina de Sfax", phone: "74 222 500", horaire: "jour"},
+        {name: "Pharmacie El Habib", lat: 34.7250, lng: 10.7750, adresse: "El Habib", phone: "74 222 600", horaire: "24h"},
+        {name: "Pharmacie Route de Tunis", lat: 34.7300, lng: 10.7550, adresse: "Route de Tunis, Sfax", phone: "74 222 700", horaire: "jour"},
+        {name: "Pharmacie Route de Gabès", lat: 34.7350, lng: 10.7650, adresse: "Route de Gabès, Sfax", phone: "74 222 800", horaire: "jour"}
+    ],
+    "Gabès": [
+        {name: "Pharmacie Gabès Centre", lat: 33.8815, lng: 10.0982, adresse: "Avenue Bourguiba, Gabès", phone: "75 271 000", horaire: "jour"},
+        {name: "Pharmacie Gabès Sud", lat: 33.8700, lng: 10.1100, adresse: "Route de Matmata, Gabès", phone: "75 271 001", horaire: "nuit"},
+        {name: "Pharmacie Chenini", lat: 33.8900, lng: 10.0850, adresse: "Chenini, Gabès", phone: "75 271 002", horaire: "24h"},
+        {name: "Pharmacie Ghannouche", lat: 33.9400, lng: 10.0700, adresse: "Ghannouche", phone: "75 271 003", horaire: "jour"},
+        {name: "Pharmacie El Hamma", lat: 33.8900, lng: 9.8000, adresse: "El Hamma", phone: "75 271 004", horaire: "jour"},
+        {name: "Pharmacie Matmata", lat: 33.5500, lng: 9.9700, adresse: "Matmata", phone: "75 271 005", horaire: "nuit"},
+        {name: "Pharmacie Mareth", lat: 33.6500, lng: 10.2900, adresse: "Mareth", phone: "75 271 006", horaire: "jour"},
+        {name: "Pharmacie Menzel", lat: 33.8500, lng: 10.1000, adresse: "Menzel", phone: "75 271 007", horaire: "24h"},
+        {name: "Pharmacie Nouvelle Matmata", lat: 33.5300, lng: 9.9500, adresse: "Nouvelle Matmata", phone: "75 271 008", horaire: "jour"},
+        {name: "Pharmacie Oudhref", lat: 33.8200, lng: 10.0400, adresse: "Oudhref", phone: "75 271 009", horaire: "jour"}
+    ],
+    "Médenine": [
+        {name: "Pharmacie Médenine Centre", lat: 33.3547, lng: 10.5053, adresse: "Médenine Centre", phone: "75 640 000", horaire: "jour"},
+        {name: "Pharmacie Djerba", lat: 33.8750, lng: 10.8500, adresse: "Houmt Souk, Djerba", phone: "75 640 001", horaire: "nuit"},
+        {name: "Pharmacie Zarzis", lat: 33.5000, lng: 11.1100, adresse: "Zarzis", phone: "75 640 002", horaire: "24h"},
+        {name: "Pharmacie Ben Gardane", lat: 33.1400, lng: 11.2200, adresse: "Ben Gardane", phone: "75 640 003", horaire: "jour"},
+        {name: "Pharmacie Ajim", lat: 33.7200, lng: 10.7600, adresse: "Ajim, Djerba", phone: "75 640 004", horaire: "jour"},
+        {name: "Pharmacie Midoun", lat: 33.8200, lng: 10.9900, adresse: "Midoun, Djerba", phone: "75 640 005", horaire: "nuit"},
+        {name: "Pharmacie Sidi Makhlouf", lat: 33.4000, lng: 10.4200, adresse: "Sidi Makhlouf", phone: "75 640 006", horaire: "jour"},
+        {name: "Pharmacie Médenine Sud", lat: 33.3400, lng: 10.5100, adresse: "Médenine Sud", phone: "75 640 007", horaire: "24h"},
+        {name: "Pharmacie Médenine Nord", lat: 33.3700, lng: 10.5000, adresse: "Médenine Nord", phone: "75 640 008", horaire: "jour"},
+        {name: "Pharmacie Zarat", lat: 33.4800, lng: 10.8500, adresse: "Zarat, Djerba", phone: "75 640 009", horaire: "jour"}
+    ],
+    "Tataouine": [
+        {name: "Pharmacie Tataouine Centre", lat: 32.9333, lng: 10.4500, adresse: "Tataouine Centre", phone: "75 860 000", horaire: "jour"},
+        {name: "Pharmacie Ghomrassen", lat: 33.0600, lng: 10.3400, adresse: "Ghomrassen", phone: "75 860 001", horaire: "nuit"},
+        {name: "Pharmacie Remada", lat: 32.3200, lng: 10.4000, adresse: "Remada", phone: "75 860 002", horaire: "24h"},
+        {name: "Pharmacie Bir Lahmar", lat: 32.7600, lng: 10.2500, adresse: "Bir Lahmar", phone: "75 860 003", horaire: "jour"},
+        {name: "Pharmacie Dehiba", lat: 32.0200, lng: 10.7000, adresse: "Dehiba", phone: "75 860 004", horaire: "jour"},
+        {name: "Pharmacie Smar", lat: 33.0800, lng: 10.5500, adresse: "Smar", phone: "75 860 005", horaire: "nuit"},
+        {name: "Pharmacie Tataouine Sud", lat: 32.9200, lng: 10.4600, adresse: "Tataouine Sud", phone: "75 860 006", horaire: "jour"},
+        {name: "Pharmacie Tataouine Nord", lat: 32.9500, lng: 10.4400, adresse: "Tataouine Nord", phone: "75 860 007", horaire: "24h"},
+        {name: "Pharmacie Oum El Guelaz", lat: 33.0100, lng: 10.3800, adresse: "Oum El Guelaz", phone: "75 860 008", horaire: "jour"},
+        {name: "Pharmacie Chenini", lat: 33.1700, lng: 10.1900, adresse: "Chenini, Tataouine", phone: "75 860 009", horaire: "jour"}
+    ],
+    "Gafsa": [
+        {name: "Pharmacie Gafsa Centre", lat: 34.4256, lng: 8.7842, adresse: "Avenue Bourguiba, Gafsa", phone: "76 221 000", horaire: "jour"},
+        {name: "Pharmacie El Ksar", lat: 34.3800, lng: 8.8000, adresse: "El Ksar, Gafsa", phone: "76 221 001", horaire: "nuit"},
+        {name: "Pharmacie Mdhilla", lat: 34.2500, lng: 9.1800, adresse: "Mdhilla", phone: "76 221 002", horaire: "24h"},
+        {name: "Pharmacie Redeyef", lat: 34.3800, lng: 8.1500, adresse: "Redeyef", phone: "76 221 003", horaire: "jour"},
+        {name: "Pharmacie Métlaoui", lat: 34.3200, lng: 8.4000, adresse: "Métlaoui", phone: "76 221 004", horaire: "jour"},
+        {name: "Pharmacie Sened", lat: 34.4700, lng: 9.2800, adresse: "Sened", phone: "76 221 005", horaire: "nuit"},
+        {name: "Pharmacie Belkhir", lat: 34.3200, lng: 9.2200, adresse: "Belkhir", phone: "76 221 006", horaire: "jour"},
+        {name: "Pharmacie El Guettar", lat: 34.3300, lng: 8.9500, adresse: "El Guettar", phone: "76 221 007", horaire: "24h"},
+        {name: "Pharmacie Sidi Aïch", lat: 34.6900, lng: 9.0600, adresse: "Sidi Aïch", phone: "76 221 008", horaire: "jour"},
+        {name: "Pharmacie Lela", lat: 34.5600, lng: 8.6800, adresse: "Lela", phone: "76 221 009", horaire: "jour"}
+    ],
+    "Tozeur": [
+        {name: "Pharmacie Tozeur Oasis", lat: 33.9197, lng: 8.1336, adresse: "Zone Oasis, Tozeur", phone: "76 451 000", horaire: "jour"},
+        {name: "Pharmacie Degache", lat: 33.9800, lng: 8.2100, adresse: "Degache", phone: "76 451 001", horaire: "nuit"},
+        {name: "Pharmacie Nefta", lat: 33.8700, lng: 7.8800, adresse: "Nefta", phone: "76 451 002", horaire: "24h"},
+        {name: "Pharmacie Hezoua", lat: 33.7500, lng: 7.9500, adresse: "Hezoua", phone: "76 451 003", horaire: "jour"},
+        {name: "Pharmacie Tamaghza", lat: 34.3900, lng: 7.9400, adresse: "Tamaghza", phone: "76 451 004", horaire: "jour"},
+        {name: "Pharmacie Tozeur Nord", lat: 33.9300, lng: 8.1400, adresse: "Tozeur Nord", phone: "76 451 005", horaire: "nuit"},
+        {name: "Pharmacie Tozeur Sud", lat: 33.9100, lng: 8.1300, adresse: "Tozeur Sud", phone: "76 451 006", horaire: "jour"},
+        {name: "Pharmacie El Hamma du Jérid", lat: 33.8900, lng: 7.8000, adresse: "El Hamma du Jérid", phone: "76 451 007", horaire: "24h"},
+        {name: "Pharmacie Ouled Dhiaf", lat: 33.8500, lng: 8.0500, adresse: "Ouled Dhiaf", phone: "76 451 008", horaire: "jour"},
+        {name: "Pharmacie Sahari", lat: 33.9000, lng: 8.1000, adresse: "Sahari", phone: "76 451 009", horaire: "jour"}
+    ],
+    "Kébili": [
+        {name: "Pharmacie Kébili Centre", lat: 33.7044, lng: 8.9689, adresse: "Kébili Centre", phone: "75 350 000", horaire: "jour"},
+        {name: "Pharmacie Douz", lat: 33.4600, lng: 9.0200, adresse: "Douz", phone: "75 350 001", horaire: "nuit"},
+        {name: "Pharmacie Souk Lahad", lat: 33.8200, lng: 9.2900, adresse: "Souk Lahad", phone: "75 350 002", horaire: "24h"},
+        {name: "Pharmacie Faouar", lat: 33.6800, lng: 8.9700, adresse: "Faouar", phone: "75 350 003", horaire: "jour"},
+        {name: "Pharmacie El Golâa", lat: 33.4800, lng: 9.0000, adresse: "El Golâa", phone: "75 350 004", horaire: "jour"},
+        {name: "Pharmacie Kébili Nord", lat: 33.7100, lng: 8.9700, adresse: "Kébili Nord", phone: "75 350 005", horaire: "nuit"},
+        {name: "Pharmacie Kébili Sud", lat: 33.7000, lng: 8.9600, adresse: "Kébili Sud", phone: "75 350 006", horaire: "jour"},
+        {name: "Pharmacie Jemna", lat: 33.5800, lng: 9.0200, adresse: "Jemna", phone: "75 350 007", horaire: "24h"},
+        {name: "Pharmacie El Hicha", lat: 33.5400, lng: 8.9800, adresse: "El Hicha", phone: "75 350 008", horaire: "jour"},
+        {name: "Pharmacie Nouail", lat: 33.6600, lng: 9.0400, adresse: "Nouail", phone: "75 350 009", horaire: "jour"}
+    ]
+};
+
+// Variables globales
+let map;
+let markers = [];
+let currentZoom = 7;
+let userLocationMarker = null;
+
+// Initialisation Google Maps
+function initMap() {
+    try {
+        const tunisieCenter = { lat: 34.0, lng: 9.0 };
+
+        map = new google.maps.Map(document.getElementById("pharmacies-map"), {
+            center: tunisieCenter,
+            zoom: currentZoom,
+            mapTypeControl: true,
+            streetViewControl: false,
+            fullscreenControl: true,
+            zoomControl: true,
+            styles: [
+                {
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }]
+                }
+            ]
+        });
+
+        document.getElementById('map-error').style.display = 'none';
+
+        // Remplir le sélecteur de gouvernorats
+        populateGovernorateSelect();
+
+        // Afficher toutes les pharmacies au démarrage
+        showAllPharmacies();
+
+        updateStats();
+
+    } catch (error) {
+        console.error("Erreur Google Maps:", error);
+        document.getElementById('map-error').style.display = 'block';
+        document.getElementById('map-error').innerHTML = `
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Erreur Google Maps :</strong> ${error.message}<br>
+            Vérifiez votre clé API ou votre connexion internet.
+        `;
+    }
+}
+
+// Remplir le sélecteur de gouvernorats
+function populateGovernorateSelect() {
+    const select = document.getElementById('governorate-select');
+    const gouvernorats = Object.keys(pharmaciesTunisie).sort();
+
+    gouvernorats.forEach(gouvernorat => {
+        const option = document.createElement('option');
+        option.value = gouvernorat;
+        option.textContent = gouvernorat;
+        select.appendChild(option);
+    });
+}
+
+// Afficher toutes les pharmacies
+function showAllPharmacies() {
+    clearMarkers();
+
+    let allPharmacies = [];
+    Object.entries(pharmaciesTunisie).forEach(([gouvernorat, pharmaciesList]) => {
+        pharmaciesList.forEach(pharmacie => {
+            allPharmacies.push({
+                ...pharmacie,
+                gouvernorat: gouvernorat
+            });
+        });
+    });
+
+    displayPharmacies(allPharmacies);
+    updateTable(allPharmacies);
+}
+
+// Afficher les pharmacies d'un gouvernorat spécifique
+function showPharmaciesByGovernorate(gouvernoratName, horaireFilter = '') {
+    clearMarkers();
+
+    if (pharmaciesTunisie[gouvernoratName]) {
+        let pharmaciesList = pharmaciesTunisie[gouvernoratName].map(p => ({
+            ...p,
+            gouvernorat: gouvernoratName
+        }));
+
+        // Appliquer le filtre d'horaire si spécifié
+        if (horaireFilter) {
+            pharmaciesList = pharmaciesList.filter(p => p.horaire === horaireFilter);
+        }
+
+        displayPharmacies(pharmaciesList);
+        updateTable(pharmaciesList);
+
+        // Mettre à jour le détail affiché
+        document.getElementById('displayed-detail').textContent = `dans ${gouvernoratName}`;
+    }
+}
+
+// Afficher les pharmacies sur la carte
+function displayPharmacies(pharmaciesList) {
+    if (!map) return;
+
+    const bounds = new google.maps.LatLngBounds();
+
+    pharmaciesList.forEach(pharmacie => {
+        const position = { lat: pharmacie.lat, lng: pharmacie.lng };
+
+        // Déterminer l'icône en fonction de l'horaire
+        let iconUrl;
+        let iconColor;
+
+        switch(pharmacie.horaire) {
+            case 'jour':
+                iconUrl = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
+                iconColor = '#ffc107';
+                break;
+            case 'nuit':
+                iconUrl = "http://maps.google.com/mapfiles/ms/icons/black-dot.png";
+                iconColor = '#343a40';
+                break;
+            case '24h':
+                iconUrl = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+                iconColor = '#17a2b8';
+                break;
+            default:
+                iconUrl = "http://maps.google.com/mapfiles/ms/icons/red-dot.png";
+                iconColor = '#dc3545';
+        }
+
+        const marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            title: pharmacie.name,
+            icon: {
+                url: iconUrl,
+                scaledSize: new google.maps.Size(32, 32)
+            }
+        });
+
+        const infoWindow = new google.maps.InfoWindow({
+            content: `
+                <div style="padding: 15px; max-width: 300px;">
+                    <h3 style="margin: 0 0 10px 0; color: #2c3e50;">${pharmacie.name}</h3>
+                    <p style="margin: 5px 0; color: #666;">
+                        <i class="fas fa-map-marker-alt" style="color: ${iconColor};"></i>
+                        ${pharmacie.adresse}
+                    </p>
+                    <p style="margin: 5px 0; color: #666;">
+                        <i class="fas fa-city" style="color: ${iconColor};"></i>
+                        ${pharmacie.gouvernorat}
+                    </p>
+                    <p style="margin: 5px 0; color: #666;">
+                        <i class="fas fa-phone" style="color: ${iconColor};"></i>
+                        ${pharmacie.phone}
+                    </p>
+                    <p style="margin: 5px 0; color: #666;">
+                        <i class="fas fa-clock" style="color: ${iconColor};"></i>
+                        Horaires: <strong>${getHoraireText(pharmacie.horaire)}</strong>
+                    </p>
+                </div>
+            `
+        });
+
+        marker.addListener("click", () => {
+            infoWindow.open(map, marker);
+        });
+
+        markers.push(marker);
+        bounds.extend(position);
+    });
+
+    if (pharmaciesList.length > 0) {
+        if (pharmaciesList.length === 1) {
+            map.setCenter({ lat: pharmaciesList[0].lat, lng: pharmaciesList[0].lng });
+            map.setZoom(15);
+        } else {
+            map.fitBounds(bounds);
+        }
+    }
+
+    // Mettre à jour les statistiques
+    updateStats(pharmaciesList.length);
+    document.getElementById("map-title").innerHTML = `<i class="fas fa-map-marked-alt"></i> ${pharmaciesList.length} pharmacies`;
+}
+
+// Mettre à jour le tableau de liste
+function updateTable(pharmaciesList) {
+    const tbody = document.getElementById('pharmacies-table-body');
+    tbody.innerHTML = '';
+
+    pharmaciesList.forEach(pharmacie => {
+        const row = document.createElement('tr');
+
+        const horaireClass = `horaire-${pharmacie.horaire}`;
+        const horaireText = getHoraireText(pharmacie.horaire);
+
+        row.innerHTML = `
+            <td><strong>${pharmacie.name}</strong></td>
+            <td>${pharmacie.gouvernorat}</td>
+            <td>${pharmacie.adresse}</td>
+            <td>${pharmacie.phone}</td>
+            <td><span class="horaire-badge ${horaireClass}">${horaireText}</span></td>
+        `;
+
+        tbody.appendChild(row);
+    });
+
+    document.getElementById('pharmacy-list-count').textContent = pharmaciesList.length;
+}
+
+// Obtenir le texte d'horaire
+function getHoraireText(horaire) {
+    switch(horaire) {
+        case 'jour': return 'De jour (8h-20h)';
+        case 'nuit': return 'De nuit (20h-8h)';
+        case '24h': return '24h/24';
+        default: return 'Non spécifié';
+    }
+}
+
+// Effacer les marqueurs
+function clearMarkers() {
+    markers.forEach(marker => marker.setMap(null));
+    markers = [];
+}
+
+// Mettre à jour les statistiques
+function updateStats(displayedCount = 0) {
+    let totalCount = 0;
+    let jourCount = 0;
+    let nuitCount = 0;
+    let count24h = 0;
+
+    Object.values(pharmaciesTunisie).forEach(pharmaciesList => {
+        totalCount += pharmaciesList.length;
+        pharmaciesList.forEach(pharmacie => {
+            switch(pharmacie.horaire) {
+                case 'jour': jourCount++; break;
+                case 'nuit': nuitCount++; break;
+                case '24h': count24h++; break;
+            }
+        });
+    });
+
+    const governorateCount = Object.keys(pharmaciesTunisie).length;
+
+    document.getElementById("total-count").textContent = totalCount;
+    document.getElementById("governorate-count").textContent = governorateCount;
+    document.getElementById("jour-count").textContent = jourCount;
+    document.getElementById("nuit-count").textContent = nuitCount;
+    document.getElementById("24h-count").textContent = count24h;
+    document.getElementById("displayed-count").textContent = displayedCount;
+}
+
+// Localiser l'utilisateur
+function locateUser() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+
+                // Supprimer l'ancien marqueur s'il existe
+                if (userLocationMarker) {
+                    userLocationMarker.setMap(null);
+                }
+
+                // Ajouter un nouveau marqueur pour la position de l'utilisateur
+                userLocationMarker = new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    title: "Votre position",
+                    icon: {
+                        url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                        scaledSize: new google.maps.Size(40, 40)
+                    },
+                    animation: google.maps.Animation.BOUNCE
+                });
+
+                // Centrer la carte sur la position de l'utilisateur
+                map.setCenter(pos);
+                map.setZoom(14);
+
+                // Arrêter l'animation après 2 secondes
+                setTimeout(() => {
+                    if (userLocationMarker) {
+                        userLocationMarker.setAnimation(null);
+                    }
+                }, 2000);
+
+                // Afficher une infobulle
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                        <div style="padding: 15px; max-width: 300px;">
+                            <h3 style="margin: 0 0 10px 0; color: #2c3e50;">
+                                <i class="fas fa-location-arrow"></i> Votre position
+                            </h3>
+                            <p style="margin: 5px 0; color: #666;">
+                                Latitude: ${pos.lat.toFixed(6)}<br>
+                                Longitude: ${pos.lng.toFixed(6)}
+                            </p>
+                            <p style="margin: 5px 0; color: #666; font-size: 0.9rem;">
+                                <i class="fas fa-info-circle"></i> Les pharmacies à proximité sont affichées sur la carte
+                            </p>
+                        </div>
+                    `
+                });
+
+                infoWindow.open(map, userLocationMarker);
+
+                // Fermer l'infobulle après 5 secondes
+                setTimeout(() => {
+                    infoWindow.close();
+                }, 5000);
+
+            },
+            (error) => {
+                let errorMessage = "Impossible d'obtenir votre position.";
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = "Permission de géolocalisation refusée.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = "Information de position indisponible.";
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = "La requête de géolocalisation a expiré.";
+                        break;
+                }
+                alert(errorMessage);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    } else {
+        alert("La géolocalisation n'est pas supportée par votre navigateur.");
+    }
+}
+
+// Gérer les événements DOM
+document.addEventListener('DOMContentLoaded', function() {
+    // Recherche par gouvernorat
+    document.getElementById('search-btn').addEventListener('click', function() {
+        const selectedGovernorate = document.getElementById('governorate-select').value;
+        const selectedHoraire = document.getElementById('horaire-select').value;
+
+        if (!selectedGovernorate) {
+            // Afficher toutes les pharmacies avec filtre d'horaire
+            if (selectedHoraire) {
+                let allPharmacies = [];
+                Object.entries(pharmaciesTunisie).forEach(([gouvernorat, pharmaciesList]) => {
+                    pharmaciesList.forEach(pharmacie => {
+                        if (pharmacie.horaire === selectedHoraire) {
+                            allPharmacies.push({
+                                ...pharmacie,
+                                gouvernorat: gouvernorat
+                            });
+                        }
+                    });
+                });
+
+                clearMarkers();
+                displayPharmacies(allPharmacies);
+                updateTable(allPharmacies);
+                document.getElementById('displayed-detail').textContent = `avec horaire ${selectedHoraire}`;
+            } else {
+                showAllPharmacies();
+            }
+        } else {
+            showPharmaciesByGovernorate(selectedGovernorate, selectedHoraire);
+        }
+
+        document.getElementById('map-section').classList.add('active');
+        document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Recherche par nom de pharmacie
+    document.getElementById('search-pharmacy').addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        if (!query) return;
+
+        let filteredPharmacies = [];
+        Object.entries(pharmaciesTunisie).forEach(([gouvernorat, pharmaciesList]) => {
+            pharmaciesList.forEach(pharmacie => {
+                if (pharmacie.name.toLowerCase().includes(query)) {
+                    filteredPharmacies.push({
+                        ...pharmacie,
+                        gouvernorat: gouvernorat
+                    });
+                }
+            });
+        });
+
+        if (filteredPharmacies.length > 0) {
+            clearMarkers();
+            displayPharmacies(filteredPharmacies);
+            updateTable(filteredPharmacies);
+        }
+    });
+
+    // Filtre d'horaire sur la carte
+    document.getElementById('filter-horaire-map').addEventListener('change', function() {
+        const horaireFilter = this.value;
+        const selectedGovernorate = document.getElementById('governorate-select').value;
+
+        if (selectedGovernorate) {
+            showPharmaciesByGovernorate(selectedGovernorate, horaireFilter);
+        } else if (horaireFilter) {
+            let filteredPharmacies = [];
+            Object.entries(pharmaciesTunisie).forEach(([gouvernorat, pharmaciesList]) => {
+                pharmaciesList.forEach(pharmacie => {
+                    if (pharmacie.horaire === horaireFilter) {
+                        filteredPharmacies.push({
+                            ...pharmacie,
+                            gouvernorat: gouvernorat
+                        });
+                    }
+                });
+            });
+
+            clearMarkers();
+            displayPharmacies(filteredPharmacies);
+            updateTable(filteredPharmacies);
+        } else {
+            showAllPharmacies();
+        }
+    });
+
+    // Toutes les pharmacies
+    document.getElementById('show-all-btn').addEventListener('click', function() {
+        document.getElementById('governorate-select').value = '';
+        document.getElementById('horaire-select').value = '';
+        document.getElementById('filter-horaire-map').value = '';
+        showAllPharmacies();
+        document.getElementById('map-section').classList.add('active');
+        document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Localisation
+    document.getElementById('locate-btn').addEventListener('click', function() {
+        locateUser();
+        document.getElementById('map-section').classList.add('active');
+        document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Zoom in
+    document.getElementById('zoom-in-btn').addEventListener('click', function() {
+        if (map) {
+            currentZoom = Math.min(currentZoom + 1, 20);
+            map.setZoom(currentZoom);
+        }
+    });
+
+    // Zoom out
+    document.getElementById('zoom-out-btn').addEventListener('click', function() {
+        if (map) {
+            currentZoom = Math.max(currentZoom - 1, 1);
+            map.setZoom(currentZoom);
+        }
+    });
+
+    // Réinitialiser
+    document.getElementById('reset-btn').addEventListener('click', function() {
+        document.getElementById('search-pharmacy').value = '';
+        document.getElementById('filter-horaire-map').value = '';
+        showAllPharmacies();
+    });
+
+    // Afficher/Cacher
+    document.getElementById('toggle-pharmacies-btn').addEventListener('click', function() {
+        const mapSection = document.getElementById('map-section');
+        if (mapSection.classList.contains('active')) {
+            mapSection.classList.remove('active');
+            this.innerHTML = '<i class="fas fa-map-marker-alt"></i> Afficher la carte';
+        } else {
+            mapSection.classList.add('active');
+            this.innerHTML = '<i class="fas fa-map-marker-alt"></i> Cacher la carte';
+            showAllPharmacies();
+            mapSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    // Fermer la carte
+    document.getElementById('close-map').addEventListener('click', function() {
+        document.getElementById('map-section').classList.remove('active');
+        document.getElementById('toggle-pharmacies-btn').innerHTML = '<i class="fas fa-map-marker-alt"></i> Afficher la carte';
+    });
+
+    // Recherche avec Entrée dans le champ de recherche
+    document.getElementById('search-pharmacy').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            this.dispatchEvent(new Event('input'));
+        }
+    });
+});
+
+// Gestion des erreurs Google Maps
+function gm_authFailure() {
+    document.getElementById('map-error').style.display = 'block';
+    document.getElementById('map-error').innerHTML = `
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Erreur d'authentification Google Maps :</strong><br>
+        La clé API est invalide ou a expiré.
+    `;
+}
+
+window.gm_authFailure = gm_authFailure;
+</script>
+
+<!-- Google Maps API -->
+<script>
+(function() {
+    const GOOGLE_MAPS_API_KEY = 'AIzaSyCrIRfNB2KOuJgbBkLsNmhTj49jbFkbSM0';
+
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap&language=fr&region=TN`;
+    script.async = true;
+    script.defer = true;
+    script.onerror = function() {
+        console.error('Erreur de chargement de Google Maps');
+        document.getElementById('map-error').style.display = 'block';
+        document.getElementById('map-error').innerHTML = `
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Erreur de chargement :</strong> Impossible de charger Google Maps.
+        `;
+    };
+    document.head.appendChild(script);
+})();
+</script>
+
+</body>
+</html>

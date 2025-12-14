@@ -154,6 +154,29 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
+    /* ============ MENU DÉROULANT SERVICES ============ */
+    .dropdown-menu {
+        background: linear-gradient(135deg, #2c5f2d 0%, #1e4620 100%);
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .dropdown-item {
+        color: white;
+        padding: 10px 20px;
+        transition: var(--transition);
+    }
+
+    .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--secondary-color);
+    }
+
+    .dropdown-divider {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
     /* ============ RESPONSIVE ============ */
     @media (max-width: 991px) {
         #navigation {
@@ -163,6 +186,12 @@
 
         .user-info {
             margin: 15px 0;
+        }
+
+        .dropdown-menu {
+            position: static;
+            float: none;
+            width: 100%;
         }
     }
 </style>
@@ -185,23 +214,55 @@
                         <div class="main-menu f-right d-none d-lg-block">
                             <nav>
                                 <ul id="navigation">
+                                    <!-- Accueil -->
                                     <li><a href="{{ path('home') }}"><i class="fas fa-home"></i> Accueil</a></li>
-                                    <li>  <a href="{{ path('rendezvous_new') }}" class="nav-btn rdv-btn">📅 Rendez-vous</a></li>
-                                    <li><a href="#"><i class="fas fa-info-circle"></i> À propos</a></li>
-                                    <li><a href="#"><i class="fas fa-stethoscope"></i> Services</a></li>
+
+                                    <!-- Animaux -->
                                     <li><a href="{{ path('lists_animaux') }}"><i class="fas fa-paw"></i> Animaux</a></li>
+
+                                    <!-- Dossiers -->
                                     <li><a href="{{ path('lists_dossiers') }}"><i class="fas fa-folder-open"></i> Dossiers</a></li>
 
+                                    <!-- Nos Services (menu déroulant) -->
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-stethoscope"></i> Nos Services
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                                            <li><a class="dropdown-item" href="{{ path('services') }}#consultations"><i class="fas fa-user-md"></i> Consultations</a></li>
+                                            <li><a class="dropdown-item" href="{{ path('services') }}#vaccinations"><i class="fas fa-syringe"></i> Vaccinations</a></li>
+                                            <li><a class="dropdown-item" href="{{ path('services') }}#chirurgie"><i class="fas fa-cut"></i> Chirurgie</a></li>
+                                            <li><a class="dropdown-item" href="{{ path('services') }}#analyses"><i class="fas fa-flask"></i> Analyses</a></li>
+                                            <li><a class="dropdown-item" href="{{ path('services') }}#urgences"><i class="fas fa-ambulance"></i> Urgences 24/7</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item" href="{{ path('app_traitement_index') }}"><i class="fas fa-prescription"></i> Traitements</a></li>
+                                            <li><a class="dropdown-item" href="{{ path('app_medicament_index') }}"><i class="fas fa-pills"></i> Médicaments</a></li>
+                                        </ul>
+                                    <li><a href="{{ path('app_client_interface') }}"><i class="fas fa-map-marker-alt"></i> Interface Client</a></li>
+                                    </li>
+
+                                    <!-- Menu utilisateur -->
                                     {% if app.user %}
                                         {% if is_granted('ROLE_ADMIN') %}
                                             <li><a href="{{ path('app_user_index') }}"><i class="fas fa-users"></i> Utilisateurs</a></li>
                                         {% endif %}
-                                        <li><a href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
-                                    {% else %}
-                                        <li><a href="{{ path('app_login') }}"><i class="fas fa-sign-in-alt"></i> Connexion</a></li>
-                                    {% endif %}
 
-                                    <li><a href="{{ path('app_user_new') }}"><i class="fas fa-user-plus"></i> Créer un compte</a></li>
+                                        <!-- Déconnexion -->
+                                        <li>
+                                            <form method="post" action="{{ path('app_logout') }}" style="display: inline;">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('logout') }}">
+                                                <button type="submit" class="btn btn-link text-white p-0" style="text-decoration: none;">
+                                                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                                                </button>
+                                            </form>
+                                        </li>
+                                    {% else %}
+                                        <!-- Connexion -->
+                                        <li><a href="{{ path('app_login') }}"><i class="fas fa-sign-in-alt"></i> Connexion</a></li>
+
+                                        <!-- Créer un compte -->
+                                        <li><a href="{{ path('app_user_new') }}"><i class="fas fa-user-plus"></i> Créer un compte</a></li>
+                                    {% endif %}
                                 </ul>
                             </nav>
                         </div>
@@ -210,10 +271,10 @@
                         {% if app.user %}
                             <div class="user-info d-none d-lg-flex">
                                 {% if app.user.profilePhoto %}
-                                    <img src="{{ asset('uploads/profiles/' ~ app.user.profilePhoto) }}" 
+                                    <img src="{{ asset('uploads/profiles/' ~ app.user.profilePhoto) }}"
                                          alt="Avatar" class="avatar-small">
                                 {% else %}
-                                    <div class="avatar-small d-flex align-items-center justify-content-center bg-secondary text-white" 
+                                    <div class="avatar-small d-flex align-items-center justify-content-center bg-secondary text-white"
                                          style="font-weight: bold; font-size: 0.9rem;">
                                         {{ app.user.initials }}
                                     </div>

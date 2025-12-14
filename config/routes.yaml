@@ -1,62 +1,13 @@
-<<<<<<< HEAD
 # config/routes.yaml
 
-# Active l'auto-découverte des routes depuis les contrôleurs
+# Import automatique des controllers avec annotations/attributes
 controllers:
-    resource: ../src/Controller/
-    type: attribute
-
-# Pas besoin de routes supplémentaires car tout est défini dans les contrôleurs
-=======
-
-app_home:
-    path: /
-    controller: App\Controller\HomeController::index
-
-app_client_interface:
-    path: /client
-    controller: App\Controller\HomeController::clientInterface
-
-
-app_medicament:
-    resource: '../src/Controller/MedicamentController.php'
-    type: attribute
-
-app_traitement:
-    resource: '../src/Controller/TraitementController.php'
-    type: attribute
-
-# Déclaration globale des controllers via attributes
-controllers:
-  resource:
-    path: ../src/Controller/
-    namespace: App\Controller
+  resource: ../src/Controller/
   type: attribute
 
-# Routes explicites
-app_home:
+# Route vers la page d'accueil / index
+app_user_index:
   path: /
-  controller: App\Controller\HomeController::index
-
-app_client_interface:
-  path: /client
-  controller: App\Controller\HomeController::clientInterface
-
-app_login:
-  path: /login
-  controller: App\Controller\SecurityController::login
-
-app_logout:
-  path: /logout
-  controller: App\Controller\SecurityController::logout
-
-# Controllers spécifiques avec type attribute (optionnel si déjà pris par 'controllers' ci-dessus)
-app_medicament:
-  resource: '../src/Controller/MedicamentController.php'
-  type: attribute
-
-app_traitement:
-  resource: '../src/Controller/TraitementController.php'
-  type: attribute
-
->>>>>>> 343012190ba309c39188b230b31908e912145e26
+  controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController::template
+  defaults:
+    template: 'security/index.html.twig'
