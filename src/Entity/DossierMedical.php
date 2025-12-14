@@ -45,7 +45,7 @@ class DossierMedical
     private ?string $antecedents_medicaux = null;
 
     // --- RELATION ONE TO ONE ---
-    #[ORM\OneToOne(inversedBy: 'dossier_animal', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'dossier_animal')]
     #[ORM\JoinColumn(name: "animal_id", referencedColumnName: "id_animal", nullable: true)]
     private ?Animal $animal = null;
 

@@ -58,6 +58,11 @@ class Animal
     private ?DossierMedical $dossier_animal = null;
 
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'animals')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $owner = null;
+
+
     // --- ID ACCESSORS ---
     public function getIdAnimal(): ?int
     {
@@ -157,6 +162,17 @@ class Animal
             $dossier_animal->setAnimal($this);
         }
 
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): static
+    {
+        $this->owner = $owner;
         return $this;
     }
 }

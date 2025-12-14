@@ -1,182 +1,174 @@
-{% extends 'base.html.twig' %}
+    {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Animaux{% endblock %}
+    {% block title %}Liste des Animaux{% endblock %}
 
-{% block body %}
-    <section class="main-content" style="padding-top: 30px; padding-bottom: 30px;">
-        <div class="container">
-            <h2 class="mb-4 text-center">Liste des Animaux</h2>
+    {% block body %}
+        <section class="main-content" style="padding-top: 30px; padding-bottom: 30px;">
+            <div class="container">
+                <h2 class="mb-4 text-center">Liste des Animaux</h2>
 
-            <div class="table-responsive shadow-sm rounded">
-                <table class="table table-hover align-middle text-center">
-                    <thead class="table-primary">
-                    <tr>
-                        <th>
-                            <a href="{{ path('lists_animaux', {
-                                sort: 'nom',
-                                order: sort == 'nom' and order == 'ASC' ? 'DESC' : 'ASC'
-                            }) }}">
-                                Nom
-                                {% if sort == 'nom' %}
-                                    {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
-                                {% endif %}
-                            </a>
-                        </th>
-
-                        <th>
-                            <a href="{{ path('lists_animaux', {
-                                sort: 'typeAnimal',
-                                order: sort == 'typeAnimal' and order == 'ASC' ? 'DESC' : 'ASC'
-                            }) }}">
-                                Type
-                                {% if sort == 'typeAnimal' %}
-                                    {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
-                                {% endif %}
-                            </a>
-                        </th>
-
-                        <th>Sexe</th>
-
-                        <th>
-                            <a href="{{ path('lists_animaux', {
-                                sort: 'poids',
-                                order: sort == 'poids' and order == 'ASC' ? 'DESC' : 'ASC'
-                            }) }}">
-                                Poids (kg)
-                                {% if sort == 'poids' %}
-                                    {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
-                                {% endif %}
-                            </a>
-                        </th>
-
-                        <th>
-                            <a href="{{ path('lists_animaux', {
-                                sort: 'couleur',
-                                order: sort == 'couleur' and order == 'ASC' ? 'DESC' : 'ASC'
-                            }) }}">
-                                Couleur
-                                {% if sort == 'couleur' %}
-                                    {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
-                                {% endif %}
-                            </a>
-                        </th>
-
-                        <th>
-                            <a href="{{ path('lists_animaux', {
-                                sort: 'dateNaissance',
-                                order: sort == 'dateNaissance' and order == 'ASC' ? 'DESC' : 'ASC'
-                            }) }}">
-                                Date Naissance
-                                {% if sort == 'dateNaissance' %}
-                                    {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
-                                {% endif %}
-                            </a>
-                        </th>
-
-                        <th>
-                            <a href="{{ path('lists_animaux', {
-                                sort: 'dateEnregistrement',
-                                order: sort == 'dateEnregistrement' and order == 'ASC' ? 'DESC' : 'ASC'
-                            }) }}">
-                                Date Enregistrement
-                                {% if sort == 'dateEnregistrement' %}
-                                    {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
-                                {% endif %}
-                            </a>
-                        </th>
-
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    {% for animal in tabAnimaux %}
-                        <tr class="align-middle">
-                            <td>{{ animal.nom }}</td>
-                            <td>
-                                <span class="badge
-                                    {% if animal.typeAnimal == 'Chien' %}bg-primary
-                                    {% elseif animal.typeAnimal == 'Chat' %}bg-warning text-dark
-                                    {% else %}bg-info text-dark{% endif %}">
-                                    {{ animal.typeAnimal }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge {% if animal.sexe == 'Mâle' %}bg-info text-dark{% else %}bg-danger{% endif %}">
-                                    {{ animal.sexe }}
-                                </span>
-                            </td>
-                            <td>{{ animal.poids }}</td>
-                            <td>{{ animal.couleur }}</td>
-                            <td>{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '' }}</td>
-                            <td>{{ animal.dateEnregistrement ? animal.dateEnregistrement|date('d/m/Y') : '' }}</td>
-
-                            <td class="d-flex justify-content-center gap-2 flex-wrap">
-                                <a href="{{ path('update_animal', {'id': animal.idAnimal}) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit me-1"></i> Modifier
-                                </a>
-                                <a href="{{ path('remove_animal', {'id_animal': animal.idAnimal}) }}" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash-alt me-1"></i> Supprimer
-                                </a>
-                                <a href="{{ path('add_dossier_for_animal', {'animalId': animal.idAnimal}) }}" class="btn btn-success btn-sm">
-                                    <i class="fas fa-notes-medical me-1"></i> Ajouter Dossier
-                                </a>
-                                {% if animal.dossierAnimal %}
-                                    <a href="{{ path('show_dossier', {'id': animal.dossierAnimal.idDossier}) }}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye me-1"></i> Voir
-                                    </a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% else %}
+                <div class="table-responsive shadow-sm rounded">
+                    <table class="table table-hover align-middle text-center">
+                        <thead>
                         <tr>
-                            <td colspan="8" class="text-center">Aucun animal trouvé.</td>
+                            <th style="background-color: #343a40; color: white;">
+                                <a href="{{ path('lists_animaux', { sort: 'nom', order: sort == 'nom' and order == 'ASC' ? 'DESC' : 'ASC', page: 1 }) }}" style="color: white; text-decoration: none;">
+                                    Nom
+                                    {% if sort == 'nom' %}
+                                        {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th style="background-color: #343a40; color: white;">
+                                <a href="{{ path('lists_animaux', { sort: 'type_animal', order: sort == 'type_animal' and order == 'ASC' ? 'DESC' : 'ASC', page: 1 }) }}" style="color: white; text-decoration: none;">
+                                    Type
+                                    {% if sort == 'type_animal' %}
+                                        {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th style="background-color: #343a40; color: white;">Sexe</th>
+                            <th style="background-color: #343a40; color: white;">
+                                <a href="{{ path('lists_animaux', { sort: 'poids', order: sort == 'poids' and order == 'ASC' ? 'DESC' : 'ASC', page: 1 }) }}" style="color: white; text-decoration: none;">
+                                    Poids (kg)
+                                    {% if sort == 'poids' %}
+                                        {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th style="background-color: #343a40; color: white;">
+                                <a href="{{ path('lists_animaux', { sort: 'couleur', order: sort == 'couleur' and order == 'ASC' ? 'DESC' : 'ASC', page: 1 }) }}" style="color: white; text-decoration: none;">
+                                    Couleur
+                                    {% if sort == 'couleur' %}
+                                        {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th style="background-color: #343a40; color: white;">
+                                <a href="{{ path('lists_animaux', { sort: 'date_naissance', order: sort == 'date_naissance' and order == 'ASC' ? 'DESC' : 'ASC', page: 1 }) }}" style="color: white; text-decoration: none;">
+                                    Date Naissance
+                                    {% if sort == 'date_naissance' %}
+                                        {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th style="background-color: #343a40; color: white;">
+                                <a href="{{ path('lists_animaux', { sort: 'date_enregistrement', order: sort == 'date_enregistrement' and order == 'ASC' ? 'DESC' : 'ASC', page: 1 }) }}" style="color: white; text-decoration: none;">
+                                    Date Enregistrement
+                                    {% if sort == 'date_enregistrement' %}
+                                        {% if order == 'ASC' %} ▲ {% else %} ▼ {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th style="background-color: #343a40; color: white;">Actions</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+
+                        <tbody>
+                        {% for animal in tabAnimaux %}
+                            <tr class="align-middle">
+                                <td>{{ animal.nom }}</td>
+                                <td>
+                        <span class="badge
+                            {% if animal.typeAnimal == 'Chien' %}bg-primary
+                            {% elseif animal.typeAnimal == 'Chat' %}bg-warning text-dark
+                            {% else %}bg-info text-dark{% endif %}">
+                            {{ animal.typeAnimal }}
+                        </span>
+                                </td>
+                                <td>
+                        <span class="badge {% if animal.sexe == 'M' %}bg-info text-dark{% else %}bg-danger{% endif %}">
+                            {{ animal.sexe }}
+                        </span>
+                                </td>
+                                <td>{{ animal.poids }}</td>
+                                <td>{{ animal.couleur }}</td>
+                                <td>{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '' }}</td>
+                                <td>{{ animal.dateEnregistrement ? animal.dateEnregistrement|date('d/m/Y') : '' }}</td>
+                                <td class="d-flex justify-content-center gap-2 flex-wrap">
+                                    <a href="{{ path('update_animal', {'id': animal.idAnimal}) }}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit me-1"></i> Modifier
+                                    </a>
+                                    <a href="{{ path('remove_animal', {'id_animal': animal.idAnimal}) }}" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash-alt me-1"></i> Supprimer
+                                    </a>
+                                    {% if is_granted('ROLE_VET') or is_granted('ROLE_ADMIN') %}
+                                        <a href="{{ path('add_dossier_for_animal', {'animalId': animal.idAnimal}) }}" class="btn btn-success btn-sm">
+                                            <i class="fas fa-notes-medical me-1"></i> Ajouter Dossier
+                                        </a>
+                                    {% endif %}
+                                    {% if animal.dossierAnimal %}
+                                        <a href="{{ path('show_dossier', {'id': animal.dossierAnimal.idDossier}) }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye me-1"></i> Voir
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center">Aucun animal trouvé.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+
+                {# Pagination #}
+                {% if tabAnimaux.totalItemCount > 0 %}
+                    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+                        <div class="text-muted">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Affichage de
+                            <strong>{{ (tabAnimaux.currentPageNumber - 1) * tabAnimaux.itemNumberPerPage + 1 }}</strong>
+                            à
+                            <strong>{{ min(tabAnimaux.currentPageNumber * tabAnimaux.itemNumberPerPage, tabAnimaux.totalItemCount) }}</strong>
+                            sur
+                            <strong>{{ tabAnimaux.totalItemCount }}</strong> animal(s)
+                        </div>
+
+                        <div class="pagination-wrapper">
+                            <nav aria-label="Pagination">
+                                <ul class="pagination">
+                                    {# Précédent #}
+                                    {% if tabAnimaux.currentPageNumber > 1 %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ path('lists_animaux', { page: tabAnimaux.currentPageNumber - 1, sort: sort, order: order }) }}">
+                                                <i class="fas fa-chevron-left"></i> Précédent
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span class="page-link"><i class="fas fa-chevron-left"></i> Précédent</span></li>
+                                    {% endif %}
+
+                                    {# Numéros de page #}
+                                    {% for page in 1..tabAnimaux.pageCount %}
+                                        {% if page == tabAnimaux.currentPageNumber %}
+                                            <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+                                        {% else %}
+                                            <li class="page-item"><a class="page-link" href="{{ path('lists_animaux', { page: page, sort: sort, order: order }) }}">{{ page }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {# Suivant #}
+                                    {% if tabAnimaux.currentPageNumber < tabAnimaux.pageCount %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ path('lists_animaux', { page: tabAnimaux.currentPageNumber + 1, sort: sort, order: order }) }}">Suivant <i class="fas fa-chevron-right"></i></a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span class="page-link">Suivant <i class="fas fa-chevron-right"></i></span></li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="mt-4 text-center">
+                    <a href="{{ path('addForm_animal') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i> Ajouter un nouvel animal
+                    </a>
+                </div>
             </div>
-
-            <div class="mt-4 text-center">
-                <a href="{{ path('addForm_animal') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-plus-circle me-2"></i> Ajouter un nouvel animal
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <style>
-        table.table-hover tbody tr:hover {
-            background-color: #f0f8ff;
-            transition: background-color 0.2s;
-        }
-
-        .badge {
-            padding: 0.4em 0.6em;
-            font-size: 0.9em;
-        }
-
-        td .btn {
-            display: flex;
-            align-items: center;
-        }
-
-        th a {
-            color: #000;
-            text-decoration: none;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-            width: 100%;
-            padding: 8px 0;
-        }
-
-        th a:hover {
-            text-decoration: underline;
-            color: #003366;
-        }
-    </style>
-
-{% endblock %}
+        </section>
+    {% endblock %}

@@ -5,14 +5,24 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
-    public: false
 
+  # Tous les services SAUF EmailJsService
   App\:
     resource: '../src/'
     exclude:
       - '../src/DependencyInjection/'
       - '../src/Entity/'
       - '../src/Kernel.php'
+      - '../src/Service/EmailJsService.php'
+
+  # ✅ Configuration EXPLICITE de EmailJsService (après App\:)
+  App\Service\EmailJsService:
+    autowire: false
+    arguments:
+      - '@Symfony\Contracts\HttpClient\HttpClientInterface'
+      - '%env(EMAILJS_SERVICE_ID)%'
+      - '%env(EMAILJS_TEMPLATE_ID)%'
+      - '%env(EMAILJS_USER_ID)%'
 
   App\Controller\:
     resource: '../src/Controller/'

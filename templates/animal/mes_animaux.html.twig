@@ -1,0 +1,206 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Animaux{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+
+        {# En-tête #}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="fas fa-paw me-2 text-primary"></i>Mes Animaux</h2>
+                <p class="text-muted mb-0">Gérez vos compagnons enregistrés</p>
+            </div>
+            <a href="{{ path('addForm_animal') }}" class="btn btn-success btn-lg">
+                <i class="fas fa-plus-circle me-2"></i>Ajouter un animal
+            </a>
+        </div>
+
+        {# Statistiques rapides #}
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-paw fa-2x text-primary mb-2"></i>
+                        <h3 class="mb-0">{{ animaux.totalItemCount }}</h3>
+                        <p class="text-muted mb-0">Animal{{ animaux.totalItemCount > 1 ? 'aux' : '' }} enregistré{{ animaux.totalItemCount > 1 ? 's' : '' }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-dog fa-2x text-info mb-2"></i>
+                        <h3 class="mb-0">{{ chiens }}</h3>
+                        <p class="text-muted mb-0">Chien{{ chiens > 1 ? 's' : '' }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-cat fa-2x text-warning mb-2"></i>
+                        <h3 class="mb-0">{{ chats }}</h3>
+                        <p class="text-muted mb-0">Chat{{ chats > 1 ? 's' : '' }}</p>
+                    </div>
+                </div>
+            </div>
+            {% if autres > 0 %}
+                <div class="col-md-4 mt-3">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body">
+                            <i class="fas fa-hippo fa-2x text-secondary mb-2"></i>
+                            <h3 class="mb-0">{{ autres }}</h3>
+                            <p class="text-muted mb-0">Autres</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        {# Filtres #}
+        <div class="mb-4">
+            <span class="badge bg-secondary me-2 filter-badge" data-type="all" style="cursor:pointer;">Tous</span>
+            {% set types = ['Chien', 'Chat'] %}
+            {% for type in types %}
+                <span class="badge bg-primary me-2 filter-badge" data-type="{{ type|lower }}" style="cursor:pointer;">{{ type }}</span>
+            {% endfor %}
+            {% if autres > 0 %}
+                <span class="badge bg-info filter-badge" data-type="autres" style="cursor:pointer;">Autres</span>
+            {% endif %}
+        </div>
+
+        {# Liste des animaux #}
+        {% if animaux|length > 0 %}
+            <div class="row" id="animal-list">
+                {% for animal in animaux %}
+                    {% set type_lower = animal.typeAnimal|lower %}
+                    {% if type_lower != 'chien' and type_lower != 'chat' %}
+                        {% set type_lower = 'autres' %}
+                    {% endif %}
+                    <div class="col-md-6 col-lg-4 mb-4 animal-card-wrapper" data-type="{{ type_lower }}">
+                        <div class="card h-100 shadow-sm animal-card">
+                            <div class="card-header {% if animal.typeAnimal == 'Chien' %}bg-primary text-white{% elseif animal.typeAnimal == 'Chat' %}bg-warning{% else %}bg-info text-white{% endif %}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">
+                                        <i class="fas {% if animal.typeAnimal == 'Chien' %}fa-dog{% elseif animal.typeAnimal == 'Chat' %}fa-cat{% else %}fa-paw{% endif %} me-2"></i>
+                                        {{ animal.nom }}
+                                    </h5>
+                                    <span class="badge {% if animal.sexe == 'M' %}bg-light text-dark{% else %}bg-danger{% endif %}">
+                                    {{ animal.sexe == 'M' ? 'Mâle' : 'Femelle' }}
+                                </span>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-2"><span class="text-muted">Type :</span> <strong>{{ animal.typeAnimal }}</strong></div>
+                                    <div class="d-flex justify-content-between mb-2"><span class="text-muted">Couleur :</span> <strong>{{ animal.couleur }}</strong></div>
+                                    <div class="d-flex justify-content-between mb-2"><span class="text-muted">Poids :</span> <strong>{{ animal.poids }} kg</strong></div>
+                                    <div class="d-flex justify-content-between mb-2"><span class="text-muted">Âge :</span> <strong>{{ date('now').diff(animal.dateNaissance).y }} an{{ date('now').diff(animal.dateNaissance).y > 1 ? 's' : '' }}</strong></div>
+                                </div>
+
+                                <hr>
+
+                                {% if animal.dossierAnimal %}
+                                    <div class="alert alert-success py-2 px-3 mb-0"><i class="fas fa-check-circle me-1"></i> <small>Dossier médical à jour</small></div>
+                                {% else %}
+                                    <div class="alert alert-warning py-2 px-3 mb-0"><i class="fas fa-exclamation-triangle me-1"></i> <small>Pas de dossier médical</small></div>
+                                {% endif %}
+                            </div>
+
+                            <div class="card-footer bg-white">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{{ path('animal_show', {'id': animal.idAnimal}) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i> Voir
+                                    </a>
+
+                                    <a href="{{ path('update_animal', {'id': animal.idAnimal}) }}" class="btn btn-sm btn-outline-warning">
+                                        <i class="fas fa-edit me-1"></i> Modifier
+                                    </a>
+
+                                    {% if animal.dossierAnimal %}
+                                        <a href="{{ path('show_dossier', {'id': animal.dossierAnimal.idDossier}) }}" class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-notes-medical me-1"></i> Dossier
+                                        </a>
+                                    {% elseif is_granted('ROLE_VET') or is_granted('ROLE_ADMIN') %}
+                                        <a href="{{ path('add_dossier_for_animal', {'animalId': animal.idAnimal}) }}" class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-plus me-1"></i> Dossier
+                                        </a>
+                                    {% endif %}
+
+                                    <a href="{{ path('remove_animal', {'id_animal': animal.idAnimal}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet animal ?');">
+                                        <i class="fas fa-trash me-1"></i> Supprimer
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {# Pagination #}
+            {% if animaux.pageCount > 1 %}
+                <div class="d-flex justify-content-center mt-4">
+                    <nav aria-label="Pagination">
+                        <ul class="pagination">
+                            {% if animaux.currentPageNumber > 1 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ path('animal_mes_animaux', {page: animaux.currentPageNumber - 1}) }}">
+                                        <i class="fas fa-chevron-left"></i> Précédent
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for page in 1..animaux.pageCount %}
+                                <li class="page-item {% if page == animaux.currentPageNumber %}active{% endif %}">
+                                    <a class="page-link" href="{{ path('animal_mes_animaux', {page: page}) }}">{{ page }}</a>
+                                </li>
+                            {% endfor %}
+                            {% if animaux.currentPageNumber < animaux.pageCount %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ path('animal_mes_animaux', {page: animaux.currentPageNumber + 1}) }}">Suivant <i class="fas fa-chevron-right"></i></a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            {% endif %}
+
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-paw fa-5x text-muted mb-4"></i>
+                <h4 class="text-muted mb-3">Vous n'avez pas encore d'animaux enregistrés</h4>
+                <p class="text-muted mb-4">Commencez par ajouter votre premier compagnon !</p>
+                <a href="{{ path('addForm_animal') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus-circle me-2"></i>Ajouter mon premier animal
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <style>
+        .animal-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .animal-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important; }
+        .card-footer .btn { font-size: 0.85rem; }
+        .filter-badge.bg-success { color: #fff !important; }
+    </style>
+
+    <script>
+        const badges = document.querySelectorAll('.filter-badge');
+        const cards = document.querySelectorAll('.animal-card-wrapper');
+
+        badges.forEach(badge => {
+            badge.addEventListener('click', () => {
+                const type = badge.dataset.type;
+
+                cards.forEach(card => {
+                    card.style.display = (type === 'all' || card.dataset.type === type) ? 'block' : 'none';
+                });
+
+                badges.forEach(b => b.classList.remove('bg-success'));
+                badge.classList.add('bg-success');
+            });
+        });
+    </script>
+{% endblock %}
