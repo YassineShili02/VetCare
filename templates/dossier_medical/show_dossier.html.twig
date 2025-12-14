@@ -42,8 +42,19 @@
                                     <p>Aucune image disponible.</p>
                                 {% endfor %}
                             </div>
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{{ path('dossier_pdf', {'id': dossier.idDossier}) }}"
+                                   class="btn btn-danger"
+                                   target="_blank">
+                                    <i class="fas fa-file-pdf me-1"></i>
+                                    Générer PDF
+                                </a>
 
-                            <a href="{{ path('lists_dossiers') }}" class="btn btn-secondary mt-3">Retour</a>
+                                <a href="{{ path('lists_dossiers') }}"
+                                   class="btn btn-secondary">
+                                    Retour
+                                </a>
+                            </div>
 
                         </div>
                     </div>

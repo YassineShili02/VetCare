@@ -1,4 +1,5 @@
 <?php
+// src/Controller/SecurityController.php
 
 namespace App\Controller;
 
@@ -38,17 +39,19 @@ class SecurityController extends AbstractController
         }
 
         $error = $authenticationUtils->getLastAuthenticationError();
+
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
-            'error' => $error
+            'error' => $error,
         ]);
     }
 
-    #[Route(path: '/logout', name: 'app_logout')]
+    #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
+        // controller can be blank: it will never be called!
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 

@@ -1,97 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil - VetCare{% endblock %}
+{% block title %}Connexion - VetCare{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        /* Reset & fonts */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%);
-        }
-
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 4rem;
-            color: #2196F3;
-            animation: pulse 2s infinite;
-            margin-bottom: 1rem;
-        }
-
-        h1 {
-            font-size: 2.8rem;
-            color: #1976D2;
-            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: #546E7A;
-            margin-bottom: 3rem;
-        }
-
-        /* Navigation buttons */
-        .nav-links {
+        .login-container {
+            min-height: 100vh;
             display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 1.5rem;
-            flex-wrap: wrap;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%);
+            padding: 2rem 0;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.15);
+            padding: 3rem;
+            max-width: 450px;
+            width: 100%;
+            margin: 0 1rem;
+        }
+
+        .login-header {
+            text-align: center;
             margin-bottom: 2rem;
         }
 
-        .nav-link {
-            display: inline-block;
-            padding: 1.2rem 2.5rem;
-            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            transform: translateY(-5px);
-            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
-        }
-
-        /* Description */
-        .description {
-            margin-top: 2rem;
-            padding: 2rem;
-            background: #E3F2FD;
-            border-radius: 10px;
-            border: 2px solid #BBDEFB;
-            text-align: left;
-        }
-
-        .description h3 {
+        .login-logo {
+            font-size: 4rem;
             margin-bottom: 1rem;
-            color: #1976D2;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .description h3:before {
-            content: "💡";
-            font-size: 1.5rem;
-        }
-
-        .description p {
-            color: #455A64;
-            line-height: 1.7;
+            animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
@@ -99,53 +40,168 @@
             50% { transform: scale(1.05); }
         }
 
-        /* Footer */
-        .footer {
-            margin-top: 2rem;
-            color: #78909C;
-            font-size: 0.9rem;
+        .login-title {
+            font-size: 2rem;
+            color: #1976D2;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-link { padding: 1rem 2rem; }
+        .login-subtitle {
+            color: #546E7A;
+            font-size: 0.95rem;
         }
 
-        @media (max-width: 480px) {
-            h1 { font-size: 1.8rem; }
-            .logo { font-size: 3rem; }
-            .subtitle { font-size: 1rem; }
+        .form-label {
+            color: #455A64;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border: 2px solid #e3f2fd;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #2196F3;
+            box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.15);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.875rem;
+            font-weight: 600;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+        }
+
+        .alert {
+            border-radius: 8px;
+            border: none;
+            padding: 1rem;
+        }
+
+        .alert-danger {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .form-check-input:checked {
+            background-color: #2196F3;
+            border-color: #2196F3;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #1976D2;
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .login-title {
+                font-size: 1.75rem;
+            }
         }
     </style>
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="logo">🏥</div>
-        <h1>VetCare Pro</h1>
-        <p class="subtitle">Système de gestion des médicaments et traitements vétérinaires</p>
-
-        <div class="nav-links">
-            <a href="{{ path('app_client_interface') }}" class="nav-link">
-                👁️ Interface Client
-            </a>
-            <a href="{{ path('app_login') }}" class="nav-link">
-                🔐 Accès Vétérinaire
-            </a>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-logo">🔐</div>
+            <h1 class="login-title">Connexion</h1>
+            <p class="login-subtitle">Accès Vétérinaire - VetCare Pro</p>
         </div>
 
-        <div class="description">
-            <h3>À propos de VetCare</h3>
-            <p>
-                VetCare est une application web moderne dédiée à la gestion des médicaments et traitements
-                dans les cabinets vétérinaires. L'interface client permet aux propriétaires d'animaux de
-                consulter les informations disponibles, tandis que l'espace vétérinaire sécurisé offre
-                des fonctionnalités complètes de gestion pour les professionnels.
-            </p>
-        </div>
+        {# Affichage des erreurs de connexion #}
+        {% set error = app.session.get('_security.last_error') %}
+        {% if error %}
+            <div class="alert alert-danger mb-4">
+                <strong>Erreur :</strong> {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
 
-        <div class="footer">
-            <p>© 2024 VetCare Pro. Tous droits réservés.</p>
+        <form method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label">
+                    <i class="fas fa-user"></i> Nom d'utilisateur
+                </label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="username"
+                    name="_username"
+                    value="{{ app.session.get('_security.last_username') }}"
+                    required
+                    autofocus
+                    placeholder="Entrez votre nom d'utilisateur"
+                >
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">
+                    <i class="fas fa-lock"></i> Mot de passe
+                </label>
+                <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="_password"
+                    required
+                    placeholder="Entrez votre mot de passe"
+                >
+            </div>
+
+            <div class="form-check mb-4">
+                <input
+                    type="checkbox"
+                    class="form-check-input"
+                    id="remember_me"
+                    name="_remember_me"
+                >
+                <label class="form-check-label" for="remember_me">
+                    Se souvenir de moi
+                </label>
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <button type="submit" class="btn btn-login">
+                <i class="fas fa-sign-in-alt"></i> Se connecter
+            </button>
+        </form>
+
+        <div class="text-center">
+            <a href="{{ path('app_home') }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Retour à l'accueil
+            </a>
         </div>
     </div>
+</div>
 {% endblock %}

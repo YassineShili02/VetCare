@@ -23,6 +23,7 @@
                             {% elseif traitement.statut == 'in_progress' %}En cours
                             {% elseif traitement.statut == 'completed' %}Terminé
                             {% elseif traitement.statut == 'cancelled' %}Annulé
+                            {% else %}{{ traitement.statut }}
                             {% endif %}
                         </span>
                     </span>
@@ -64,6 +65,7 @@
     {% endfor %}
 </div>
 
+<a href="{{ path('app_home') }}" class="btn-back">🏠 Retour à l'accueil</a>
 <a href="{{ path('app_traitement_index') }}" class="btn-back">Retour au Backoffice</a>
 
 <script>
@@ -81,4 +83,5 @@ function refuseTraitement(id) {
     }
 }
 </script>
+
 {% endblock %}

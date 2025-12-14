@@ -1,14 +1,15 @@
 <?php
+// src/Controller/HomeController.php
 
 namespace App\Controller;
 
-use App\Form\ContactType;
-use App\Repository\MedicamentRepository;
-use App\Repository\TraitementRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Form\ContactType; // Si tu as un formulaire de contact
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 class HomeController extends AbstractController
 {
@@ -24,42 +25,49 @@ class HomeController extends AbstractController
         return $this->render('home/about.html.twig');
     }
 
-    #[Route('/blog', name: 'app_blog')]
-    public function blog(): Response
-    {
-        return $this->render('home/blog.html.twig');
-    }
-
-    #[Route('/services', name: 'app_services')]
+    // src/Controller/HomeController.php
+    #[Route('/services', name: 'services')]
     public function services(): Response
     {
         return $this->render('home/services.html.twig');
     }
 
+    #[Route('/actualites', name: 'app_actualites')]
+    public function actualites(): Response
+    {
+        return $this->render('home/actualites.html.twig');
+    }
+
     #[Route('/contact', name: 'app_contact')]
-    public function contact(Request $request): Response
+    public function contact(Request $request, MailerInterface $mailer): Response
     {
         $form = $this->createForm(ContactType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            // Exemple d'envoi d'email
+            $email = (new Email())
+                ->from($data['email'])
+                ->to('contact@vetcare.com')
+                ->subject('Nouveau message depuis le formulaire de contact')
+                ->html(
+                    "Nom: {$data['nom']}<br>" .
+                    "Email: {$data['email']}<br>" .
+                    "Téléphone: {$data['telephone']}<br>" .
+                    "Sujet: {$data['sujet']}<br>" .
+                    "Message: {$data['message']}"
+                );
+
+            $mailer->send($email);
+
             $this->addFlash('success', 'Votre message a été envoyé avec succès !');
             return $this->redirectToRoute('app_contact');
         }
 
         return $this->render('home/contact.html.twig', [
             'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/client', name: 'app_client_interface')]
-    public function clientInterface(
-        MedicamentRepository $medicamentRepository,
-        TraitementRepository $traitementRepository
-    ): Response {
-        return $this->render('client/interface.html.twig', [
-            'medicaments' => $medicamentRepository->findAll(),
-            'traitements' => $traitementRepository->findAll(),
         ]);
     }
 }

@@ -1,4 +1,6 @@
 <?php
+// src/Repository/MedicamentRepository.php
+
 namespace App\Repository;
 
 use App\Entity\Medicament;
@@ -12,53 +14,63 @@ class MedicamentRepository extends ServiceEntityRepository
         parent::__construct($registry, Medicament::class);
     }
 
-    // AJOUTER CETTE MÉTHODE
-    public function findWithFilters(
-        string $sortBy = 'id',
-        string $order = 'ASC',
-        string $stockFilter = 'all',
-        string $search = ''
-    ): array
+    public function findAllWithSearch(?string $search, ?string $sortBy, ?string $order, ?int $minStock, ?int $maxStock): array
     {
-        // Création du QueryBuilder
         $qb = $this->createQueryBuilder('m');
 
-        // 1. FILTRE PAR NIVEAU DE STOCK
-        if ($stockFilter !== 'all') {
-            switch ($stockFilter) {
-                case 'low':
-                    $qb->andWhere('m.stock < 5');
-                    break;
-                case 'medium':
-                    $qb->andWhere('m.stock >= 5 AND m.stock <= 20');
-                    break;
-                case 'high':
-                    $qb->andWhere('m.stock > 20');
-                    break;
-            }
-        }
-
-        // 2. FILTRE PAR RECHERCHE (nom ou description)
-        if (!empty($search)) {
-            $qb->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->like('m.nom', ':search'),
-                    $qb->expr()->like('m.description', ':search')
-                )
-            )
+        if ($search) {
+            $qb->andWhere('m.nom LIKE :search OR m.description LIKE :search')
                 ->setParameter('search', '%' . $search . '%');
         }
 
-        // 3. TRI
-        // Vérification pour éviter les injections SQL
-        $allowedSortFields = ['id', 'nom', 'stock', 'dateCreation'];
-        if (!in_array($sortBy, $allowedSortFields)) {
-            $sortBy = 'id';
+        if ($minStock !== null) {
+            $qb->andWhere('m.stock >= :minStock')
+                ->setParameter('minStock', $minStock);
         }
 
-        $qb->orderBy('m.' . $sortBy, $order);
+        if ($maxStock !== null) {
+            $qb->andWhere('m.stock <= :maxStock')
+                ->setParameter('maxStock', $maxStock);
+        }
 
-        // Exécution de la requête
+        if ($sortBy) {
+            $qb->orderBy('m.' . $sortBy, $order === 'ASC' ? 'ASC' : 'DESC');
+        } else {
+            $qb->orderBy('m.dateCreation', 'DESC');
+        }
+
         return $qb->getQuery()->getResult();
+    }
+
+    public function getStockStatistics(): array
+    {
+        $result = $this->createQueryBuilder('m')
+            ->select('MIN(m.stock) as minStock', 'MAX(m.stock) as maxStock', 'AVG(m.stock) as avgStock', 'SUM(m.stock) as totalStock', 'COUNT(m.id) as total')
+            ->getQuery()
+            ->getSingleResult();
+
+        return [
+            'minStock' => $result['minStock'] ?? 0,
+            'maxStock' => $result['maxStock'] ?? 0,
+            'avgStock' => $result['avgStock'] ? round($result['avgStock'], 2) : 0,
+            'totalStock' => $result['totalStock'] ?? 0,
+            'total' => $result['total'] ?? 0,
+        ];
+    }
+
+    public function save(Medicament $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Medicament $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($entity);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 }
