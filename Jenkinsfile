@@ -51,8 +51,9 @@ pipeline {
     steps {
         sh '''
             export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            kubectl apply -f k8s/configmap.yaml -f k8s/secret.yaml -n $K8S_NAMESPACE
             kubectl apply -f k8s/job-migrate.yaml -n $K8S_NAMESPACE
-            kubectl wait --for=condition=complete job/vetcare-migrate -n $K8S_NAMESPACE --timeout=120s
+            kubectl wait --for=condition=complete job/vetcare-migrate -n $K8S_NAMESPACE --timeout=180s
         '''
     }
 }
