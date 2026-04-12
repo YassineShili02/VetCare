@@ -48,8 +48,8 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # ✅ MUST BE HERE: Create dirs & fix permissions BEFORE switching user
 RUN mkdir -p /var/lib/nginx/tmp /var/log/nginx /run/nginx \
     && mkdir -p /var/www/html/var/cache /var/www/html/var/log \
-    && chown -R www-www-data /var/lib/nginx /var/log/nginx /run/nginx \
-    && chown -R www-www-data /var/www/html \
+    && chown -R www-data:www-data /var/lib/nginx /var/log/nginx /run/nginx \
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/var \
     && chmod -R 775 /var/www/html/var/cache /var/www/html/var/log
 
