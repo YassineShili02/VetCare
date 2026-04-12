@@ -16,12 +16,11 @@ pipeline {
         stage('Lint') {
     steps {
         sh '''
-            echo "APP_ENV=prod" > /app/.env
-            echo "APP_SECRET=ci-lint-only" >> /app/.env
-            echo 'DATABASE_URL="mysql://vetcare_app:AppPass%212024Secure@mysql:3306/vetcare?serverVersion=10.4&charset=utf8mb4"' >> /app/.env
-            
             docker run --rm -v $PWD:/app composer:2 sh -c "
-                git config --global --add safe.directory /app &&
+                git config --global --add safe.directory /app
+                echo 'APP_ENV=prod' > /app/.env
+                echo 'APP_SECRET=ci-lint-only' >> /app/.env
+                echo 'DATABASE_URL=\"mysql://vetcare_app:AppPass%212024Secure@mysql:3306/vetcare?serverVersion=10.4&charset=utf8mb4\"' >> /app/.env
                 composer install --no-dev --no-scripts &&
                 php bin/console lint:container
             "
