@@ -16,6 +16,12 @@ pipeline {
         stage('Lint') {
     steps {
         sh '''
+            # Create minimal .env dynamically (never committed to Git)
+            echo "APP_ENV=prod" > /app/.env
+            echo "APP_SECRET=ci-lint-only" >> /app/.env
+            echo 'DATABASE_URL="mysql://vetcare_app:AppPass%212024Secure@mysql:3306/vetcare?serverVersion=10.4&charset=utf8mb4"' >> /app/.env
+            
+            # Now run lint with git trust + .env present
             docker run --rm -v $PWD:/app composer:2 sh -c "
                 git config --global --add safe.directory /app &&
                 composer install --no-dev --no-scripts &&
