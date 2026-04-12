@@ -1,6 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
-meta
+metadata:
   name: mysql
   labels:
     app: mysql
@@ -8,17 +8,16 @@ meta
 spec:
   replicas: 1
   strategy:
-    type: Recreate  # Required for single-replica DBs to prevent data corruption
+    type: Recreate
   selector:
     matchLabels:
       app: mysql
   template:
     metadata:
-      labels:   # ← CRITICAL: Must be "labels", NOT "name"
+      labels:
         app: mysql
         tier: database
     spec:
-      # Security context: run as mysql user (UID 999 in MariaDB image)
       securityContext:
         runAsUser: 999
         runAsGroup: 999
@@ -39,7 +38,6 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
-        # Health checks with authentication (uses env vars from secret)
         livenessProbe:
           exec:
             command:
@@ -70,4 +68,4 @@ spec:
         persistentVolumeClaim:
           claimName: mysql-pvc
       - name: mysql-logs
-        emptyDir: {}  # Or use PVC for persistent logs in prod
+        emptyDir: {}
