@@ -27,17 +27,20 @@ pipeline {
         }
         
         stage('Build & Push') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    // Force cache bust on COPY step
-                    sh 'docker build --build-arg CACHE_BUST=$(date +%s) -t $REGISTRY/$IMAGE:$TAG .'
-                    sh 'docker tag $REGISTRY/$IMAGE:$TAG $REGISTRY/$IMAGE:latest'
-                    sh 'docker push $REGISTRY/$IMAGE:$TAG'
-                    sh 'docker push $REGISTRY/$IMAGE:latest'
-                }
-            }
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+            sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+            
+            sh 'docker build --no-cache --progress=plain -t $REGISTRY/$IMAGE:$TAG .'
+            
+            sh 'docker tag $REGISTRY/$IMAGE:$TAG $REGISTRY/$IMAGE:latest'
+            sh 'docker push $REGISTRY/$IMAGE:$TAG'
+            sh 'docker push $REGISTRY/$IMAGE:latest'
+            
+            sh 'docker run --rm $REGISTRY/$IMAGE:$TAG ls -ld /var/lib/nginx /var/log/nginx || echo "⚠️ Permission check failed"'
         }
+    }
+}
 
         stage('Deploy MySQL') {
             steps {
