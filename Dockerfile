@@ -25,8 +25,8 @@ RUN php bin/console cache:clear --env=prod && php bin/console cache:warmup --env
 
 # Stage 2: Runtime (PHP-FPM + Nginx)
 FROM php:8.2-fpm-alpine
-RUN apk add --no-cache nginx mysql-client \
-    && docker-php-ext-install pdo pdo_mysql
+RUN apk add --no-cache nginx mysql-client icu-libs \
+    && docker-php-ext-install pdo pdo_mysql intl
 
 COPY --from=builder /app /var/www/html
 COPY nginx.conf /etc/nginx/nginx.conf
