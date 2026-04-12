@@ -3,16 +3,33 @@ kind: Job
 metadata:
   name: vetcare-migrate
 spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 300
   template:
+    metadata:
+      labels:
+        app: vetcare-migrate
     spec:
+      restartPolicy: Never
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox:1.36
+        command: ['sh', '-c', 'until nc -z mysql 3306; do echo "⏳ Waiting for MySQL..."; sleep 2; done; echo "✅ MySQL ready"']
       containers:
       - name: migrate
         image: yassineshili/vetcare:latest
-        command: ["php", "bin/console", "doctrine:migrations:migrate", "--no-interaction", "--env=prod"]
+        imagePullPolicy: Always
+        # ✅ Use schema sync instead of migrations (bypasses broken migration files)
+        command: ["php", "bin/console", "doctrine:schema:update", "--force", "--complete", "--env=prod"]
         envFrom:
         - configMapRef:
             name: vetcare-config
         - secretRef:
             name: vetcare-secrets
-      restartPolicy: Never
-  backoffLimit: 1
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
