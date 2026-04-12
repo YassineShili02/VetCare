@@ -1,0 +1,71 @@
+
+# ===== GIT / IDE =====
+.git
+.gitignore
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ===== DOCUMENTATION =====
+*.md
+docs/
+README*
+LICENSE
+
+# ===== PHP DEV TOOLS =====
+.php-cs-fixer.dist.php
+.phpunit.result.cache
+.php-cs-fixer.php
+ecs.php
+rector.php
+phpstan.neon
+phpstan.neon.dist
+
+# ===== SYMFONY CACHE/LOGS (rebuilt in Docker) =====
+/var/cache/*
+/var/log/*
+!var/cache/.gitkeep
+!var/log/.gitkeep
+
+# ===== ASSETMAPPER / FRONTEND DEV =====
+/assets/vendor/*
+!/assets/vendor/.gitkeep
+/assets/app.js
+/assets/controllers.json
+/assets/controllers/
+/assets/styles/
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# ===== DOCKER / CI (not needed inside image) =====
+Dockerfile
+.dockerignore
+Jenkinsfile
+k8s/
+!.k8s/keep
+
+# ===== TESTS =====
+/tests/
+/phpunit.xml.dist
+/phpunit.xml
+/tests/bootstrap.php
+
+# ===== MISC =====
+composer.phar
+.php-version
+.env.local
+.env.*.local
+.env.*.local.php
+.phpunit.result.cache
+.php-cs-fixer.cache
+
+# ===== WINDOWS SPECIFIC =====
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
