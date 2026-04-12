@@ -11,9 +11,9 @@ pipeline {
         
         stage('Lint') {
     steps {
-        sh 'docker run --rm -v $PWD:/app composer:2 install --no-dev --no-scripts'
-        sh 'docker run --rm -v $PWD:/app php:8.2-cli php bin/console lint:container'
+        sh 'docker run --rm -v $PWD:/app composer:2 sh -c "composer install --no-dev --no-scripts && php bin/console lint:container"'
     }
+}
 }
         
         stage('Build & Push') {
