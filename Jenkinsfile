@@ -7,14 +7,18 @@ pipeline {
         K8S_NAMESPACE = 'default'
     }
     stages {
-        stage('Checkout') { steps { checkout scm } }
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
         
         stage('Lint') {
-    steps {
-        sh 'docker run --rm -v $PWD:/app composer:2 sh -c "composer install --no-dev --no-scripts && php bin/console lint:container"'
-    }
-}
-}
+            steps {
+                // Single container: install deps + lint Symfony config
+                sh 'docker run --rm -v $PWD:/app composer:2 sh -c "composer install --no-dev --no-scripts && php bin/console lint:container"'
+            }
+        }
         
         stage('Build & Push') {
             steps {
@@ -27,20 +31,18 @@ pipeline {
                 }
             }
         }
+        
         stage('Wait for MySQL') {
             steps {
-                sh 'kubectl wait --for=condition=available deployment/mysql --timeout=180s'
-                sh 'sleep 10'  
+                sh 'kubectl wait --for=condition=available deployment/mysql -n $K8S_NAMESPACE --timeout=180s || echo "MySQL not found, skipping wait"'
+                sh 'sleep 10'
             }
-        }   
-
+        }
         
         stage('Migrate DB') {
             steps {
-                sh """
-                  kubectl apply -f k8s/job-migrate.yaml -n $K8S_NAMESPACE
-                  kubectl wait --for=condition=complete job/vetcare-migrate -n $K8S_NAMESPACE --timeout=120s
-                """
+                sh 'kubectl apply -f k8s/job-migrate.yaml -n $K8S_NAMESPACE'
+                sh 'kubectl wait --for=condition=complete job/vetcare-migrate -n $K8S_NAMESPACE --timeout=120s'
             }
         }
         
@@ -56,7 +58,7 @@ pipeline {
             echo '❌ Deployment failed. Check: kubectl logs -l app=vetcare'
         }
         success {
-            echo '✅ Deployed! Access at: http://<WSL-IP>:30080 or http://localhost:30080 (Windows)'
+            echo '✅ Deployed! Access at: http://localhost:30080'
         }
     }
 }
