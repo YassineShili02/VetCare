@@ -1,4 +1,4 @@
-
+﻿
 # ===== GIT / IDE =====
 .git
 .gitignore
@@ -32,10 +32,6 @@ phpstan.neon.dist
 # ===== ASSETMAPPER / FRONTEND DEV =====
 /assets/vendor/*
 !/assets/vendor/.gitkeep
-/assets/app.js
-/assets/controllers.json
-/assets/controllers/
-/assets/styles/
 node_modules/
 npm-debug.log
 yarn-error.log

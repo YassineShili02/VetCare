@@ -1,3 +1,4 @@
+
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -19,7 +20,7 @@ spec:
       - name: migrate
         image: yassineshili/vetcare:latest
         imagePullPolicy: Always
-        # ✅ Use schema sync instead of migrations (bypasses broken migration files)
+        # ✅ Sync schema directly (bypasses migration files)
         command: ["php", "bin/console", "doctrine:schema:update", "--force", "--complete", "--env=prod"]
         envFrom:
         - configMapRef:
