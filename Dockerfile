@@ -47,7 +47,9 @@ COPY --from=builder /app /var/www/html
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Fix permissions for www-data (UID 33 in Alpine)
-RUN chown -R www-data:www-data /var/www/html \
+RUN mkdir -p /var/lib/nginx/tmp /var/log/nginx /run/nginx \
+    && chown -R www-data:www-data /var/lib/nginx /var/log/nginx /run/nginx \
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/var \
     && chmod -R 775 /var/www/html/var/cache /var/www/html/var/log
 
