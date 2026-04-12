@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path  # Built into k3s
+  resources:
+    requests:
+      storage: 1Gi  # Adjust based on your disk

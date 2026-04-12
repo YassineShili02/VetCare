@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+meta
+  name: mysql
+  labels:
+    app: mysql
+    tier: database
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate  # Required for single-replica DBs to prevent data corruption
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:   # ← CRITICAL: Must be "labels", NOT "name"
+        app: mysql
+        tier: database
+    spec:
+      # Security context: run as mysql user (UID 999 in MariaDB image)
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      containers:
+      - name: mysql
+        image: mariadb:10.4
+        ports:
+        - containerPort: 3306
+          name: mysql
+        envFrom:
+        - secretRef:
+            name: mysql-secret
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        # Health checks with authentication (uses env vars from secret)
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - mysqladmin ping -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - mysqladmin ping -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        - name: mysql-logs
+          mountPath: /var/log/mysql
+      volumes:
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+      - name: mysql-logs
+        emptyDir: {}  # Or use PVC for persistent logs in prod

@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vetcare
+  labels:
+    app: vetcare
+    tier: frontend
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0  # Zero downtime: never stop the old pod before new is ready
+  selector:
+    matchLabels:
+      app: vetcare
+  template:
+    metadata:
+      labels:
+        app: vetcare
+        tier: frontend
+    spec:
+      # Graceful shutdown: give PHP-FPM time to finish requests
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: web
+        image: yassineshili/vetcare:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+        envFrom:
+        - configMapRef:
+            name: vetcare-config
+        - secretRef:
+            name: vetcare-secrets
+        # Health checks (must match HealthController.php route)
+        livenessProbe:
+          httpGet:
+            path: /_health
+            port: http
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /_health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        # Resource limits (prevent OOM, ensure scheduling)
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        # Volume mounts
+        volumeMounts:
+        - name: uploads
+          mountPath: /var/www/html/public/uploads
+        - name: var-cache
+          mountPath: /var/www/html/var/cache
+        - name: var-log
+          mountPath: /var/www/html/var/log
+        # Security context (run as non-root, read-only root FS where possible)
+        securityContext:
+          runAsUser: 33  # www-data UID in Alpine
+          runAsGroup: 33
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false  # Must be false for Symfony cache/logs
+      volumes:
+      - name: uploads
+        emptyDir: {}  # ⚠️ Ephemeral: files lost on pod restart. Use PVC for persistent uploads in prod.
+      - name: var-cache
+        emptyDir: {}
+      - name: var-log
+        emptyDir: {}
