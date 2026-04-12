@@ -30,7 +30,8 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    sh 'docker build -t $REGISTRY/$IMAGE:$TAG .'
+                    // Force cache bust on COPY step
+                    sh 'docker build --build-arg CACHE_BUST=$(date +%s) -t $REGISTRY/$IMAGE:$TAG .'
                     sh 'docker tag $REGISTRY/$IMAGE:$TAG $REGISTRY/$IMAGE:latest'
                     sh 'docker push $REGISTRY/$IMAGE:$TAG'
                     sh 'docker push $REGISTRY/$IMAGE:latest'
