@@ -70,6 +70,7 @@ pipeline {
                 sh '''
                     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
                     kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml -n $K8S_NAMESPACE
+                    kubectl rollout restart deployment/vetcare -n $K8S_NAMESPACE
                     kubectl rollout status deployment/vetcare -n $K8S_NAMESPACE --timeout=120s
                 '''
             }
