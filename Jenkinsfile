@@ -14,11 +14,16 @@ pipeline {
         }
         
         stage('Lint') {
-            steps {
-                // Single container: install deps + lint Symfony config
-                sh 'docker run --rm -v $PWD:/app composer:2 sh -c "composer install --no-dev --no-scripts && php bin/console lint:container"'
-            }
-        }
+    steps {
+        sh '''
+            docker run --rm -v $PWD:/app composer:2 sh -c "
+                git config --global --add safe.directory /app &&
+                composer install --no-dev --no-scripts &&
+                php bin/console lint:container
+            "
+        '''
+    }
+}
         
         stage('Build & Push') {
             steps {
