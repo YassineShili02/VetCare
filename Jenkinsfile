@@ -30,7 +30,7 @@ pipeline {
         stage('Wait for MySQL') {
             steps {
                 sh 'kubectl wait --for=condition=available deployment/mysql --timeout=180s'
-                sh 'sleep 10'  # Give MySQL 10s to accept connections
+                sh 'sleep 10'  
             }
         }   
 
