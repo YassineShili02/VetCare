@@ -14,6 +14,9 @@ COPY . .
 # 4. Dump autoloader with project classes
 RUN composer dump-autoload --optimize --classmap-authoritative
 
+ENV DATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db?serverVersion=3.15"
+ENV APP_SECRET="build-time-dummy"
+ENV APP_ENV="prod"
 # 5.  Install Importmap dependencies (Stimulus, etc.)
 RUN php bin/console importmap:install --env=prod
 
