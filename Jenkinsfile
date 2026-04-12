@@ -48,18 +48,24 @@ pipeline {
         }
         
         stage('Migrate DB') {
-            steps {
-                sh 'kubectl apply -f k8s/job-migrate.yaml -n $K8S_NAMESPACE'
-                sh 'kubectl wait --for=condition=complete job/vetcare-migrate -n $K8S_NAMESPACE --timeout=120s'
-            }
-        }
-        
-        stage('Deploy to k3s') {
-            steps {
-                sh 'kubectl apply -f k8s/configmap.yaml -f k8s/secret.yaml -f k8s/deployment.yaml -f k8s/service.yaml -n $K8S_NAMESPACE'
-                sh 'kubectl rollout status deployment/vetcare -n $K8S_NAMESPACE --timeout=60s'
-            }
-        }
+    steps {
+        sh '''
+            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            kubectl apply -f k8s/job-migrate.yaml -n $K8S_NAMESPACE
+            kubectl wait --for=condition=complete job/vetcare-migrate -n $K8S_NAMESPACE --timeout=120s
+        '''
+    }
+}
+
+stage('Deploy to k3s') {
+    steps {
+        sh '''
+            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            kubectl apply -f k8s/configmap.yaml -f k8s/secret.yaml -f k8s/deployment.yaml -f k8s/service.yaml -n $K8S_NAMESPACE
+            kubectl rollout status deployment/vetcare -n $K8S_NAMESPACE --timeout=60s
+        '''
+    }
+}
     }
     post {
         failure {
