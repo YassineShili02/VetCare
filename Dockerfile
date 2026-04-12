@@ -5,19 +5,22 @@ WORKDIR /app
 # 1. Copy ONLY composer files first (for layer caching)
 COPY composer.json composer.lock ./
 
-# 2. Install deps WITHOUT running Symfony scripts (bin/console doesn't exist yet)
+# 2. Install PHP deps WITHOUT running Symfony scripts
 RUN composer install --no-dev --optimize-autoloader --classmap-authoritative --no-scripts
 
 # 3. NOW copy the rest of the project
 COPY . .
 
-# 4. Dump autoloader with project classes now that code is present
+# 4. Dump autoloader with project classes
 RUN composer dump-autoload --optimize --classmap-authoritative
 
-# 5. Compile assets (AssetMapper for Symfony 6.4)
+# 5.  Install Importmap dependencies (Stimulus, etc.)
+RUN php bin/console importmap:install --env=prod
+
+# 6.  Compile assets with AssetMapper
 RUN php bin/console asset-map:compile --env=prod
 
-# 6. Clear and warm up cache
+# 7. Clear and warm up cache
 RUN php bin/console cache:clear --env=prod && php bin/console cache:warmup --env=prod
 
 # Stage 2: Runtime (PHP-FPM + Nginx)
