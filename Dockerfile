@@ -38,7 +38,6 @@ RUN php bin/console cache:clear --env=prod && php bin/console cache:warmup --env
 # Stage 2: Runtime (PHP-FPM + Nginx)
 FROM php:8.2-fpm-alpine
 
-# Install runtime deps + ICU dev headers for intl extension
 RUN apk add --no-cache nginx mysql-client icu-dev \
     && docker-php-ext-install -j$(nproc) pdo_mysql intl \
     && apk del icu-dev
@@ -46,10 +45,10 @@ RUN apk add --no-cache nginx mysql-client icu-dev \
 COPY --from=builder /app /var/www/html
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Fix permissions for www-data (UID 33 in Alpine)
+# ✅ MUST BE HERE: Create dirs & fix permissions BEFORE switching user
 RUN mkdir -p /var/lib/nginx/tmp /var/log/nginx /run/nginx \
-    && chown -R www-data:www-data /var/lib/nginx /var/log/nginx /run/nginx \
-    && chown -R www-data:www-data /var/www/html \
+    && chown -R www-www-data /var/lib/nginx /var/log/nginx /run/nginx \
+    && chown -R www-www-data /var/www/html \
     && chmod -R 755 /var/www/html/var \
     && chmod -R 775 /var/www/html/var/cache /var/www/html/var/log
 
