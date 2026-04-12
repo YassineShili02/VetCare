@@ -47,13 +47,20 @@ pipeline {
             }
         }
         
-        stage('Migrate DB') {
+      stage('Migrate DB') {
     steps {
         sh '''
             export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            
             kubectl apply -f k8s/configmap.yaml -f k8s/secret.yaml -n $K8S_NAMESPACE
+            
+            kubectl get configmap vetcare-config -n $K8S_NAMESPACE
+            kubectl get secret vetcare-secrets -n $K8S_NAMESPACE
+            
+            kubectl delete job vetcare-migrate -n $K8S_NAMESPACE --ignore-not-found=true
+            
             kubectl apply -f k8s/job-migrate.yaml -n $K8S_NAMESPACE
-            kubectl wait --for=condition=complete job/vetcare-migrate -n $K8S_NAMESPACE --timeout=180s
+            kubectl wait --for=condition=complete job/vetcare-migrate -n $K8S_NAMESPACE --timeout=300s
         '''
     }
 }
