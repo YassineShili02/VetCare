@@ -70,8 +70,8 @@ spec:
           mountPath: /var/www/html/var/log
         # Security context (run as non-root, read-only root FS where possible)
         securityContext:
-          runAsUser: 33  # www-data UID in Alpine
-          runAsGroup: 33
+          runAsUser: 82    # ← www-data in Alpine (NOT 33, that's Debian/Ubuntu)
+          runAsGroup: 82 
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: false  # Must be false for Symfony cache/logs
       volumes:
