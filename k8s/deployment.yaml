@@ -28,7 +28,7 @@ spec:
         image: yassineshili/vetcare:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 80
+        - containerPort: 8085
           name: http
         envFrom:
         - configMapRef:
@@ -39,7 +39,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /_health
-            port: http
+            port: 8088
           initialDelaySeconds: 15
           periodSeconds: 10
           timeoutSeconds: 5
@@ -47,7 +47,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /_health
-            port: http
+            port: 8085
           initialDelaySeconds: 5
           periodSeconds: 5
           timeoutSeconds: 3

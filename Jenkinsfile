@@ -47,7 +47,7 @@ pipeline {
                 sh '''
                     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
                     kubectl apply -f k8s/mysql-secret.yaml -f k8s/mysql-pvc.yaml -f k8s/mysql-deployment.yaml -f k8s/mysql-service.yaml -n $K8S_NAMESPACE
-                    kubectl wait --for=condition=available deployment/mysql -n $K8S_NAMESPACE --timeout=180s
+                    kubectl wait --for=condition=available deployment/mysql -n $K8S_NAMESPACE --timeout=300s
                     echo "✅ MySQL is ready"
                 '''
             }

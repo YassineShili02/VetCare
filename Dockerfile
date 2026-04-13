@@ -35,7 +35,7 @@ RUN php bin/console asset-map:compile --env=prod
 # 7. Clear and warm up cache
 RUN php bin/console cache:clear --env=prod && php bin/console cache:warmup --env=prod
 
-# Stage 2: Runtime (PHP-FPM + Nginx)
+# Stage 2: Runtime
 FROM php:8.2-fpm-alpine
 
 RUN apk add --no-cache nginx mysql-client icu-dev \
@@ -44,15 +44,15 @@ RUN apk add --no-cache nginx mysql-client icu-dev \
 
 COPY --from=builder /app /var/www/html
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY docker/entrypoint.sh /entrypoint.sh
 
-# ✅ MUST BE HERE: Create dirs & fix permissions BEFORE switching user
 RUN mkdir -p /var/lib/nginx/tmp /var/log/nginx /run/nginx \
     && mkdir -p /var/www/html/var/cache /var/www/html/var/log \
     && chown -R www-data:www-data /var/lib/nginx /var/log/nginx /run/nginx \
     && chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/var \
-    && chmod -R 775 /var/www/html/var/cache /var/www/html/var/log
+    && chmod +x /entrypoint.sh \
+    && chmod -R 775 /var/www/html/var
 
-EXPOSE 80
+EXPOSE 8080
 USER www-data
-CMD ["sh", "-c", "nginx && php-fpm"]
+CMD ["/entrypoint.sh"]
