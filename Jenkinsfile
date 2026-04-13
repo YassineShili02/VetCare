@@ -43,15 +43,15 @@ pipeline {
 }
 
         stage('Deploy MySQL') {
-            steps {
-                sh '''
-                    export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-                    kubectl apply -f k8s/mysql-secret.yaml -f k8s/mysql-pvc.yaml -f k8s/mysql-deployment.yaml -f k8s/mysql-service.yaml -n $K8S_NAMESPACE
-                    kubectl wait --for=condition=available deployment/mysql -n $K8S_NAMESPACE --timeout=300s
-                    echo "✅ MySQL is ready"
-                '''
-            }
-        }
+    steps {
+        sh '''
+            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            kubectl apply -f k8s/mysql-secret.yaml -f k8s/mysql-statefulset.yaml -f k8s/mysql-service.yaml -n $K8S_NAMESPACE
+            kubectl wait --for=condition=ready pod/mysql-0 -n $K8S_NAMESPACE --timeout=180s
+            echo "✅ MySQL is ready"
+        '''
+    }
+}
         
         stage('Migrate DB') {
             steps {
@@ -71,7 +71,7 @@ pipeline {
                     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
                     kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml -n $K8S_NAMESPACE
                     kubectl rollout restart deployment/vetcare -n $K8S_NAMESPACE
-                    kubectl rollout status deployment/vetcare -n $K8S_NAMESPACE --timeout=120s
+                    kubectl rollout status deployment/vetcare -n $K8S_NAMESPACE --timeout=300s
                 '''
             }
         }
